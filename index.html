@@ -261,12 +261,13 @@ input.wide{font-size:13px}
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
         <div style="position:relative"><i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:15px;pointer-events:none"></i><input style="width:200px;padding-left:30px;font-size:13px" type="text" id="p-search" placeholder="Search…" oninput="renderProposals()"></div>
         <select style="width:auto;font-size:13px;padding:7px 10px" id="f-status" onchange="renderProposals()"><option value="">All statuses</option><option>Draft</option><option>Active</option><option>In review</option><option>Submitted</option><option>Won</option><option>Lost</option></select>
+        <select style="width:auto;font-size:13px;padding:7px 10px" id="f-type" onchange="renderProposals()"><option value="">All types</option><option value="Budgetary">Budgetary</option><option value="Public Tender">Public Tender</option></select>
         <select style="width:auto;font-size:13px;padding:7px 10px" id="f-priority" onchange="renderProposals()"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
         <select style="width:auto;font-size:13px;padding:7px 10px" id="f-assignee" onchange="renderProposals()"><option value="">All leads</option></select>
       </div>
       <button class="btn btn-primary" onclick="openProposalModal()"><i class="ti ti-plus"></i> New proposal</button>
     </div>
-    <div class="card"><div class="table-wrap"><table><thead><tr><th>Title</th><th>Client</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead><tbody id="p-list"></tbody></table></div></div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead><tbody id="p-list"></tbody></table></div></div>
   </div>
 
   <!-- TASKS -->
@@ -309,8 +310,8 @@ input.wide{font-size:13px}
     <div class="modal-header"><span style="font-weight:500" id="pm-title">New proposal</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
     <div class="modal-body">
       <div class="field"><label>Title</label><input id="pm-name" placeholder="e.g. ClearSkies SIEM — Municipality of Athens"></div>
-      <div class="two-col"><div class="field"><label>Client / Authority</label><input id="pm-client"></div><div class="field"><label>Value (€)</label><input id="pm-value" type="number" placeholder="0"></div></div>
-      <div class="two-col"><div class="field"><label>Deadline</label><input id="pm-deadline" type="date"></div><div class="field"><label>Status</label><select id="pm-status"><option>Draft</option><option>Active</option><option>In review</option><option>Submitted</option><option>Won</option><option>Lost</option></select></div></div>
+      <div class="two-col"><div class="field"><label>Type</label><select id="pm-type" onchange="updateStatusOptions()"><option value="Budgetary">Budgetary</option><option value="Public Tender">Public Tender</option></select></div><div class="field"><label>Client / Authority</label><input id="pm-client"></div><div class="field"><label>Value (€)</label><input id="pm-value" type="number" placeholder="0"></div></div>
+      <div class="two-col"><div class="field"><label>Deadline</label><input id="pm-deadline" type="date"></div><div class="field"><label>Status</label><select id="pm-status"></select></div></div>
       <div class="two-col"><div class="field"><label>Priority</label><select id="pm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div><div class="field"><label>Lead assignee</label><select id="pm-assignee"></select></div></div>
       <div class="field"><label>Notes</label><textarea id="pm-notes" rows="3" placeholder="Key requirements, contacts, references…"></textarea></div>
     </div>
@@ -545,10 +546,14 @@ function av(id,sz){
   const s=sz||24,bg=LIGHT_BG[m.color]||'#E6F1FB',ini=(m.first[0]||'')+(m.last[0]||'');
   return`<span class="avatar" style="width:${s}px;height:${s}px;background:${bg};color:${m.color}">${ini}</span>`;
 }
-function sc(s){return{'Draft':'b-draft','Active':'b-active','In review':'b-review','Submitted':'b-submitted','Won':'b-won','Lost':'b-lost'}[s]||'b-draft';}
+function sc(s){return{'Draft':'b-draft','Active':'b-active','In review':'b-review','Submitted':'b-submitted','Won':'b-won','Lost':'b-lost','Approved':'b-approved','Converted to RFP':'b-converted','Waiting Result':'b-waiting'}[s]||'b-draft';}
 function pc(p){return{'High':'b-high','Medium':'b-medium','Low':'b-low'}[p]||'b-low';}
+function tc(t){return t==='Public Tender'?'b-tender':'b-budgetary';}
+const BUDGETARY_STATUSES=['Draft','Active','Submitted','Approved','Converted to RFP'];
+const TENDER_STATUSES=['Draft','Active','Submitted','Waiting Result','Won','Lost'];
+function statusesForType(type){return type==='Public Tender'?TENDER_STATUSES:BUDGETARY_STATUSES;}
 function dl(d,status){
-  if(status==='Submitted')return{cls:'dl-waiting',txt:'Waiting result'};
+  if(status==='Submitted'||status==='Waiting Result')return{cls:'dl-waiting',txt:'Waiting result'};
   if(!d)return{cls:'dl-ok',txt:'—'};
   const days=Math.ceil((new Date(d)-new Date())/86400000);
   if(days<0)return{cls:'dl-urgent',txt:'Overdue'};
@@ -585,14 +590,22 @@ function renderDashboard(){
 // ── Proposals ────────────────────────────────────────────────
 function renderProposals(){
   const q=document.getElementById('p-search').value.toLowerCase(),fs=document.getElementById('f-status').value,fp=document.getElementById('f-priority').value,fa=document.getElementById('f-assignee').value;
-  const list=D.proposals.filter(p=>(!q||p.name.toLowerCase().includes(q)||(p.client||'').toLowerCase().includes(q))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa));
+  const ft=document.getElementById('f-type').value;
+  const list=D.proposals.filter(p=>(!q||p.name.toLowerCase().includes(q)||(p.client||'').toLowerCase().includes(q))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa)&&(!ft||p.type===ft));
   const tb=document.getElementById('p-list');
   if(!list.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><i class="ti ti-file-off"></i>No proposals found</div></td></tr>`;return;}
   const grandTotal=list.reduce((s,p)=>s+(p.value||0),0);
   const byStatus={};list.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0);});
   const summaryParts=Object.entries(byStatus).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:4px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
-  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';return`<tr><td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
-  +`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="2" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grandTotal).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${summaryParts}</div></td></tr>`;
+  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';const typeLabel=p.type==='Public Tender'?'Tender':'Budgetary';return`<tr><td style="font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td><span class="badge ${tc(p.type)}">${typeLabel}</span></td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
+  +`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="3" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grandTotal).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${summaryParts}</div></td></tr>`;
+}
+
+function updateStatusOptions(){
+  const type=document.getElementById('pm-type').value;
+  const sel=document.getElementById('pm-status');
+  const cur=sel.value;
+  sel.innerHTML=statusesForType(type).map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
 }
 
 function openProposalModal(id){
@@ -601,11 +614,11 @@ function openProposalModal(id){
   if(id){
     const p=D.proposals.find(x=>x.id===id);
     document.getElementById('pm-title').textContent='Edit proposal';
-    document.getElementById('pm-name').value=p.name;document.getElementById('pm-client').value=p.client||'';document.getElementById('pm-value').value=p.value||'';document.getElementById('pm-deadline').value=p.deadline||'';document.getElementById('pm-status').value=p.status;document.getElementById('pm-priority').value=p.priority;document.getElementById('pm-assignee').value=p.assignee||'';document.getElementById('pm-notes').value=p.notes||'';
+    document.getElementById('pm-name').value=p.name;document.getElementById('pm-client').value=p.client||'';document.getElementById('pm-value').value=p.value||'';document.getElementById('pm-deadline').value=p.deadline||'';document.getElementById('pm-type').value=p.type||'Budgetary';updateStatusOptions();document.getElementById('pm-status').value=p.status;document.getElementById('pm-priority').value=p.priority;document.getElementById('pm-assignee').value=p.assignee||'';document.getElementById('pm-notes').value=p.notes||'';
   }else{
     document.getElementById('pm-title').textContent='New proposal';
     ['pm-name','pm-client','pm-value','pm-deadline','pm-notes'].forEach(f=>document.getElementById(f).value='');
-    document.getElementById('pm-status').value='Draft';document.getElementById('pm-priority').value='Medium';
+    document.getElementById('pm-type').value='Budgetary';updateStatusOptions();document.getElementById('pm-status').value='Draft';document.getElementById('pm-priority').value='Medium';
     if(D.team.length)document.getElementById('pm-assignee').value=D.team[0].id;
   }
   document.getElementById('modal-proposal').style.display='flex';
@@ -613,7 +626,7 @@ function openProposalModal(id){
 
 function saveProposal(){
   const name=document.getElementById('pm-name').value.trim();if(!name){document.getElementById('pm-name').focus();return;}
-  const d={name,client:document.getElementById('pm-client').value.trim(),value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:document.getElementById('pm-status').value,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,notes:document.getElementById('pm-notes').value.trim()};
+  const d={name,client:document.getElementById('pm-client').value.trim(),value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,type:document.getElementById('pm-type').value,status:document.getElementById('pm-status').value,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,notes:document.getElementById('pm-notes').value.trim()};
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
   else D.proposals.push({id:D.nextPid++,...d});
   saveData();closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
