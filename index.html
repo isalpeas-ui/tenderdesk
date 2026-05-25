@@ -75,7 +75,7 @@ tr:hover .row-actions{opacity:1}
 .b-low{background:#E6F1FB;color:#185FA5}
 .dl-urgent{color:#A32D2D;font-weight:500}
 .dl-soon{color:#854F0B}
-.dl-ok{color:var(--text2)}
+.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);width:500px;max-width:100%;max-height:90vh;overflow-y:auto}
 .modal-header{padding:1rem 1.25rem;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg)}
@@ -547,7 +547,8 @@ function av(id,sz){
 }
 function sc(s){return{'Draft':'b-draft','Active':'b-active','In review':'b-review','Submitted':'b-submitted','Won':'b-won','Lost':'b-lost'}[s]||'b-draft';}
 function pc(p){return{'High':'b-high','Medium':'b-medium','Low':'b-low'}[p]||'b-low';}
-function dl(d){
+function dl(d,status){
+  if(status==='Submitted')return{cls:'dl-waiting',txt:'Waiting result'};
   if(!d)return{cls:'dl-ok',txt:'—'};
   const days=Math.ceil((new Date(d)-new Date())/86400000);
   if(days<0)return{cls:'dl-urgent',txt:'Overdue'};
@@ -578,7 +579,7 @@ function renderDashboard(){
   const sorted=[...D.proposals].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
   const tb=document.getElementById('dash-list');
   if(!sorted.length){tb.innerHTML=`<tr><td colspan="5"><div class="empty"><i class="ti ti-calendar-off"></i>No deadlines yet</div></td></tr>`;return;}
-  tb.innerHTML=sorted.map(p=>{const d=dl(p.deadline);return`<tr><td style="font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td>${av(p.assignee)}</td></tr>`;}).join('');
+  tb.innerHTML=sorted.map(p=>{const d=dl(p.deadline,p.status);return`<tr><td style="font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td>${av(p.assignee)}</td></tr>`;}).join('');
 }
 
 // ── Proposals ────────────────────────────────────────────────
@@ -587,7 +588,11 @@ function renderProposals(){
   const list=D.proposals.filter(p=>(!q||p.name.toLowerCase().includes(q)||(p.client||'').toLowerCase().includes(q))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa));
   const tb=document.getElementById('p-list');
   if(!list.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><i class="ti ti-file-off"></i>No proposals found</div></td></tr>`;return;}
-  tb.innerHTML=list.map(p=>{const d=dl(p.deadline),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';return`<tr><td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('');
+  const grandTotal=list.reduce((s,p)=>s+(p.value||0),0);
+  const byStatus={};list.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0);});
+  const summaryParts=Object.entries(byStatus).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:4px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
+  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';return`<tr><td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
+  +`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="2" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grandTotal).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${summaryParts}</div></td></tr>`;
 }
 
 function openProposalModal(id){
