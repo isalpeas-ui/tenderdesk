@@ -85,6 +85,28 @@ tr:hover .row-actions{opacity:1}
 .field label{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
 input,select,textarea{width:100%;padding:8px 10px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;background:var(--bg);color:var(--text);font-family:inherit}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#378ADD}
+.bid-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
+.bid-sheet{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);width:780px;max-width:100%;margin:auto}
+.bid-header{background:var(--bg2);border-bottom:0.5px solid var(--border);padding:1rem 1.5rem;border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.bid-title{font-size:15px;font-weight:600;color:var(--text)}
+.bid-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+.bid-body{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+.bid-section{border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.bid-section-hdr{background:var(--bg2);padding:.5rem 1rem;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);border-bottom:0.5px solid var(--border)}
+.bid-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.bid-field{padding:.625rem 1rem;border-bottom:0.5px solid var(--border);border-right:0.5px solid var(--border)}
+.bid-field:nth-child(even){border-right:none}
+.bid-field.full{grid-column:1/-1;border-right:none}
+.bid-field:last-child,.bid-field.full:last-child{border-bottom:none}
+.bid-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.bid-field input,.bid-field select,.bid-field textarea{width:100%;padding:5px 8px;border:0.5px solid var(--border2);border-radius:6px;font-size:13px;background:var(--bg);color:var(--text);font-family:inherit}
+.bid-field input:focus,.bid-field select:focus,.bid-field textarea:focus{outline:none;border-color:#378ADD}
+.bid-field .static{font-size:13px;color:var(--text);padding:5px 0}
+.bid-toggle{display:flex;gap:8px;flex-wrap:wrap}
+.bid-toggle label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text);cursor:pointer;font-weight:normal;text-transform:none;letter-spacing:0}
+.bid-toggle input[type=radio],.bid-toggle input[type=checkbox]{width:auto;padding:0;border:none}
+.bid-footer{padding:1rem 1.5rem;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:480px){.two-col{grid-template-columns:1fr}}
 .empty{padding:3rem;text-align:center;color:var(--text2);font-size:14px}
@@ -597,7 +619,7 @@ function renderProposals(){
   const grandTotal=list.reduce((s,p)=>s+(p.value||0),0);
   const byStatus={};list.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0);});
   const summaryParts=Object.entries(byStatus).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:4px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
-  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';const typeLabel=p.type==='Public Tender'?'Tender':'Budgetary';return`<tr><td style="font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td><span class="badge ${tc(p.type)}">${typeLabel}</span></td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
+  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';const typeLabel=p.type==='Public Tender'?'Tender':'Budgetary';return`<tr><td style="font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td><span class="badge ${tc(p.type)}">${typeLabel}</span></td><td style="color:var(--text2)">${p.client||'—'}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button>${p.type==='Public Tender'?`<button class="icon-btn" onclick="openBidSheet(${p.id})" title="Bid Sheet" style="color:var(--info-text)"><i class="ti ti-clipboard-list"></i></button>`:''}<button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
   +`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="3" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grandTotal).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${summaryParts}</div></td></tr>`;
 }
 
@@ -741,6 +763,136 @@ function delUser(id){
 function closeModals(){document.querySelectorAll('.modal-backdrop').forEach(m=>m.style.display='none');editPid=null;editTid=null;editUid=null;}
 document.querySelectorAll('.modal-backdrop').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModals();}));
 
+
+// ── Bid Sheet ────────────────────────────────────────────────────────────────
+let bidProposalId = null;
+
+function openBidSheet(id) {
+  bidProposalId = id;
+  const p = D.proposals.find(x => x.id === id);
+  if (!p) return;
+
+  // Populate manager dropdown
+  const mgr = document.getElementById('bs-manager');
+  mgr.innerHTML = D.team.map(t => `<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+
+  // Populate status dropdown with tender statuses
+  const sts = document.getElementById('bs-status');
+  sts.innerHTML = TENDER_STATUSES.map(s => `<option${s===p.status?' selected':''}>${s}</option>`).join('');
+
+  // Set subtitle
+  document.getElementById('bs-subtitle').textContent = p.name + ' — ' + p.client;
+
+  // Load existing bid data or defaults
+  const b = p.bidSheet || {};
+
+  document.getElementById('bs-date').value = b.date || new Date().toISOString().split('T')[0];
+  mgr.value = b.manager || p.assignee || (D.team[0]||{}).id || '';
+  document.getElementById('bs-qno').value = b.qno || '';
+  document.getElementById('bs-authority').value = b.authority || p.client || '';
+  document.getElementById('bs-pub-date').value = b.pubDate || '';
+  document.getElementById('bs-protocol').value = b.protocol || '';
+  document.getElementById('bs-sys-num').value = b.sysNum || '';
+  document.getElementById('bs-desc').value = b.desc || p.notes || '';
+  document.getElementById('bs-cpv1').value = b.cpv1 || '';
+  document.getElementById('bs-cpv2').value = b.cpv2 || '';
+  document.getElementById('bs-partner').value = b.partner || '';
+  document.getElementById('bs-part-pct').value = b.partPct || '';
+  document.getElementById('bs-budget').value = b.budget || p.value || '';
+  document.getElementById('bs-amount-analysis').value = b.amountAnalysis || '';
+  document.getElementById('bs-price-net').value = b.priceNet || '';
+  document.getElementById('bs-price-vat').value = b.priceVat || '';
+  document.getElementById('bs-clarif-date').value = b.clarifDate || '';
+  document.getElementById('bs-submit-date').value = b.submitDate || p.deadline || '';
+  document.getElementById('bs-submit-time').value = b.submitTime || '';
+  document.getElementById('bs-guarantee-amt').value = b.guaranteeAmt || '';
+  document.getElementById('bs-guarantee-from').value = b.guaranteeFrom || '';
+  document.getElementById('bs-guarantee-to').value = b.guaranteeTo || '';
+  document.getElementById('bs-bond-from').value = b.bondFrom || '';
+  document.getElementById('bs-bond-to').value = b.bondTo || '';
+  document.getElementById('bs-notes').value = b.notes || '';
+
+  // Radio buttons
+  const tenderType = b.tenderType || 'Ανοικτός';
+  document.querySelectorAll('input[name="bs-tender-type"]').forEach(r => r.checked = r.value === tenderType);
+  const partType = b.partType || '100%';
+  document.querySelectorAll('input[name="bs-part"]').forEach(r => r.checked = r.value === partType);
+  togglePartner(partType === 'subcontract');
+  const perfBond = b.perfBond || 'Όχι';
+  document.querySelectorAll('input[name="bs-perf-bond"]').forEach(r => r.checked = r.value === perfBond);
+
+  // Checkboxes
+  document.getElementById('bs-sub-eshdis').checked = !!(b.subProcess||{}).eshdis;
+  document.getElementById('bs-sub-email').checked = !!(b.subProcess||{}).email;
+  document.getElementById('bs-sub-cosmo').checked = !!(b.subProcess||{}).cosmo;
+  document.getElementById('bs-sub-inperson').checked = !!(b.subProcess||{}).inperson;
+
+  document.getElementById('bid-sheet').style.display = 'flex';
+}
+
+function togglePartner(show) {
+  document.getElementById('bs-part-pct').style.display = show ? 'block' : 'none';
+}
+
+async function saveBidSheet() {
+  const p = D.proposals.find(x => x.id === bidProposalId);
+  if (!p) return;
+
+  p.status = document.getElementById('bs-status').value;
+  p.assignee = document.getElementById('bs-manager').value;
+
+  p.bidSheet = {
+    date: document.getElementById('bs-date').value,
+    manager: document.getElementById('bs-manager').value,
+    qno: document.getElementById('bs-qno').value,
+    authority: document.getElementById('bs-authority').value,
+    pubDate: document.getElementById('bs-pub-date').value,
+    protocol: document.getElementById('bs-protocol').value,
+    sysNum: document.getElementById('bs-sys-num').value,
+    tenderType: document.querySelector('input[name="bs-tender-type"]:checked')?.value || 'Ανοικτός',
+    subProcess: {
+      eshdis: document.getElementById('bs-sub-eshdis').checked,
+      email: document.getElementById('bs-sub-email').checked,
+      cosmo: document.getElementById('bs-sub-cosmo').checked,
+      inperson: document.getElementById('bs-sub-inperson').checked,
+    },
+    desc: document.getElementById('bs-desc').value,
+    cpv1: document.getElementById('bs-cpv1').value,
+    cpv2: document.getElementById('bs-cpv2').value,
+    partType: document.querySelector('input[name="bs-part"]:checked')?.value || '100%',
+    partPct: document.getElementById('bs-part-pct').value,
+    partner: document.getElementById('bs-partner').value,
+    budget: parseFloat(document.getElementById('bs-budget').value) || 0,
+    amountAnalysis: document.getElementById('bs-amount-analysis').value,
+    priceNet: parseFloat(document.getElementById('bs-price-net').value) || 0,
+    priceVat: parseFloat(document.getElementById('bs-price-vat').value) || 0,
+    clarifDate: document.getElementById('bs-clarif-date').value,
+    submitDate: document.getElementById('bs-submit-date').value,
+    submitTime: document.getElementById('bs-submit-time').value,
+    guaranteeAmt: parseFloat(document.getElementById('bs-guarantee-amt').value) || 0,
+    guaranteeFrom: document.getElementById('bs-guarantee-from').value,
+    guaranteeTo: document.getElementById('bs-guarantee-to').value,
+    perfBond: document.querySelector('input[name="bs-perf-bond"]:checked')?.value || 'Όχι',
+    bondFrom: document.getElementById('bs-bond-from').value,
+    bondTo: document.getElementById('bs-bond-to').value,
+    notes: document.getElementById('bs-notes').value,
+  };
+
+  await saveData();
+  closeBidSheet();
+  renderProposals();
+  toast('Bid sheet saved', 'check');
+}
+
+function closeBidSheet() {
+  document.getElementById('bid-sheet').style.display = 'none';
+  bidProposalId = null;
+}
+
+document.getElementById('bid-sheet').addEventListener('click', e => {
+  if (e.target === document.getElementById('bid-sheet')) closeBidSheet();
+});
+
 // ── Export / Import for Claude ──────────────────────────────
 function exportForClaude(){
   const snap=JSON.stringify(D,null,2);
@@ -769,5 +921,134 @@ async function doImport(){
     <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="doImport()"><i class="ti ti-check"></i> Apply changes</button></div>
   </div>
 </div>
+
+<!-- Bid Sheet Modal -->
+<div class="bid-backdrop" id="bid-sheet" style="display:none">
+  <div class="bid-sheet">
+    <div class="bid-header">
+      <div>
+        <div class="bid-title">ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ ΣΥΜΜΕΤΟΧΗΣ ΣΕ ΔΗΜΟΣΙΟ ΔΙΑΓΩΝΙΣΜΟ</div>
+        <div class="bid-subtitle" id="bs-subtitle">Public Tender Bid Sheet</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-primary" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save</button>
+        <button class="icon-btn" onclick="closeBidSheet()"><i class="ti ti-x"></i></button>
+      </div>
+    </div>
+    <div class="bid-body">
+
+      <!-- Section 1: General -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Γενικά Στοιχεία</div>
+        <div class="bid-grid">
+          <div class="bid-field"><label>Ημερομηνία</label><input type="date" id="bs-date"></div>
+          <div class="bid-field"><label>Account Manager</label><select id="bs-manager"></select></div>
+          <div class="bid-field"><label>Q No.</label><input type="text" id="bs-qno" placeholder="Quote number"></div>
+          <div class="bid-field"><label>Status</label><select id="bs-status"></select></div>
+        </div>
+      </div>
+
+      <!-- Section 2: Tender Authority -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Αναθέτουσα Αρχή</div>
+        <div class="bid-grid">
+          <div class="bid-field full"><label>Αναθέτουσα Αρχή</label><input type="text" id="bs-authority" placeholder="e.g. Δήμος Παλαιού Φαλήρου"></div>
+          <div class="bid-field"><label>Ημερομηνία Διακήρυξης</label><input type="date" id="bs-pub-date"></div>
+          <div class="bid-field"><label>Αρ. Πρωτοκόλλου</label><input type="text" id="bs-protocol" placeholder="e.g. 6001971"></div>
+          <div class="bid-field"><label>Συστημικός Αρ. Διαγωνισμού</label><input type="text" id="bs-sys-num" placeholder="e.g. 421049"></div>
+          <div class="bid-field"><label>Είδος Διαγωνισμού</label>
+            <div class="bid-toggle">
+              <label><input type="radio" name="bs-tender-type" value="Ανοικτός" checked> Ανοικτός</label>
+              <label><input type="radio" name="bs-tender-type" value="Πρόσκληση"> Πρόσκληση</label>
+              <label><input type="radio" name="bs-tender-type" value="Απ' ευθείας Ανάθεση"> Απ' ευθείας Ανάθεση</label>
+            </div>
+          </div>
+          <div class="bid-field"><label>Διαδικασία Κατάθεσης</label>
+            <div class="bid-toggle">
+              <label><input type="checkbox" id="bs-sub-eshdis"> ΕΣΗΔΗΣ</label>
+              <label><input type="checkbox" id="bs-sub-email"> Email</label>
+              <label><input type="checkbox" id="bs-sub-cosmo"> CosmoOne</label>
+              <label><input type="checkbox" id="bs-sub-inperson"> Αυτοπροσώπως</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Project -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Περιγραφή Έργου</div>
+        <div class="bid-grid">
+          <div class="bid-field full"><label>Περιγραφή Έργου</label><textarea id="bs-desc" rows="3" placeholder="Detailed project description…"></textarea></div>
+          <div class="bid-field"><label>CPV Code 1</label><input type="text" id="bs-cpv1" placeholder="e.g. 48600000-4"></div>
+          <div class="bid-field"><label>CPV Code 2</label><input type="text" id="bs-cpv2" placeholder="Optional"></div>
+        </div>
+      </div>
+
+      <!-- Section 4: Participation -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Συμμετοχή</div>
+        <div class="bid-grid">
+          <div class="bid-field"><label>Ποσοστό Συμμετοχής</label>
+            <div class="bid-toggle" style="margin-bottom:6px">
+              <label><input type="radio" name="bs-part" value="100%" id="bs-part-100" checked onclick="togglePartner(false)"> 100% ODYSSEY</label>
+              <label><input type="radio" name="bs-part" value="subcontract" onclick="togglePartner(true)"> Υπεργολαβία &lt;30%</label>
+            </div>
+            <input type="text" id="bs-part-pct" placeholder="Subcontract %" style="display:none;margin-top:4px">
+          </div>
+          <div class="bid-field"><label>Συνεργάτης (αν υπάρχει)</label><input type="text" id="bs-partner" placeholder="Partner name if any"></div>
+        </div>
+      </div>
+
+      <!-- Section 5: Financial -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Οικονομικά Στοιχεία</div>
+        <div class="bid-grid">
+          <div class="bid-field"><label>Προϋπολογισμός Έργου (€ + ΦΠΑ)</label><input type="number" id="bs-budget" placeholder="0.00"></div>
+          <div class="bid-field"><label>Ανάλυση Ποσών</label><input type="text" id="bs-amount-analysis" placeholder="Breakdown notes"></div>
+          <div class="bid-field"><label>ODYSSEY Τιμή (Καθαρή) €</label><input type="number" id="bs-price-net" placeholder="0.00"></div>
+          <div class="bid-field"><label>ODYSSEY Τιμή (με ΦΠΑ) €</label><input type="number" id="bs-price-vat" placeholder="0.00"></div>
+        </div>
+      </div>
+
+      <!-- Section 6: Deadlines & Guarantees -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Προθεσμίες & Εγγυήσεις</div>
+        <div class="bid-grid">
+          <div class="bid-field"><label>Ημερομηνία Λήξης Διευκρινήσεων</label><input type="date" id="bs-clarif-date"></div>
+          <div class="bid-field"><label>Τελική Ημερομηνία / Ώρα Κατάθεσης</label>
+            <div style="display:flex;gap:6px"><input type="date" id="bs-submit-date" style="flex:1"><input type="time" id="bs-submit-time" style="width:90px"></div>
+          </div>
+          <div class="bid-field"><label>Ποσό Εγγυητικής Συμμετοχής (€)</label><input type="number" id="bs-guarantee-amt" placeholder="0.00"></div>
+          <div class="bid-field"><label>Ημερομηνίες Ισχύος Ε.Σ.</label>
+            <div style="display:flex;gap:6px;align-items:center"><input type="date" id="bs-guarantee-from" style="flex:1"><span style="font-size:12px;color:var(--text2)">έως</span><input type="date" id="bs-guarantee-to" style="flex:1"></div>
+          </div>
+          <div class="bid-field"><label>Εγγυητική Καλής Εκτέλεσης</label>
+            <div class="bid-toggle">
+              <label><input type="radio" name="bs-perf-bond" value="Ναι"> Ναι</label>
+              <label><input type="radio" name="bs-perf-bond" value="Όχι" checked> Όχι</label>
+            </div>
+          </div>
+          <div class="bid-field"><label>Ημερομηνίες Ισχύος Ε.Κ.Ε.</label>
+            <div style="display:flex;gap:6px;align-items:center"><input type="date" id="bs-bond-from" style="flex:1"><span style="font-size:12px;color:var(--text2)">έως</span><input type="date" id="bs-bond-to" style="flex:1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7: Notes -->
+      <div class="bid-section">
+        <div class="bid-section-hdr">Σημειώσεις Bid Manager</div>
+        <div class="bid-grid">
+          <div class="bid-field full"><textarea id="bs-notes" rows="3" placeholder="Internal notes, action items, reminders…"></textarea></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="bid-footer">
+      <button class="btn" onclick="closeBidSheet()">Close</button>
+      <button class="btn btn-primary" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save Bid Sheet</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
