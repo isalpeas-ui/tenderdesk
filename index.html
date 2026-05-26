@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TenderDesk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -265,16 +266,72 @@ input.wide{font-size:13px}
 <div class="main">
   <!-- DASHBOARD -->
   <div class="tab-content active" id="tab-dashboard">
-    <div class="metrics">
-      <div class="metric"><div class="metric-label">Total proposals</div><div class="metric-val" id="m-total">—</div><div class="metric-sub">all time</div></div>
-      <div class="metric"><div class="metric-label">Active</div><div class="metric-val" id="m-active">—</div><div class="metric-sub">in progress</div></div>
-      <div class="metric"><div class="metric-label">Due this week</div><div class="metric-val" id="m-week">—</div><div class="metric-sub">urgent</div></div>
-      <div class="metric"><div class="metric-label">Win rate</div><div class="metric-val" id="m-win">—</div><div class="metric-sub">won / closed</div></div>
+
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.25rem">
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #185FA5">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Total Pipeline</div>
+        <div style="font-size:28px;font-weight:700;color:#185FA5;line-height:1" id="kpi-total">—</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-total-sub">— proposals</div>
+      </div>
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #854F0B">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Active</div>
+        <div style="font-size:28px;font-weight:700;color:#854F0B;line-height:1" id="kpi-active">—</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-active-sub">— proposals</div>
+      </div>
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #3B6D11">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Submitted</div>
+        <div style="font-size:28px;font-weight:700;color:#3B6D11;line-height:1" id="kpi-submitted">—</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-submitted-sub">waiting result</div>
+      </div>
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #A32D2D">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Due This Week</div>
+        <div style="font-size:28px;font-weight:700;color:#A32D2D;line-height:1" id="kpi-week">—</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">urgent deadlines</div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">Upcoming deadlines</span><span style="font-size:12px;color:var(--text2)" id="last-sync"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>Proposal</th><th>Client</th><th>Deadline</th><th>Status</th><th>Lead</th></tr></thead><tbody id="dash-list"></tbody></table></div>
+
+    <!-- Charts Row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.25rem">
+
+      <!-- Pipeline by Status -->
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Pipeline by Status</div>
+        <canvas id="chart-status" height="180"></canvas>
+      </div>
+
+      <!-- Budgetary vs Tender -->
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Budgetary vs Public Tender</div>
+        <canvas id="chart-type" height="180"></canvas>
+      </div>
+
+      <!-- Team Workload -->
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Team Workload</div>
+        <div id="chart-team" style="display:flex;flex-direction:column;gap:10px;margin-top:4px"></div>
+      </div>
     </div>
+
+    <!-- Bottom Row: Deadlines + Pipeline Bars -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:12px">
+
+      <!-- Urgent Deadlines -->
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;font-weight:500">Upcoming Deadlines</span>
+          <span style="font-size:12px;color:var(--text2)" id="last-sync"></span>
+        </div>
+        <div id="dash-deadlines" style="padding:.5rem 0"></div>
+      </div>
+
+      <!-- Pipeline Value Bars -->
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Value by Stage</div>
+        <div id="pipeline-bars" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- PROPOSALS -->
@@ -594,19 +651,120 @@ function populateAssigneeFilter(){
 }
 
 // ── Dashboard ────────────────────────────────────────────────
+let chartStatus=null, chartType=null;
+
 function renderDashboard(){
-  const total=D.proposals.length,active=D.proposals.filter(p=>['Active','In review','Draft'].includes(p.status)).length;
-  const now=new Date(),we=new Date();we.setDate(we.getDate()+7);
-  const week=D.proposals.filter(p=>{const d=new Date(p.deadline);return d>=now&&d<=we;}).length;
-  const won=D.proposals.filter(p=>p.status==='Won').length,closed=D.proposals.filter(p=>['Won','Lost'].includes(p.status)).length;
-  document.getElementById('m-total').textContent=total;
-  document.getElementById('m-active').textContent=active;
-  document.getElementById('m-week').textContent=week;
-  document.getElementById('m-win').textContent=closed>0?Math.round(won/closed*100)+'%':'—';
-  const sorted=[...D.proposals].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
-  const tb=document.getElementById('dash-list');
-  if(!sorted.length){tb.innerHTML=`<tr><td colspan="5"><div class="empty"><i class="ti ti-calendar-off"></i>No deadlines yet</div></td></tr>`;return;}
-  tb.innerHTML=sorted.map(p=>{const d=dl(p.deadline,p.status);return`<tr><td style="font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</td><td style="color:var(--text2)">${p.client||'—'}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td>${av(p.assignee)}</td></tr>`;}).join('');
+  const proposals = D.proposals;
+  const now = new Date(), we = new Date(); we.setDate(we.getDate()+7);
+
+  // KPIs
+  const totalVal = proposals.reduce((s,p)=>s+(p.value||0),0);
+  const activeProposals = proposals.filter(p=>p.status==='Active');
+  const activeVal = activeProposals.reduce((s,p)=>s+(p.value||0),0);
+  const submittedProposals = proposals.filter(p=>p.status==='Submitted');
+  const submittedVal = submittedProposals.reduce((s,p)=>s+(p.value||0),0);
+  const weekCount = proposals.filter(p=>{if(!p.deadline)return false;const d=new Date(p.deadline);return d>=now&&d<=we;}).length;
+
+  document.getElementById('kpi-total').textContent = '€'+totalVal.toLocaleString('el-GR');
+  document.getElementById('kpi-total-sub').textContent = proposals.length+' proposals';
+  document.getElementById('kpi-active').textContent = '€'+activeVal.toLocaleString('el-GR');
+  document.getElementById('kpi-active-sub').textContent = activeProposals.length+' proposals';
+  document.getElementById('kpi-submitted').textContent = '€'+submittedVal.toLocaleString('el-GR');
+  document.getElementById('kpi-submitted-sub').textContent = submittedProposals.length+' waiting result';
+  document.getElementById('kpi-week').textContent = weekCount;
+
+  // Chart: Pipeline by Status
+  const statusOrder = ['Active','In review','Submitted','Draft','Won','Lost','Waiting Result','Approved','Converted to RFP'];
+  const statusColors = {'Active':'#185FA5','In review':'#854F0B','Submitted':'#3B6D11','Draft':'#9b9b9b','Won':'#27500A','Lost':'#A32D2D','Waiting Result':'#534AB7','Approved':'#0F6E56','Converted to RFP':'#993556'};
+  const byStatus = {};
+  proposals.forEach(p=>{ byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0); });
+  const statusLabels = statusOrder.filter(s=>byStatus[s]>0);
+  const statusData = statusLabels.map(s=>byStatus[s]);
+
+  if(chartStatus) chartStatus.destroy();
+  const ctxS = document.getElementById('chart-status').getContext('2d');
+  chartStatus = new Chart(ctxS, {
+    type:'doughnut',
+    data:{ labels:statusLabels, datasets:[{ data:statusData, backgroundColor:statusLabels.map(s=>statusColors[s]||'#ccc'), borderWidth:2, borderColor:'transparent', hoverOffset:6 }] },
+    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:11}, padding:8 } }, tooltip:{ callbacks:{ label: ctx => ' €'+ctx.raw.toLocaleString('el-GR') } } }, cutout:'62%' }
+  });
+
+  // Chart: Type breakdown
+  const byType = {};
+  proposals.forEach(p=>{ const t=p.type||'Budgetary'; byType[t]=(byType[t]||0)+(p.value||0); });
+  const typeLabels = Object.keys(byType);
+  const typeColors = {'Budgetary':'#854F0B','Public Tender':'#185FA5'};
+
+  if(chartType) chartType.destroy();
+  const ctxT = document.getElementById('chart-type').getContext('2d');
+  chartType = new Chart(ctxT, {
+    type:'doughnut',
+    data:{ labels:typeLabels, datasets:[{ data:typeLabels.map(t=>byType[t]), backgroundColor:typeLabels.map(t=>typeColors[t]||'#ccc'), borderWidth:2, borderColor:'transparent', hoverOffset:6 }] },
+    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:11}, padding:8 } }, tooltip:{ callbacks:{ label: ctx => ' €'+ctx.raw.toLocaleString('el-GR') } } }, cutout:'62%' }
+  });
+
+  // Team Workload bars
+  const teamEl = document.getElementById('chart-team');
+  const byTeam = {};
+  proposals.forEach(p=>{ if(p.assignee) byTeam[p.assignee]=(byTeam[p.assignee]||0)+1; });
+  const maxCount = Math.max(...Object.values(byTeam), 1);
+  teamEl.innerHTML = D.team.filter(m=>byTeam[m.id]).map(m=>{
+    const count = byTeam[m.id]||0;
+    const pct = Math.round(count/maxCount*100);
+    const bg = (LIGHT_BG[m.color]||'#E6F1FB');
+    const ini = (m.first[0]||'')+(m.last[0]||'');
+    return `<div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span class="avatar" style="width:22px;height:22px;background:${bg};color:${m.color};font-size:9px;flex-shrink:0">${ini}</span>
+        <span style="font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.first} ${m.last}</span>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${count}</span>
+      </div>
+      <div style="height:6px;border-radius:999px;background:var(--bg3);overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${m.color};border-radius:999px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Pipeline Value Bars
+  const barsEl = document.getElementById('pipeline-bars');
+  const stageOrder = [['Active','#185FA5'],['Draft','#9b9b9b'],['In review','#854F0B'],['Submitted','#3B6D11'],['Won','#27500A'],['Lost','#A32D2D']];
+  const maxVal = Math.max(...stageOrder.map(([s])=>byStatus[s]||0), 1);
+  barsEl.innerHTML = stageOrder.filter(([s])=>byStatus[s]>0).map(([s,color])=>{
+    const v = byStatus[s]||0;
+    const pct = Math.round(v/maxVal*100);
+    const cnt = proposals.filter(p=>p.status===s).length;
+    return `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:500;color:${color}">${s}</span>
+        <span style="font-size:12px;color:var(--text2)">€${v.toLocaleString('el-GR')} · ${cnt}</span>
+      </div>
+      <div style="height:8px;border-radius:999px;background:var(--bg3);overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:999px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Urgent Deadlines
+  const deadlinesEl = document.getElementById('dash-deadlines');
+  const sorted = [...proposals].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
+  if(!sorted.length){ deadlinesEl.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>'; return; }
+  deadlinesEl.innerHTML = sorted.map(p=>{
+    const d = dl(p.deadline, p.status);
+    const isOverdue = new Date(p.deadline) < now && p.status !== 'Submitted';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:0.5px solid var(--border);transition:background .15s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+      <div style="width:52px;text-align:center;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:${isOverdue?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5'}">${d.txt}</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.client}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>
+        ${av(p.assignee,22)}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── Proposals ────────────────────────────────────────────────
