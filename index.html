@@ -389,7 +389,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
   </div>
   <div class="mftr">
-    <button class="btn" id="pm-schedule-btn" onclick="scheduleFromModal()" style="margin-right:auto;color:#3B6D11;border-color:#3B6D11;display:none"><i class="ti ti-calendar-plus"></i> Schedule task</button>
+    <button class="btn" id="pm-schedule-btn" onclick="scheduleFromModal()" style="margin-right:auto;color:#3B6D11;border-color:#3B6D11"><i class="ti ti-calendar-plus"></i> Schedule task</button>
     <button class="btn" onclick="closeModals()">Cancel</button>
     <button class="btn btn-p" onclick="saveProposal()">Save proposal</button>
   </div>
@@ -856,6 +856,7 @@ function openProposalModal(id){
     document.getElementById('pm-partner').value=p.partner||'';
     fillProdCheckboxes(p.products||[]);
     document.getElementById('pm-notes').value=p.notes||'';
+    document.getElementById('pm-schedule-btn').style.display='inline-flex';
   }else{
     document.getElementById('pm-title').textContent='New proposal';
     ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes'].forEach(f=>document.getElementById(f).value='');
