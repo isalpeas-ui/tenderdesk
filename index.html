@@ -798,7 +798,7 @@ function renderProposals(){
     return`<tr>
       <td style="font-weight:500;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td>
       <td><span class="badge ${tc(p.type||'Budgetary')}">${tl}</span></td>
-      <td style="color:var(--text2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cname(p)}</td>
+      <td style="color:var(--text2);max-width:180px" title="${cname(p)}"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cname(p)}</div></td>
       <td><div class="prod-tags">${ptags(p.products)}</div></td>
       <td style="color:var(--text2);font-size:12px">${p.partner||'—'}</td>
       <td style="font-weight:500">${v}</td>
@@ -883,6 +883,30 @@ function saveProposal(){
   }
 }
 
+
+function scheduleTask(proposalId){
+  const p=(D.proposals||[]).find(x=>x.id===proposalId);if(!p)return;
+  editTid=null;
+  // Populate task modal
+  document.getElementById('tm-title').textContent='New task';
+  document.getElementById('tm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  document.getElementById('tm-proposal').innerHTML='<option value="">— None —</option>'+(D.proposals||[]).map(pr=>`<option value="${pr.id}">${pr.name}</option>`).join('');
+  // Pre-fill with proposal data
+  document.getElementById('tm-name').value='';
+  document.getElementById('tm-proposal').value=p.id;
+  document.getElementById('tm-assignee').value=p.assignee||((D.team&&D.team.length)?D.team[0].id:'');
+  document.getElementById('tm-start').value='';
+  document.getElementById('tm-due').value=p.deadline||'';
+  document.getElementById('tm-priority').value=p.priority||'Medium';
+  document.getElementById('tm-status').value='todo';
+  document.getElementById('tm-desc').value='';
+  // Show modal with a hint
+  document.getElementById('tm-title').textContent=`New task — ${cname(p)}`;
+  openModal('m-task');
+  // Focus the title field
+  setTimeout(()=>document.getElementById('tm-name').focus(),100);
+}
+
 function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData();renderProposals();renderDashboard();}
 
 // ═══ TASKS ═══════════════════════════════════════════════════════════════════
@@ -894,7 +918,13 @@ function renderTasks(){
     el.innerHTML=items.map(t=>{
       const p=(D.proposals||[]).find(x=>x.id===t.proposal),d=dl(t.due,'');
       const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:9px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'';
-      return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})"><div class="ktitle">${t.title}</div><div class="kmeta">${av(t.assignee)}${p?`<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${cname(p)}</span>`:''}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div></div>`;
+      const clientLabel=p?cname(p):'';
+      return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})">
+        <div class="ktitle">${t.title}</div>
+        ${p?`<div style="font-size:11px;color:var(--info-text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500" title="${p.name}"><i class="ti ti-file-description" style="font-size:10px"></i> ${p.name}</div>`:''}
+        ${clientLabel?`<div style="font-size:11px;color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-building" style="font-size:10px"></i> ${clientLabel}</div>`:''}
+        <div class="kmeta">${av(t.assignee)}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div>
+      </div>`;
     }).join('');
   });
 }
