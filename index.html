@@ -363,7 +363,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
 
     <!-- Loading overlay -->
-    <div id="map-loading" style="position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:500;border-radius:var(--rl)">
+    <div id="map-loading" style="position:absolute;inset:0;background:rgba(255,255,255,.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:500;border-radius:var(--rl)">
       <div class="spinner" style="width:28px;height:28px;border-width:3px"></div>
       <div style="font-size:13px;color:#666" id="map-loading-txt">Loading municipality boundaries…</div>
     </div>
@@ -1315,58 +1315,43 @@ function geoMatchStatus(featName, nutsId){
 }
 
 async function renderMap(){
-  // Init map with CartoDB Positron tiles (clean professional look)
-  if(!mapInst){
-    mapInst=L.map('map-container',{zoomControl:true,preferCanvas:true}).setView([38.8,23.5],6);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-      attribution:'© <a href="https://openstreetmap.org">OSM</a> © <a href="https://carto.com">CARTO</a>',
-      subdomains:'abcd',maxZoom:19
-    }).addTo(mapInst);
-  }
+  // Guard: if map already initialized, just refresh markers
+  if(mapInst){renderMapMarkers();setTimeout(()=>mapInst.invalidateSize(),200);return;}
 
-  // Load municipality boundaries GeoJSON
-  if(!geoLayer){
-    document.getElementById('map-loading').style.display='flex';
-    document.getElementById('map-loading-txt').textContent='Loading municipality boundaries from geodata.gov.gr…';
-    const WFS_URLS=[
-      'https://geodata.gov.gr/geoserver/ows?service=WFS&request=GetFeature&version=2.0.0&outputFormat=json&srsName=EPSG:4326&typeNames=geodata.gov.gr:c7b5978b-aca9-4d74-b8a5-d3a48d02f6d0',
-      'http://geodata.gov.gr/geoserver/ows?service=WFS&request=GetFeature&version=2.0.0&outputFormat=json&srsName=EPSG:4326&typeNames=geodata.gov.gr:c7b5978b-aca9-4d74-b8a5-d3a48d02f6d0'
-    ];
-    for(const url of WFS_URLS){
-      try{
-        const r=await fetch(url);
-        if(r.ok){
-          document.getElementById('map-loading-txt').textContent='Coloring municipalities…';
-          const gj=await r.json();
-          geoLayer=L.geoJSON(gj,{
-            style:feat=>{
-              const name=feat.properties.NAME||feat.properties.Name||feat.properties.LNAME||feat.properties.name||'';
-              const st=geoMatchStatus(name);
-              if(!st)return{fillColor:'#e8e8e8',fillOpacity:0.3,color:'#aaa',weight:0.5,opacity:0.6};
-              return{fillColor:statusColor(st,1),fillOpacity:st==='won'?0.7:0.55,color:'#fff',weight:1,opacity:0.8};
-            },
-            onEachFeature:(feat,layer)=>{
-              const name=feat.properties.NAME||feat.properties.Name||feat.properties.LNAME||'';
-              const st=geoMatchStatus(name);
-              if(st){
-                layer.on('mouseover',function(e){this.setStyle({fillOpacity:0.9,weight:2});});
-                layer.on('mouseout',function(e){geoLayer.resetStyle(this);});
-                layer.bindTooltip(name,{sticky:true,className:'leaflet-tooltip'});
-              }
-            }
-          }).addTo(mapInst);
-          geoLayer.bringToBack();
-          document.getElementById('map-geo-status').textContent='✓ Municipality boundaries loaded';
-          break;
+  // Init Leaflet map once
+  mapInst=L.map('map-container',{zoomControl:true,preferCanvas:true}).setView([38.8,23.5],6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://openstreetmap.org">OSM</a> © <a href="https://carto.com">CARTO</a>',
+    subdomains:'abcd',maxZoom:19
+  }).addTo(mapInst);
+
+  // Fetch regional boundaries once silently (no spinner, no repeat)
+  try{
+    const ctrl=new AbortController();
+    setTimeout(()=>ctrl.abort(),8000);
+    const r=await fetch('https://raw.githubusercontent.com/eurostat/Nuts2json/master/pub/v2/2021/4326/10M/nutsrg_3.json',{signal:ctrl.signal});
+    if(r.ok){
+      const gj=await r.json();
+      const gr=gj.features.filter(f=>(f.properties.id||'').startsWith('EL'));
+      geoLayer=L.geoJSON({type:'FeatureCollection',features:gr},{
+        style:feat=>{
+          const st=geoMatchStatus(feat.properties.na||'',feat.properties.id);
+          if(!st)return{fillColor:'#e0e0e0',fillOpacity:0.2,color:'#bbb',weight:0.8,opacity:0.6};
+          return{fillColor:statusColor(st,1),fillOpacity:st==='won'?0.65:0.5,color:'#fff',weight:1,opacity:0.9};
+        },
+        onEachFeature:(feat,layer)=>{
+          layer.on('mouseover',function(){this.setStyle({fillOpacity:0.85,weight:2});});
+          layer.on('mouseout',function(){if(geoLayer)geoLayer.resetStyle(this);});
+          layer.bindTooltip(feat.properties.na||'',{sticky:true});
         }
-      }catch(e){
-        document.getElementById('map-geo-status').textContent='Map tiles only — boundaries unavailable';
-      }
+      }).addTo(mapInst);
+      geoLayer.bringToBack();
+      document.getElementById('map-geo-status').textContent='✓ Regional boundaries loaded';
     }
-    document.getElementById('map-loading').style.display='none';
-  }
+  }catch(e){document.getElementById('map-geo-status').textContent='';}
 
   renderMapMarkers();
+  setTimeout(()=>mapInst.invalidateSize(),200);
 }
 
 function renderMapMarkers(){
