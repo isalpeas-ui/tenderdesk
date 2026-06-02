@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TenderDesk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--info-bg:#e6f1fb;--info-text:#185FA5;--info-border:#b5d4f4;--success-bg:#eaf3de;--success-text:#3B6D11;--warn-bg:#faeeda;--warn-text:#854F0B;--danger-bg:#fcebeb;--danger-text:#A32D2D;--r:8px;--rl:12px}
@@ -216,7 +218,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="nb active" onclick="goTab('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
     <button class="nb" onclick="goTab('proposals',this)"><i class="ti ti-file-description"></i> Proposals</button>
     <button class="nb" onclick="goTab('tasks',this)"><i class="ti ti-check-square"></i> Tasks</button>
-    <button class="nb" onclick="goTab('templates',this)"><i class="ti ti-template"></i> Templates</button>
+    <button class="nb" onclick="goTab('map',this)"><i class="ti ti-map-2"></i> Map</button>
     <button class="nb" onclick="goTab('forecast',this)"><i class="ti ti-crystal-ball"></i> Forecast</button>
     <button class="nb" onclick="goTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
     <button class="nb" onclick="goTab('team',this)"><i class="ti ti-users"></i> Team</button>
@@ -312,6 +314,36 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   </div></div>
 </div>
 
+
+<!-- MAP -->
+<div class="tab" id="tab-map">
+  <!-- KPI strip -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem">
+    <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Mapped Clients</div><div class="kpi-val" id="map-k-total" style="color:#185FA5">—</div><div class="kpi-sub">geocoded</div></div>
+    <div class="kpi" style="border-top:3px solid #3B6D11"><div class="kpi-label">Won</div><div class="kpi-val" id="map-k-won" style="color:#3B6D11">—</div><div class="kpi-sub">municipalities</div></div>
+    <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Active / Submitted</div><div class="kpi-val" id="map-k-active" style="color:#185FA5">—</div><div class="kpi-sub">municipalities</div></div>
+    <div class="kpi" style="border-top:3px solid #A32D2D"><div class="kpi-label">No proposals</div><div class="kpi-val" id="map-k-none" style="color:#A32D2D">—</div><div class="kpi-sub">in client list</div></div>
+  </div>
+
+  <!-- Geocoding progress -->
+  <div id="map-progress" style="display:none;background:var(--warn-bg);border:.5px solid #D4A84B;border-radius:var(--r);padding:.75rem 1.25rem;margin-bottom:1rem;font-size:13px;color:#854F0B;display:flex;align-items:center;gap:10px">
+    <div class="spinner" style="border-top-color:#854F0B"></div>
+    <span id="map-progress-txt">Locating municipalities on the map…</span>
+  </div>
+
+  <!-- Map + Legend -->
+  <div style="position:relative">
+    <div id="map-container" style="height:580px;border-radius:var(--rl);overflow:hidden;border:.5px solid var(--border)"></div>
+    <!-- Legend -->
+    <div style="position:absolute;bottom:24px;left:12px;z-index:1000;background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+      <div style="font-weight:600;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Legend</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:12px;height:12px;border-radius:50%;background:#27500A;display:inline-block;flex-shrink:0"></span> Won at least one proposal</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:12px;height:12px;border-radius:50%;background:#185FA5;display:inline-block;flex-shrink:0"></span> Proposals sent</div>
+      <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:50%;background:#A32D2D;display:inline-block;flex-shrink:0"></span> No proposals yet</div>
+    </div>
+  </div>
+</div>
+
 <!-- TASKS -->
 <div class="tab" id="tab-tasks">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
@@ -325,8 +357,8 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   </div>
 </div>
 
-<!-- TEMPLATES -->
-<div class="tab" id="tab-templates">
+<!-- TEMPLATES (accessible via modal) -->
+<div class="tab" id="tab-templates" style="display:none!important">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <div style="font-size:13px;color:var(--text2)">Shared templates for the whole team</div>
     <button class="btn btn-p" onclick="openModal('m-tpl')"><i class="ti ti-plus"></i> Add template</button>
@@ -704,6 +736,7 @@ function renderAll(){
   else if(curTab==='proposals')renderProposals();
   else if(curTab==='tasks')renderTasks();
   else if(curTab==='templates')renderTemplates();
+  else if(curTab==='map')renderMap();
   else if(curTab==='forecast')renderForecast();
   else if(curTab==='clients')renderClients();
   else if(curTab==='team')renderTeam();
@@ -1153,6 +1186,158 @@ async function doImport(){
   catch(e){err.textContent='Could not parse JSON';err.style.display='block';}
 }
 
+
+
+// ═══ MAP ═════════════════════════════════════════════════════════════════════
+let mapInst = null, markersLayer = null, geoLayer = null;
+let geocoding = false;
+
+async function renderMap(){
+  // Init map
+  if(!mapInst){
+    mapInst = L.map('map-container', {zoomControl:true}).setView([38.5, 23.0], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+      maxZoom:18
+    }).addTo(mapInst);
+    markersLayer = L.layerGroup().addTo(mapInst);
+  }
+
+  // Try loading Greek municipalities GeoJSON for choropleth background
+  if(!geoLayer){
+    const geoUrls=[
+      'https://raw.githubusercontent.com/stefanikostopoulos/Greece-GeoJSON/master/GR_Municipalities.geojson',
+      'https://raw.githubusercontent.com/codefornl/geojson-municipalities/master/GR/GR.geojson'
+    ];
+    for(const url of geoUrls){
+      try{
+        const r=await fetch(url);
+        if(r.ok){
+          const gj=await r.json();
+          geoLayer=L.geoJSON(gj,{
+            style:feat=>{
+              const name=(feat.properties.NAME_3||feat.properties.NAME||feat.properties.name||'').toLowerCase();
+              const status=getMunicipalityStatus(name);
+              return{fillColor:status==='won'?'#2D6A2D':status==='proposals'?'#185FA5':'#E8E8E8',fillOpacity:status==='none'?0.15:0.45,color:'#fff',weight:0.5,opacity:0.6};
+            },
+            onEachFeature:(feat,layer)=>{
+              const name=feat.properties.NAME_3||feat.properties.NAME||feat.properties.name||'Unknown';
+              layer.bindPopup(`<strong>${name}</strong>`);
+            }
+          }).addTo(mapInst);
+          break;
+        }
+      }catch(e){}
+    }
+  }
+
+  // Geocode clients that don't have coordinates yet
+  await geocodeClients();
+
+  // Render markers
+  renderMapMarkers();
+}
+
+function getMunicipalityStatus(geoName){
+  const clients=D.clients||[];
+  const proposals=D.proposals||[];
+  // Find matching client
+  const client=clients.find(c=>{
+    const cn=c.name.toLowerCase().replace('municipality of ','').replace('δήμος ','').replace('δήμο ','').trim();
+    return geoName.includes(cn)||cn.includes(geoName)||geoName.replace('dimos ','').includes(cn);
+  });
+  if(!client)return'none';
+  const cProps=proposals.filter(p=>p.clientId===client.id||p.client===client.name);
+  if(!cProps.length)return'none';
+  if(cProps.some(p=>p.status==='Won'))return'won';
+  return'proposals';
+}
+
+async function geocodeClients(){
+  const clients=D.clients||[];
+  const needsGeo=clients.filter(c=>!c.lat||!c.lng);
+  if(!needsGeo.length)return;
+
+  const prog=document.getElementById('map-progress');
+  const progTxt=document.getElementById('map-progress-txt');
+  prog.style.display='flex';
+
+  let saved=false;
+  for(let i=0;i<needsGeo.length;i++){
+    const c=needsGeo[i];
+    progTxt.textContent=`Locating ${i+1}/${needsGeo.length}: ${c.name}…`;
+    try{
+      const q=encodeURIComponent(c.name+', Greece');
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gr`,{headers:{'Accept-Language':'en','User-Agent':'TenderDesk/1.0'}});
+      if(r.ok){
+        const data=await r.json();
+        if(data&&data.length>0){
+          const idx=(D.clients||[]).findIndex(x=>x.id===c.id);
+          if(idx>=0){D.clients[idx].lat=parseFloat(data[0].lat);D.clients[idx].lng=parseFloat(data[0].lon);saved=true;}
+        }
+      }
+    }catch(e){}
+    // Rate limit: 1 request per second (Nominatim policy)
+    if(i<needsGeo.length-1)await new Promise(res=>setTimeout(res,1100));
+  }
+
+  prog.style.display='none';
+  if(saved){await saveData();}
+}
+
+function renderMapMarkers(){
+  if(!markersLayer)return;
+  markersLayer.clearLayers();
+
+  const clients=D.clients||[];
+  const proposals=D.proposals||[];
+  let won=0,active=0,none=0,mapped=0;
+
+  clients.forEach(c=>{
+    if(!c.lat||!c.lng)return;
+    mapped++;
+    const cProps=proposals.filter(p=>p.clientId===c.id||p.client===c.name);
+    const hasWon=cProps.some(p=>p.status==='Won');
+    const hasProposals=cProps.length>0;
+    const color=hasWon?'#27500A':hasProposals?'#185FA5':'#A32D2D';
+    const totalVal=cProps.reduce((s,p)=>s+(p.value||0),0);
+
+    if(hasWon)won++;
+    else if(hasProposals)active++;
+    else none++;
+
+    const marker=L.circleMarker([c.lat,c.lng],{
+      radius:hasWon?10:hasProposals?8:6,
+      fillColor:color,color:'#fff',weight:2,opacity:1,fillOpacity:0.85
+    });
+
+    const propList=cProps.slice(0,5).map(p=>`<div style="font-size:11px;padding:2px 0;border-bottom:1px solid #eee"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.status==='Won'?'#27500A':p.status==='Lost'?'#A32D2D':'#185FA5'};margin-right:4px"></span>${p.name.slice(0,40)}${p.name.length>40?'…':''}</div>`).join('');
+    const moreStr=cProps.length>5?`<div style="font-size:11px;color:#888;margin-top:3px">+${cProps.length-5} more</div>`:'';
+
+    marker.bindPopup(`
+      <div style="min-width:200px;font-family:Arial,sans-serif">
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">${c.name}</div>
+        <div style="font-size:11px;color:#666;margin-bottom:8px">${c.category||''}${c.contact?' · '+c.contact:''}</div>
+        <div style="display:flex;gap:12px;margin-bottom:8px">
+          <div><div style="font-size:18px;font-weight:700;color:${color}">${cProps.length}</div><div style="font-size:10px;color:#888">proposals</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:${color}">${totalVal?'€'+totalVal.toLocaleString('el-GR'):'—'}</div><div style="font-size:10px;color:#888">value</div></div>
+        </div>
+        ${propList}${moreStr}
+      </div>
+    `,{maxWidth:260});
+
+    markersLayer.addLayer(marker);
+  });
+
+  // Update KPIs
+  document.getElementById('map-k-total').textContent=mapped;
+  document.getElementById('map-k-won').textContent=won;
+  document.getElementById('map-k-active').textContent=active;
+  document.getElementById('map-k-none').textContent=none;
+
+  // Invalidate map size after tab becomes visible
+  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},100);
+}
 
 // ═══ FORECAST ════════════════════════════════════════════════════════════════
 let editFid = null, lostPid = null, chartFC = null;
