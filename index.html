@@ -1448,11 +1448,7 @@ function mapFilter(state,btn){
   renderMapMarkers();
 }
 
-async function geocodeClients(){
-  // Geocoding is now pre-done server-side
-  // This is kept as a no-op since all 76 clients are already geocoded
-  return;
-}
+function geocodeClients(){ return Promise.resolve(); }
 
 
 // ═══ FORECAST ════════════════════════════════════════════════════════════════
