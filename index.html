@@ -217,6 +217,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="nb" onclick="goTab('proposals',this)"><i class="ti ti-file-description"></i> Proposals</button>
     <button class="nb" onclick="goTab('tasks',this)"><i class="ti ti-check-square"></i> Tasks</button>
     <button class="nb" onclick="goTab('templates',this)"><i class="ti ti-template"></i> Templates</button>
+    <button class="nb" onclick="goTab('forecast',this)"><i class="ti ti-crystal-ball"></i> Forecast</button>
     <button class="nb" onclick="goTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
     <button class="nb" onclick="goTab('team',this)"><i class="ti ti-users"></i> Team</button>
   </nav>
@@ -269,6 +270,45 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="card"><div class="tw">
     <table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Partner</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead>
     <tbody id="p-list"></tbody></table>
+  </div></div>
+</div>
+
+
+<!-- FORECAST -->
+<div class="tab" id="tab-forecast">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div class="frow" style="margin-bottom:0">
+      <div class="sbar"><i class="ti ti-search"></i><input type="text" id="fc-q" placeholder="Search forecast…" oninput="renderForecast()"></div>
+      <select class="fs" id="fc-intent" onchange="renderForecast()"><option value="">All intents</option><option>Participate</option><option>Monitor</option><option>Pass</option></select>
+      <select class="fs" id="fc-prod" onchange="renderForecast()"><option value="">All products</option></select>
+    </div>
+    <button class="btn btn-p" onclick="openForecastModal()"><i class="ti ti-plus"></i> Add forecast</button>
+  </div>
+
+  <!-- Monthly chart -->
+  <div class="card" style="padding:1rem;margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-size:13px;font-weight:500">Expected Tenders by Month</div>
+      <div style="display:flex;gap:8px;font-size:12px;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#185FA5;display:inline-block"></span>Participate</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#854F0B;display:inline-block"></span>Monitor</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#9b9b9b;display:inline-block"></span>Pass</span>
+      </div>
+    </div>
+    <canvas id="ch-forecast" height="120"></canvas>
+  </div>
+
+  <!-- KPI row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem">
+    <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Total Forecast</div><div class="kpi-val" id="fc-k-total" style="color:#185FA5">—</div><div class="kpi-sub" id="fc-k-total-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Will Participate</div><div class="kpi-val" id="fc-k-part" style="color:#185FA5">—</div><div class="kpi-sub" id="fc-k-part-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #854F0B"><div class="kpi-label">Monitoring</div><div class="kpi-val" id="fc-k-mon" style="color:#854F0B">—</div><div class="kpi-sub" id="fc-k-mon-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #A32D2D"><div class="kpi-label">Due in 60 days</div><div class="kpi-val" id="fc-k-soon" style="color:#A32D2D">—</div><div class="kpi-sub">approaching</div></div>
+  </div>
+
+  <div class="card"><div class="tw">
+    <table><thead><tr><th>Title / Description</th><th>Client</th><th>Products</th><th>Est. Value</th><th>Previous Winner</th><th>Repeat Date</th><th>Intent</th><th>Lead</th><th></th></tr></thead>
+    <tbody id="fc-list"></tbody></table>
   </div></div>
 </div>
 
@@ -516,6 +556,60 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
 </div>
 </div>
 
+
+<!-- Forecast Modal -->
+<div class="mb" id="m-forecast" style="display:none">
+<div class="modal" style="width:580px">
+  <div class="mhdr"><span style="font-weight:500" id="fm-title">New forecast</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Description</label><input id="fm-name" placeholder="e.g. Penetration Test — Municipality of X"></div>
+    <div class="two">
+      <div class="field"><label>Client</label><select id="fm-client"><option value="">— Select client —</option></select></div>
+      <div class="field"><label>Estimated Value (€)</label><input id="fm-value" type="number" placeholder="0"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Previous Winner</label><input id="fm-winner" placeholder="e.g. Computer Studio"></div>
+      <div class="field"><label>Date of Previous Award</label><input id="fm-prev-date" type="date"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Expected Repeat Date</label><input id="fm-repeat-date" type="date"></div>
+      <div class="field"><label>Repeat Period</label><select id="fm-period"><option value="12">12 months</option><option value="24">24 months</option><option value="36">36 months</option><option value="0">Custom</option></select></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Our Intent</label><select id="fm-intent"><option>Participate</option><option>Monitor</option><option>Pass</option></select></div>
+      <div class="field"><label>Lead</label><select id="fm-assignee"></select></div>
+    </div>
+    <div class="field"><label>Products / Services</label><div class="prod-cb" id="fm-products"></div></div>
+    <div class="field"><label>Notes (why lost, strategy, contacts)</label><textarea id="fm-notes" rows="3" placeholder="What happened, what we'd do differently…"></textarea></div>
+    <div id="fm-linked-row" style="display:none"><div class="field"><label>Linked proposal</label><div id="fm-linked" style="font-size:13px;color:var(--text2);padding:6px 0"></div></div></div>
+  </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveForecast()">Save forecast</button></div>
+</div>
+</div>
+
+<!-- Lost → Forecast popup -->
+<div class="mb" id="m-lost-fc" style="display:none">
+<div class="modal" style="width:480px">
+  <div class="mhdr"><span style="font-weight:500">Create forecast from this loss?</span><button class="ib" onclick="document.getElementById('m-lost-fc').style.display='none'"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div style="font-size:13px;color:var(--text2);background:var(--bg2);border-radius:var(--r);padding:.875rem;line-height:1.6">
+      This tender was marked as <strong>Lost</strong>. Would you like to create a forecast entry so you can track when it repeats?
+    </div>
+    <div class="field"><label>Who won it?</label><input id="lf-winner" placeholder="Competitor name"></div>
+    <div class="two">
+      <div class="field"><label>Expected repeat</label><select id="lf-period" onchange="updateLfDate()"><option value="12">In 12 months</option><option value="24">In 24 months</option><option value="36">In 36 months</option><option value="0">Custom date</option></select></div>
+      <div class="field"><label>Repeat date</label><input id="lf-date" type="date"></div>
+    </div>
+    <div class="field"><label>Our intent</label><select id="lf-intent"><option>Participate</option><option>Monitor</option><option>Pass</option></select></div>
+    <div class="field"><label>Notes (why we lost, what to improve)</label><textarea id="lf-notes" rows="2" placeholder="e.g. Price was too high, missing certifications…"></textarea></div>
+  </div>
+  <div class="mftr">
+    <button class="btn" onclick="document.getElementById('m-lost-fc').style.display='none'">Skip</button>
+    <button class="btn btn-p" onclick="saveLostForecast()"><i class="ti ti-crystal-ball"></i> Create forecast</button>
+  </div>
+</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -606,6 +700,7 @@ function renderAll(){
   else if(curTab==='proposals')renderProposals();
   else if(curTab==='tasks')renderTasks();
   else if(curTab==='templates')renderTemplates();
+  else if(curTab==='forecast')renderForecast();
   else if(curTab==='clients')renderClients();
   else if(curTab==='team')renderTeam();
 }
@@ -677,6 +772,11 @@ function renderDashboard(){
   const sorted=[...P].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
   const de=document.getElementById('dash-dl');
   if(!sorted.length){de.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>';return;}
+  // Forecast alert
+  const fcSoon=(D.forecasts||[]).filter(f=>{if(!f.repeatDate)return false;const d=new Date(f.repeatDate),now2=new Date(),s=new Date();s.setDate(s.getDate()+60);return d>=now2&&d<=s;});
+  const fcAlert=document.getElementById('dash-fc-alert');
+  if(fcAlert){if(fcSoon.length>0){fcAlert.style.display='flex';document.getElementById('dash-fc-msg').textContent=fcSoon.length+' forecast tender'+(fcSoon.length>1?'s':'')+' expected within 60 days — €'+fcSoon.reduce((s,f)=>s+(f.value||0),0).toLocaleString('el-GR');}else{fcAlert.style.display='none';}}
+
   de.innerHTML=sorted.map(p=>{const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''"><div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:11px;color:var(--text2)">${cname(p)}</div></div><div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div></div>`;}).join('');
 }
 
@@ -1001,6 +1101,201 @@ async function doImport(){
   try{const p=JSON.parse(raw);if(!p.proposals||!p.team){err.textContent='Invalid data';err.style.display='block';return;}D=p;await saveData();closeModals();renderAll();toast('Workspace updated!','check');}
   catch(e){err.textContent='Could not parse JSON';err.style.display='block';}
 }
+
+
+// ═══ FORECAST ════════════════════════════════════════════════════════════════
+let editFid = null, lostPid = null, chartFC = null;
+
+function renderForecast(){
+  const q=(document.getElementById('fc-q')||{value:''}).value.toLowerCase();
+  const fi=(document.getElementById('fc-intent')||{value:''}).value;
+  const fp=(document.getElementById('fc-prod')||{value:''}).value;
+
+  // Populate product filter
+  const pfSel=document.getElementById('fc-prod');
+  if(pfSel&&pfSel.options.length<=1){(D.products||PRODS).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pfSel.appendChild(o);});}
+
+  const forecasts=(D.forecasts||[]).filter(f=>
+    (!q||f.name.toLowerCase().includes(q)||cname({clientId:f.clientId,client:f.client}).toLowerCase().includes(q))&&
+    (!fi||f.intent===fi)&&
+    (!fp||( f.products||[]).includes(fp))
+  );
+
+  // KPIs
+  const now=new Date(), soon=new Date(); soon.setDate(soon.getDate()+60);
+  const all=D.forecasts||[];
+  const tv=all.reduce((s,f)=>s+(f.value||0),0);
+  const part=all.filter(f=>f.intent==='Participate');
+  const mon=all.filter(f=>f.intent==='Monitor');
+  const soonCount=all.filter(f=>{if(!f.repeatDate)return false;const d=new Date(f.repeatDate);return d>=now&&d<=soon;}).length;
+  document.getElementById('fc-k-total').textContent='€'+tv.toLocaleString('el-GR');
+  document.getElementById('fc-k-total-s').textContent=all.length+' opportunities';
+  document.getElementById('fc-k-part').textContent='€'+part.reduce((s,f)=>s+(f.value||0),0).toLocaleString('el-GR');
+  document.getElementById('fc-k-part-s').textContent=part.length+' tenders';
+  document.getElementById('fc-k-mon').textContent='€'+mon.reduce((s,f)=>s+(f.value||0),0).toLocaleString('el-GR');
+  document.getElementById('fc-k-mon-s').textContent=mon.length+' tenders';
+  document.getElementById('fc-k-soon').textContent=soonCount;
+
+  // Monthly chart — next 12 months
+  const months=[]; const labels=[];
+  for(let i=0;i<12;i++){const d=new Date(now.getFullYear(),now.getMonth()+i,1);months.push(d);labels.push(d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}));}
+  const INTENT_C={'Participate':'#185FA5','Monitor':'#854F0B','Pass':'#9b9b9b'};
+  const datasets=(['Participate','Monitor','Pass']).map(intent=>({
+    label:intent,backgroundColor:INTENT_C[intent],
+    data:months.map(m=>{
+      return(D.forecasts||[]).filter(f=>{
+        if(f.intent!==intent||!f.repeatDate)return false;
+        const d=new Date(f.repeatDate);
+        return d.getFullYear()===m.getFullYear()&&d.getMonth()===m.getMonth();
+      }).reduce((s,f)=>s+(f.value||0),0);
+    }),borderRadius:4,borderSkipped:false
+  }));
+  if(chartFC)chartFC.destroy();
+  const ctx=document.getElementById('ch-forecast');
+  if(ctx){chartFC=new Chart(ctx.getContext('2d'),{type:'bar',data:{labels,datasets},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: €${c.raw.toLocaleString('el-GR')}`}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>'€'+Number(v).toLocaleString('el-GR')}}}}});}
+
+  // Table
+  const tb=document.getElementById('fc-list');if(!tb)return;
+  if(!forecasts.length){tb.innerHTML='<tr><td colspan="9"><div class="empty"><i class="ti ti-crystal-ball"></i>No forecast opportunities yet</div></td></tr>';return;}
+  const IC={'Participate':'b-active','Monitor':'b-medium','Pass':'b-draft'};
+  const sorted=[...forecasts].sort((a,b)=>new Date(a.repeatDate||'9999')-new Date(b.repeatDate||'9999'));
+  tb.innerHTML=sorted.map(f=>{
+    const d=f.repeatDate?new Date(f.repeatDate):null;
+    const daysOut=d?Math.ceil((d-new Date())/86400000):null;
+    const dStr=d?d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';
+    const dCls=daysOut!==null?(daysOut<0?'dl-urgent':daysOut<=60?'dl-soon':'dl-ok'):'dl-ok';
+    const dLabel=daysOut!==null?(daysOut<0?'Overdue':daysOut===0?'Today':daysOut+'d away'):dStr;
+    const cl=cname({clientId:f.clientId,client:f.client});
+    return`<tr>
+      <td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${f.name}">${f.name}</td>
+      <td style="color:var(--text2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cl}</td>
+      <td><div class="prod-tags">${ptags(f.products)}</div></td>
+      <td style="font-weight:500">${f.value?'€'+Number(f.value).toLocaleString('el-GR'):'—'}</td>
+      <td style="color:var(--text2);font-size:12px">${f.winner||'—'}</td>
+      <td><div style="font-size:13px;font-weight:500">${dStr}</div><div class="${dCls}" style="font-size:11px">${dLabel}</div></td>
+      <td><span class="badge ${IC[f.intent]||'b-draft'}">${f.intent}</span></td>
+      <td>${av(f.assignee)}</td>
+      <td><div class="ra">
+        <button class="ib" onclick="openForecastModal(${f.id})" title="Edit"><i class="ti ti-edit"></i></button>
+        <button class="ib" onclick="convertForecast(${f.id})" title="Convert to proposal" style="color:var(--info-text)"><i class="ti ti-arrow-right"></i></button>
+        <button class="ib" onclick="delForecast(${f.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openForecastModal(id){
+  editFid=id||null;
+  document.getElementById('fm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  const fmCl=document.getElementById('fm-client');
+  fmCl.innerHTML='<option value="">— Select client —</option>'+(D.clients||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  fillForecastProducts([]);
+  if(id){
+    const f=(D.forecasts||[]).find(x=>x.id===id);if(!f)return;
+    document.getElementById('fm-title').textContent='Edit forecast';
+    document.getElementById('fm-name').value=f.name||'';
+    fmCl.value=f.clientId||'';
+    document.getElementById('fm-value').value=f.value||'';
+    document.getElementById('fm-winner').value=f.winner||'';
+    document.getElementById('fm-prev-date').value=f.prevDate||'';
+    document.getElementById('fm-repeat-date').value=f.repeatDate||'';
+    document.getElementById('fm-period').value=f.period||'12';
+    document.getElementById('fm-intent').value=f.intent||'Participate';
+    document.getElementById('fm-assignee').value=f.assignee||'';
+    document.getElementById('fm-notes').value=f.notes||'';
+    fillForecastProducts(f.products||[]);
+    if(f.linkedProposalId){document.getElementById('fm-linked-row').style.display='block';const p=(D.proposals||[]).find(x=>x.id===f.linkedProposalId);document.getElementById('fm-linked').textContent=p?p.name:'Linked proposal not found';}
+    else document.getElementById('fm-linked-row').style.display='none';
+  }else{
+    document.getElementById('fm-title').textContent='New forecast';
+    ['fm-name','fm-value','fm-winner','fm-prev-date','fm-notes'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('fm-intent').value='Participate';
+    document.getElementById('fm-period').value='12';
+    document.getElementById('fm-repeat-date').value=defaultRepeatDate(12);
+    document.getElementById('fm-linked-row').style.display='none';
+    if(D.team&&D.team.length)document.getElementById('fm-assignee').value=D.team[0].id;
+  }
+  document.getElementById('fm-period').onchange=function(){if(this.value!=='0')document.getElementById('fm-repeat-date').value=defaultRepeatDate(parseInt(this.value));};
+  openModal('m-forecast');
+}
+
+function fillForecastProducts(sel){
+  document.getElementById('fm-products').innerHTML=(D.products||PRODS).map(p=>`<label class="prod-cb" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:var(--bg2);border:.5px solid var(--border);border-radius:6px;padding:3px 8px"><input type="checkbox" value="${p}" ${(sel||[]).includes(p)?'checked':''} style="width:auto;padding:0;border:none"> ${p}</label>`).join('');
+}
+function getForecastProds(){return[...document.querySelectorAll('#fm-products input:checked')].map(x=>x.value);}
+function defaultRepeatDate(months){const d=new Date();d.setMonth(d.getMonth()+months);return d.toISOString().split('T')[0];}
+
+function saveForecast(){
+  const name=document.getElementById('fm-name').value.trim();if(!name){document.getElementById('fm-name').focus();return;}
+  const clientId=document.getElementById('fm-client').value;
+  const clientObj=(D.clients||[]).find(c=>c.id===clientId);
+  const d={name,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('fm-value').value)||0,winner:document.getElementById('fm-winner').value.trim(),prevDate:document.getElementById('fm-prev-date').value,repeatDate:document.getElementById('fm-repeat-date').value,period:document.getElementById('fm-period').value,intent:document.getElementById('fm-intent').value,assignee:document.getElementById('fm-assignee').value,products:getForecastProds(),notes:document.getElementById('fm-notes').value.trim()};
+  if(!D.forecasts)D.forecasts=[];
+  if(!D.nextFid)D.nextFid=1;
+  if(editFid){const i=D.forecasts.findIndex(f=>f.id===editFid);D.forecasts[i]={...D.forecasts[i],...d};}
+  else{D.forecasts.push({id:D.nextFid++,...d});}
+  saveData();closeModals();renderForecast();toast('Forecast saved','check');
+}
+
+function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts=(D.forecasts||[]).filter(f=>f.id!==id);saveData();renderForecast();}
+
+function convertForecast(id){
+  const f=(D.forecasts||[]).find(x=>x.id===id);if(!f)return;
+  if(!confirm(`Convert "${f.name}" into an active proposal?`))return;
+  if(!D.proposals)D.proposals=[];if(!D.nextPid)D.nextPid=1;
+  const p={id:D.nextPid++,name:f.name,clientId:f.clientId,client:f.client,value:f.value,type:'Public Tender',status:'Draft',priority:'Medium',assignee:f.assignee,products:f.products||[],partner:'',notes:`Converted from forecast. Previous winner: ${f.winner||'—'}. ${f.notes||''}`.trim(),deadline:f.repeatDate||''};
+  D.proposals.push(p);
+  // Mark forecast as converted
+  const fi=D.forecasts.findIndex(x=>x.id===id);if(fi>=0)D.forecasts[fi].convertedToProposalId=p.id;
+  saveData();goTab('proposals',document.querySelector('.nb:nth-child(2)'));toast('Converted to proposal!','check');
+}
+
+// ── Lost → Forecast popup ─────────────────────────────────────────────────────
+function showLostForecastPopup(proposalId){
+  lostPid=proposalId;
+  updateLfDate();
+  document.getElementById('lf-winner').value='';
+  document.getElementById('lf-notes').value='';
+  document.getElementById('lf-intent').value='Participate';
+  document.getElementById('m-lost-fc').style.display='flex';
+}
+
+function updateLfDate(){
+  const months=parseInt(document.getElementById('lf-period').value)||12;
+  if(months>0)document.getElementById('lf-date').value=defaultRepeatDate(months);
+}
+
+function saveLostForecast(){
+  const p=(D.proposals||[]).find(x=>x.id===lostPid);if(!p)return;
+  if(!D.forecasts)D.forecasts=[];if(!D.nextFid)D.nextFid=1;
+  const winner=document.getElementById('lf-winner').value.trim();
+  const repeatDate=document.getElementById('lf-date').value;
+  const intent=document.getElementById('lf-intent').value;
+  const notes=document.getElementById('lf-notes').value.trim();
+  D.forecasts.push({
+    id:D.nextFid++,name:p.name,clientId:p.clientId,client:p.client,
+    value:p.value,winner,prevDate:new Date().toISOString().split('T')[0],
+    repeatDate,period:document.getElementById('lf-period').value,
+    intent,assignee:p.assignee,products:p.products||[],
+    notes,linkedProposalId:p.id
+  });
+  document.getElementById('m-lost-fc').style.display='none';
+  lostPid=null;
+  saveData();toast('Forecast created!','crystal-ball');
+}
+
+// ── Patch saveProposal to trigger popup on Lost ───────────────────────────────
+const _origSaveProposal=saveProposal;
+saveProposal=function(){
+  const prevStatus=editPid?(D.proposals||[]).find(p=>p.id===editPid)?.status:null;
+  const newStatus=document.getElementById('pm-status').value;
+  const pid=editPid;
+  _origSaveProposal();
+  // After save, if status changed to Lost, offer forecast
+  if(pid&&prevStatus&&prevStatus!=='Lost'&&newStatus==='Lost'){
+    setTimeout(()=>showLostForecastPopup(pid),300);
+  }
+};
 
 // ═══ BOOT ═════════════════════════════════════════════════════════════════════
 loadCFG();
