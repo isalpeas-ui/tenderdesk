@@ -1143,7 +1143,7 @@ function saveClient(){
   const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim()};
   if(!D.clients) D.clients=[];
   if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);D.clients[i]={...D.clients[i],...d};}
-  else{D.clients.push({id:'c'+(D.nextCid||99)++,...d});}
+  else{D.clients.push({id:'c'+(D.nextCid=D.nextCid?D.nextCid+1:100),...d});}
   saveData();closeModals();renderClients();populateClientDropdown();toast('Client saved','check');
 }
 
