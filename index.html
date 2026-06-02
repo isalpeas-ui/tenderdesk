@@ -2,578 +2,577 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TenderDesk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;
-  --text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;
-  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
-  --info-bg:#e6f1fb;--info-text:#185FA5;--info-border:#b5d4f4;
-  --success-bg:#eaf3de;--success-text:#3B6D11;
-  --warn-bg:#faeeda;--warn-text:#854F0B;
-  --danger-bg:#fcebeb;--danger-text:#A32D2D;
-  --radius:8px;--radius-lg:12px;
-}
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1e1e1c;--bg2:#272725;--bg3:#2f2f2c;
-    --text:#f0efe9;--text2:#9b9b9b;--text3:#6b6b6b;
-    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
-  }
-}
+:root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--info-bg:#e6f1fb;--info-text:#185FA5;--info-border:#b5d4f4;--success-bg:#eaf3de;--success-text:#3B6D11;--warn-bg:#faeeda;--warn-text:#854F0B;--danger-bg:#fcebeb;--danger-text:#A32D2D;--r:8px;--rl:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg2:#272725;--bg3:#2f2f2c;--text:#f0efe9;--text2:#9b9b9b;--text3:#6b6b6b;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.18)}}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:15px;min-height:100vh}
-.topbar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:.5rem;height:52px;position:sticky;top:0;z-index:50}
-.logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;color:var(--text);text-decoration:none;flex-shrink:0}
-.logo svg{color:#185FA5}
-.nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.nav-btn{background:none;border:none;padding:0 11px;height:52px;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:color .15s}
-.nav-btn.active{color:var(--text);border-bottom-color:#185FA5;font-weight:500}
-.nav-btn:hover:not(.active){color:var(--text);background:var(--bg2)}
-.sync-wrap{margin-left:auto;display:flex;align-items:center;gap:7px;flex-shrink:0}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;transition:background .3s}
+.topbar{background:var(--bg);border-bottom:.5px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:.5rem;height:52px;position:sticky;top:0;z-index:50}
+.logo{font-weight:600;font-size:15px;display:flex;align-items:center;gap:7px;color:var(--text);flex-shrink:0}
+.logo i{color:#185FA5}
+.nav{display:flex;overflow-x:auto}
+.nb{background:none;border:none;padding:0 11px;height:52px;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:color .15s}
+.nb.active{color:var(--text);border-bottom-color:#185FA5;font-weight:500}
+.nb:hover:not(.active){color:var(--text);background:var(--bg2)}
+.sync-wrap{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#639922}
 .sync-dot.saving{background:#BA7517;animation:pulse .9s infinite}
 .sync-dot.error{background:#E24B4A}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .sync-label{font-size:12px;color:var(--text2)}
-.icon-btn{background:none;border:none;cursor:pointer;color:var(--text2);padding:4px;border-radius:6px;display:inline-flex;align-items:center;font-size:16px;transition:all .15s}
-.icon-btn:hover{color:var(--text);background:var(--bg2)}
-.main{padding:1.5rem;max-width:1200px;margin:0 auto}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
-@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}}
-.metric{background:var(--bg2);border-radius:var(--radius);padding:1rem}
-.metric-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.metric-val{font-size:26px;font-weight:600;line-height:1.1;margin-bottom:2px}
-.metric-sub{font-size:11px;color:var(--text3)}
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1rem}
-.card-header{padding:.875rem 1.25rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ib{background:none;border:none;cursor:pointer;color:var(--text2);padding:4px;border-radius:6px;display:inline-flex;align-items:center;font-size:16px}
+.ib:hover{color:var(--text);background:var(--bg2)}
+.main{padding:1.5rem;max-width:1280px;margin:0 auto}
+.tab{display:none}.tab.active{display:block}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.25rem}
+.kpi{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1.1rem}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;line-height:1}
+.kpi-sub{font-size:12px;color:var(--text2);margin-top:4px}
+/* Charts */
+.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.25rem}
+.chart-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1rem}
+.chart-title{font-size:13px;font-weight:500;margin-bottom:1rem}
+.bottom-row{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+/* Card */
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem}
+.card-hdr{padding:.875rem 1.25rem;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .card-title{font-size:14px;font-weight:500}
-.btn{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);padding:7px 13px;cursor:pointer;font-size:13px;color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
-.btn:hover{background:var(--bg2)}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:var(--info-bg);border-color:var(--info-border);color:var(--info-text)}
-.btn-primary:hover{opacity:.85;background:var(--info-bg)}
-.table-wrap{overflow-x:auto}
+/* Buttons */
+.btn{background:none;border:.5px solid var(--border2);border-radius:var(--r);padding:7px 13px;cursor:pointer;font-size:13px;color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
+.btn:hover{background:var(--bg2)}.btn:active{transform:scale(.98)}
+.btn-p{background:var(--info-bg);border-color:var(--info-border);color:var(--info-text)}.btn-p:hover{opacity:.85;background:var(--info-bg)}
+/* Table */
+.tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:.6rem 1.25rem;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:0.5px solid var(--border);background:var(--bg2);white-space:nowrap}
-td{padding:.75rem 1.25rem;border-bottom:0.5px solid var(--border);vertical-align:middle}
+th{text-align:left;padding:.6rem 1rem;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:.5px solid var(--border);background:var(--bg2);white-space:nowrap}
+td{padding:.7rem 1rem;border-bottom:.5px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--bg2)}
-.row-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
-tr:hover .row-actions{opacity:1}
+.ra{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+tr:hover .ra{opacity:1}
+/* Badges */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;white-space:nowrap}
-.b-draft{background:#F1EFE8;color:#5F5E5A}
-.b-active{background:#E6F1FB;color:#185FA5}
-.b-review{background:#FAEEDA;color:#854F0B}
-.b-submitted{background:#EAF3DE;color:#3B6D11}
-.b-won{background:#EAF3DE;color:#27500A}
-.b-lost{background:#FCEBEB;color:#A32D2D}
-.b-high{background:#FCEBEB;color:#A32D2D}
-.b-medium{background:#FAEEDA;color:#854F0B}
-.b-low{background:#E6F1FB;color:#185FA5}
-.dl-urgent{color:#A32D2D;font-weight:500}
-.dl-soon{color:#854F0B}
-.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
-.modal{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);width:500px;max-width:100%;max-height:90vh;overflow-y:auto}
-.modal-header{padding:1rem 1.25rem;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg)}
-.modal-body{padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
-.modal-footer{padding:.875rem 1.25rem;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg)}
+.b-draft{background:#F1EFE8;color:#5F5E5A}.b-active{background:#E6F1FB;color:#185FA5}.b-review{background:#FAEEDA;color:#854F0B}.b-submitted{background:#EAF3DE;color:#3B6D11}.b-won{background:#EAF3DE;color:#27500A}.b-lost{background:#FCEBEB;color:#A32D2D}.b-waiting{background:#EEEDFE;color:#534AB7}.b-approved{background:#EAF3DE;color:#27500A}.b-converted{background:#EEEDFE;color:#534AB7}
+.b-high{background:#FCEBEB;color:#A32D2D}.b-medium{background:#FAEEDA;color:#854F0B}.b-low{background:#E6F1FB;color:#185FA5}
+.b-todo{background:#F1EFE8;color:#5F5E5A}.b-inprogress{background:#E6F1FB;color:#185FA5}.b-done{background:#EAF3DE;color:#3B6D11}
+.b-Municipality{background:#E6F1FB;color:#185FA5}.b-Hospital{background:#FAEEDA;color:#854F0B}.b-University{background:#EAF3DE;color:#3B6D11}.b-Ministry{background:#F1EFE8;color:#5F5E5A}.b-Region{background:#FAEEDA;color:#854F0B}.b-Defence{background:#FCEBEB;color:#A32D2D}.b-Public{background:#E6F1FB;color:#185FA5}.b-Other{background:#F1EFE8;color:#5F5E5A}
+.b-tender{background:#E6F1FB;color:#185FA5}.b-budgetary{background:#FAEEDA;color:#854F0B}
+.dl-urgent{color:#A32D2D;font-weight:500}.dl-soon{color:#854F0B}.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
+/* Modal */
+.mb{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal{background:var(--bg);border-radius:var(--rl);border:.5px solid var(--border);width:520px;max-width:100%;max-height:90vh;overflow-y:auto}
+.mhdr{padding:1rem 1.25rem;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:1}
+.mbdy{padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+.mftr{padding:.875rem 1.25rem;border-top:.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg)}
 .field{display:flex;flex-direction:column;gap:5px}
 .field label{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
-input,select,textarea{width:100%;padding:8px 10px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;background:var(--bg);color:var(--text);font-family:inherit}
+input,select,textarea{width:100%;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--r);font-size:14px;background:var(--bg);color:var(--text);font-family:inherit}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#378ADD}
-.bid-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
-.bid-sheet{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);width:780px;max-width:100%;margin:auto}
-.bid-header{background:var(--bg2);border-bottom:0.5px solid var(--border);padding:1rem 1.5rem;border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.bid-title{font-size:15px;font-weight:600;color:var(--text)}
-.bid-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
-.bid-body{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
-.bid-section{border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.bid-section-hdr{background:var(--bg2);padding:.5rem 1rem;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);border-bottom:0.5px solid var(--border)}
-.bid-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.bid-field{padding:.625rem 1rem;border-bottom:0.5px solid var(--border);border-right:0.5px solid var(--border)}
-.bid-field:nth-child(even){border-right:none}
-.bid-field.full{grid-column:1/-1;border-right:none}
-.bid-field:last-child,.bid-field.full:last-child{border-bottom:none}
-.bid-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.bid-field input,.bid-field select,.bid-field textarea{width:100%;padding:5px 8px;border:0.5px solid var(--border2);border-radius:6px;font-size:13px;background:var(--bg);color:var(--text);font-family:inherit}
-.bid-field input:focus,.bid-field select:focus,.bid-field textarea:focus{outline:none;border-color:#378ADD}
-.bid-field .static{font-size:13px;color:var(--text);padding:5px 0}
-.bid-toggle{display:flex;gap:8px;flex-wrap:wrap}
-.bid-toggle label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text);cursor:pointer;font-weight:normal;text-transform:none;letter-spacing:0}
-.bid-toggle input[type=radio],.bid-toggle input[type=checkbox]{width:auto;padding:0;border:none}
-.bid-footer{padding:1rem 1.5rem;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
-
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-@media(max-width:480px){.two-col{grid-template-columns:1fr}}
-.empty{padding:3rem;text-align:center;color:var(--text2);font-size:14px}
-.empty i{font-size:36px;display:block;margin-bottom:.75rem;opacity:.3}
-.tasks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-@media(max-width:700px){.tasks-grid{grid-template-columns:1fr}}
-.task-col-hdr{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between}
-.task-col{background:var(--bg2);border-radius:var(--radius-lg);padding:.875rem;display:flex;flex-direction:column;gap:.5rem;min-height:160px}
-.task-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:.75rem;cursor:grab;transition:border-color .15s;user-select:none}
-.task-card:hover{border-color:var(--border2)}
-.task-card.dragging{opacity:.5}
-.task-title{font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.3}
-.task-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.avatar{border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:11px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+/* Kanban */
+.kboard{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.kcol-hdr{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between}
+.kcol{background:var(--bg2);border-radius:var(--rl);padding:.875rem;display:flex;flex-direction:column;gap:.5rem;min-height:160px}
+.kcard{background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:.75rem;cursor:grab;user-select:none}
+.kcard:hover{border-color:var(--border2)}
+.ktitle{font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.3}
+.kmeta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Templates */
 .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.tpl-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;display:flex;flex-direction:column;gap:8px;transition:border-color .15s}
+.tpl-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1rem;display:flex;flex-direction:column;gap:8px}
 .tpl-card:hover{border-color:var(--border2)}
-.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.user-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px}
-.color-picker{display:flex;gap:8px;flex-wrap:wrap}
-.swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s}
-.swatch.sel{border-color:var(--text);transform:scale(1.12)}
-.tab-content{display:none}.tab-content.active{display:block}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:.625rem 1rem;font-size:13px;z-index:300;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
-.toast.show{opacity:1;transform:translateY(0)}
-
-/* Setup screen */
-.setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg3)}
-.setup-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:2rem;width:540px;max-width:100%}
-.setup-step{display:none}.setup-step.active{display:block}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--info-bg);color:var(--info-text);font-size:13px;font-weight:600;margin-bottom:.75rem}
+/* Team / Clients */
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.ucard{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px}
+.av{border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+/* Products */
+.prod-tags{display:flex;flex-wrap:wrap;gap:4px}
+.ptag{border-radius:4px;padding:1px 6px;font-size:10px;font-weight:500;white-space:nowrap}
+/* Bid Sheet */
+.bsb{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
+.bsheet{background:var(--bg);border-radius:var(--rl);border:.5px solid var(--border);width:800px;max-width:100%;margin:auto}
+.bshdr{background:var(--bg2);border-bottom:.5px solid var(--border);padding:1rem 1.5rem;border-radius:var(--rl) var(--rl) 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.bsbdy{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+.bssec{border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.bssec-hdr{background:var(--bg2);padding:.5rem 1rem;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);border-bottom:.5px solid var(--border)}
+.bsgrid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.bsf{padding:.625rem 1rem;border-bottom:.5px solid var(--border);border-right:.5px solid var(--border)}
+.bsf:nth-child(even){border-right:none}
+.bsf.full{grid-column:1/-1;border-right:none}
+.bsf label{display:block;font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.bsf input,.bsf select,.bsf textarea{width:100%;padding:5px 8px;border:.5px solid var(--border2);border-radius:6px;font-size:13px;background:var(--bg);color:var(--text);font-family:inherit}
+.bsf input:focus,.bsf select:focus,.bsf textarea:focus{outline:none;border-color:#378ADD}
+.toggle{display:flex;gap:8px;flex-wrap:wrap}
+.toggle label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;font-weight:normal;text-transform:none;letter-spacing:0}
+.toggle input[type=radio],.toggle input[type=checkbox]{width:auto;padding:0;border:none}
+.bsftr{padding:1rem 1.5rem;border-top:.5px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg);border-radius:0 0 var(--rl) var(--rl)}
+/* Setup */
+.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg3)}
+.setup-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:2rem;width:560px;max-width:100%}
+.sstep{display:none}.sstep.active{display:block}
 .setup-title{font-size:18px;font-weight:600;margin-bottom:.5rem}
 .setup-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:1.25rem}
 ol.steps{font-size:14px;color:var(--text2);line-height:2;padding-left:1.25rem;margin-bottom:1.25rem}
-ol.steps li{margin-bottom:2px}
 ol.steps a{color:var(--info-text)}
-.info-box{background:var(--bg2);border-radius:var(--radius);padding:.875rem;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.25rem}
+.info-box{background:var(--bg2);border-radius:var(--r);padding:.875rem;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.25rem}
 code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12px}
-.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:#378ADD;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:#378ADD;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-input.wide{font-size:13px}
-.error-msg{font-size:12px;color:#A32D2D;margin-top:4px;display:none}
+/* Color swatches */
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.sw.sel{border-color:var(--text);transform:scale(1.1)}
+/* Filters */
+.frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:1rem}
+.fs{width:auto;font-size:13px;padding:7px 10px}
+.sbar{position:relative}.sbar i{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:15px;pointer-events:none}
+.sbar input{width:200px;padding-left:32px;font-size:13px}
+.empty{padding:3rem;text-align:center;color:var(--text2);font-size:14px}
+.empty i{font-size:36px;display:block;margin-bottom:.75rem;opacity:.3}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg);border:.5px solid var(--border2);border-radius:var(--r);padding:.625rem 1rem;font-size:13px;z-index:300;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.toast.show{opacity:1;transform:translateY(0)}
+.prod-cb{display:flex;flex-wrap:wrap;gap:6px}
+.prod-cb label{display:inline-flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:var(--bg2);border:.5px solid var(--border);border-radius:6px;padding:3px 8px}
+.prod-cb input[type=checkbox]{width:auto;padding:0;border:none}
+@media(max-width:700px){.kpis,.charts-row,.bottom-row,.kboard,.two{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
 
 <!-- SETUP SCREEN -->
-<div id="setup-screen" class="setup-screen" style="display:none">
+<div id="setup-screen" class="setup" style="display:none">
   <div class="setup-card">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.5rem">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <i class="ti ti-shield-check" style="font-size:22px;color:#185FA5"></i>
       <span style="font-weight:600;font-size:16px">TenderDesk</span>
     </div>
-
-    <!-- Step 1: Choose -->
-    <div class="setup-step active" id="step-choose">
+    <div class="sstep active" id="ss-choose">
       <div class="setup-title">Welcome to TenderDesk</div>
-      <div class="setup-sub">Set up your shared workspace. All team members connect to the same database so everyone sees live data.</div>
+      <div class="setup-sub">Connect to your shared workspace to get started.</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" style="justify-content:flex-start;padding:1rem;font-size:14px" onclick="showStep('step-create')">
-          <i class="ti ti-plus" style="font-size:18px"></i>
-          <div style="text-align:left"><div style="font-weight:500">Create a new workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">First person on the team — set up the shared database</div></div>
+        <button class="btn btn-p" style="justify-content:flex-start;padding:1rem;font-size:14px;text-align:left" onclick="showStep('ss-create')">
+          <i class="ti ti-plus" style="font-size:18px;flex-shrink:0"></i>
+          <div><div style="font-weight:500">Create a new workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">First person — set up the shared database</div></div>
         </button>
-        <button class="btn" style="justify-content:flex-start;padding:1rem;font-size:14px" onclick="showStep('step-join')">
-          <i class="ti ti-link" style="font-size:18px"></i>
-          <div style="text-align:left"><div style="font-weight:500">Join an existing workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">You have a Bin ID and API key from your team</div></div>
+        <button class="btn" style="justify-content:flex-start;padding:1rem;font-size:14px;text-align:left" onclick="showStep('ss-join')">
+          <i class="ti ti-link" style="font-size:18px;flex-shrink:0"></i>
+          <div><div style="font-weight:500">Join an existing workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">You have a Gist ID and token from your team</div></div>
         </button>
       </div>
     </div>
-
-    <!-- Step 2a: Create -->
-    <div class="setup-step" id="step-create">
-      <div class="step-num">1</div>
+    <div class="sstep" id="ss-create">
       <div class="setup-title">Create a GitHub Personal Access Token</div>
-      <div class="setup-sub">GitHub Gist stores your workspace data online so the whole team shares it in real time — and Claude can read and write it directly.</div>
       <ol class="steps">
-        <li>Go to <a href="https://github.com" target="_blank">github.com</a> and sign in (or sign up free)</li>
-        <li>Go to <strong>Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></li>
-        <li>Click <strong>Generate new token</strong>, give it a name, tick the <strong>gist</strong> scope, and generate</li>
+        <li>Go to <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></li>
+        <li>Click <strong>Generate new token (classic)</strong></li>
+        <li>Tick the <strong>gist</strong> scope → Generate</li>
         <li>Copy the token (starts with <code>ghp_</code>)</li>
       </ol>
       <div class="field" style="margin-bottom:1rem">
-        <label>Your JSONbin Secret Key</label>
-        <input class="wide" id="create-key" placeholder="ghp_..." type="password">
-        <div class="error-msg" id="create-key-err">Please enter your secret key</div>
+        <label>GitHub Token</label>
+        <input id="c-token" placeholder="ghp_..." type="password">
       </div>
       <div style="display:flex;gap:8px;justify-content:space-between">
-        <button class="btn" onclick="showStep('step-choose')"><i class="ti ti-arrow-left"></i> Back</button>
-        <button class="btn btn-primary" onclick="createGist()"><span id="create-btn-txt">Create workspace</span> <span id="create-spinner" style="display:none" class="spinner"></span></button>
+        <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn btn-p" onclick="doCreate()"><span id="c-lbl">Create workspace</span> <span id="c-spin" style="display:none" class="spinner"></span></button>
       </div>
     </div>
-
-    <!-- Step 2b: Join -->
-    <div class="setup-step" id="step-join">
-      <div class="step-num">2</div>
-      <div class="setup-title">Connect to your team's workspace</div>
-      <div class="setup-sub">Ask the person who created the workspace to share the Bin ID and API key with you.</div>
-      <div class="field" style="margin-bottom:.75rem">
-        <label>Gist ID</label>
-        <input class="wide" id="join-bin" placeholder="e.g. a1b2c3d4e5f6...">
-        <div class="error-msg" id="join-bin-err">Please enter the Bin ID</div>
-      </div>
-      <div class="field" style="margin-bottom:1rem">
-        <label>API Key</label>
-        <input class="wide" id="join-key" placeholder="ghp_..." type="password">
-        <div class="error-msg" id="join-key-err">Please enter the API key</div>
-      </div>
+    <div class="sstep" id="ss-join">
+      <div class="setup-title">Join existing workspace</div>
+      <div class="field" style="margin-bottom:.75rem"><label>Gist ID</label><input id="j-gist" placeholder="e.g. 8c6684b13a4e4d14f000aa8e720ff9ee"></div>
+      <div class="field" style="margin-bottom:1rem"><label>GitHub Token</label><input id="j-token" placeholder="ghp_..." type="password"></div>
       <div style="display:flex;gap:8px;justify-content:space-between">
-        <button class="btn" onclick="showStep('step-choose')"><i class="ti ti-arrow-left"></i> Back</button>
-        <button class="btn btn-primary" onclick="joinGist()"><span id="join-btn-txt">Connect</span> <span id="join-spinner" style="display:none" class="spinner"></span></button>
+        <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn btn-p" onclick="doJoin()"><span id="j-lbl">Connect</span> <span id="j-spin" style="display:none" class="spinner"></span></button>
       </div>
     </div>
-
-    <!-- Step 3: Success -->
-    <div class="setup-step" id="step-done">
+    <div class="sstep" id="ss-done">
       <div style="text-align:center;padding:1rem 0">
         <div style="width:52px;height:52px;border-radius:50%;background:var(--success-bg);color:var(--success-text);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem"><i class="ti ti-check"></i></div>
         <div class="setup-title">Workspace ready!</div>
         <div class="setup-sub" id="done-msg"></div>
         <div class="info-box" id="done-creds" style="text-align:left;display:none">
-          <div style="font-weight:500;margin-bottom:.5rem;color:var(--text)">Share these with your team:</div>
-          <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="done-bin-id"></code></div>
-          <div><strong>API Key:</strong> <code id="done-api-key"></code></div>
-          <div style="margin-top:.75rem;font-size:12px">They enter these when opening TenderDesk. Also share these with Claude so it can read and write your data directly.</div>
+          <div style="font-weight:500;margin-bottom:.5rem;color:var(--text)">Share with your team:</div>
+          <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="done-gist"></code></div>
+          <div><strong>Token:</strong> <code id="done-token"></code></div>
         </div>
-        <button class="btn btn-primary" style="margin-top:1rem" onclick="launchApp()"><i class="ti ti-rocket"></i> Open TenderDesk</button>
+        <button class="btn btn-p" style="margin-top:1rem" onclick="launchApp()"><i class="ti ti-rocket"></i> Open TenderDesk</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="app" style="display:none">
 <div class="topbar">
-  <a class="logo" href="#" onclick="return false">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    TenderDesk
-  </a>
+  <div class="logo"><i class="ti ti-shield-check"></i> TenderDesk</div>
   <nav class="nav">
-    <button class="nav-btn active" onclick="switchTab('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
-    <button class="nav-btn" onclick="switchTab('proposals',this)"><i class="ti ti-file-description"></i> Proposals</button>
-    <button class="nav-btn" onclick="switchTab('tasks',this)"><i class="ti ti-check-square"></i> Tasks</button>
-    <button class="nav-btn" onclick="switchTab('templates',this)"><i class="ti ti-template"></i> Templates</button>
-    <button class="nav-btn" onclick="switchTab('team',this)"><i class="ti ti-users"></i> Team</button>
-    <button class="nav-btn" onclick="switchTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
+    <button class="nb active" onclick="goTab('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
+    <button class="nb" onclick="goTab('proposals',this)"><i class="ti ti-file-description"></i> Proposals</button>
+    <button class="nb" onclick="goTab('tasks',this)"><i class="ti ti-check-square"></i> Tasks</button>
+    <button class="nb" onclick="goTab('templates',this)"><i class="ti ti-template"></i> Templates</button>
+    <button class="nb" onclick="goTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
+    <button class="nb" onclick="goTab('team',this)"><i class="ti ti-users"></i> Team</button>
   </nav>
   <div class="sync-wrap">
     <div class="sync-dot" id="sync-dot"></div>
-    <span class="sync-label" id="sync-label">Synced</span>
-    <button class="icon-btn" onclick="refreshData()" title="Refresh"><i class="ti ti-refresh"></i></button>
-    <button class="icon-btn" onclick="showSettings()" title="Settings"><i class="ti ti-settings"></i></button>
-    <button class="btn" onclick="exportForClaude()" title="Copy data for Claude" style="font-size:12px;padding:5px 10px;gap:5px;flex-shrink:0"><i class="ti ti-brand-claude" style="font-size:15px"></i> Export for Claude</button>
-    <button class="btn" onclick="openImportModal()" title="Import data from Claude" style="font-size:12px;padding:5px 10px;gap:5px;flex-shrink:0"><i class="ti ti-download" style="font-size:15px"></i> Import from Claude</button>
+    <span class="sync-label" id="sync-lbl">Synced</span>
+    <button class="ib" onclick="refreshData()" title="Refresh"><i class="ti ti-refresh"></i></button>
+    <button class="ib" onclick="exportForClaude()" title="Export for Claude"><i class="ti ti-brand-claude"></i></button>
+    <button class="ib" onclick="openModal('m-import')" title="Import from Claude"><i class="ti ti-download"></i></button>
+    <button class="ib" onclick="showSettings()" title="Settings"><i class="ti ti-settings"></i></button>
   </div>
 </div>
 
 <div class="main">
-  <!-- DASHBOARD -->
-  <div class="tab-content active" id="tab-dashboard">
 
-    <!-- KPI Row -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.25rem">
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #185FA5">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Total Pipeline</div>
-        <div style="font-size:28px;font-weight:700;color:#185FA5;line-height:1" id="kpi-total">—</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-total-sub">— proposals</div>
-      </div>
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #854F0B">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Active</div>
-        <div style="font-size:28px;font-weight:700;color:#854F0B;line-height:1" id="kpi-active">—</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-active-sub">— proposals</div>
-      </div>
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #3B6D11">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Submitted</div>
-        <div style="font-size:28px;font-weight:700;color:#3B6D11;line-height:1" id="kpi-submitted">—</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px" id="kpi-submitted-sub">waiting result</div>
-      </div>
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;border-top:3px solid #A32D2D">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px">Due This Week</div>
-        <div style="font-size:28px;font-weight:700;color:#A32D2D;line-height:1" id="kpi-week">—</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px">urgent deadlines</div>
-      </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.25rem">
-
-      <!-- Pipeline by Status -->
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
-        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Pipeline by Status</div>
-        <canvas id="chart-status" height="180"></canvas>
-      </div>
-
-      <!-- Budgetary vs Tender -->
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
-        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Budgetary vs Public Tender</div>
-        <canvas id="chart-type" height="180"></canvas>
-      </div>
-
-      <!-- Team Workload -->
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
-        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Team Workload</div>
-        <div id="chart-team" style="display:flex;flex-direction:column;gap:10px;margin-top:4px"></div>
-      </div>
-    </div>
-
-    <!-- Bottom Row: Deadlines + Pipeline Bars -->
-    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:12px">
-
-      <!-- Urgent Deadlines -->
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
-        <div style="padding:.875rem 1.25rem;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:13px;font-weight:500">Upcoming Deadlines</span>
-          <span style="font-size:12px;color:var(--text2)" id="last-sync"></span>
-        </div>
-        <div id="dash-deadlines" style="padding:.5rem 0"></div>
-      </div>
-
-      <!-- Pipeline Value Bars -->
-      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem">
-        <div style="font-size:13px;font-weight:500;margin-bottom:1rem">Value by Stage</div>
-        <div id="pipeline-bars" style="display:flex;flex-direction:column;gap:12px"></div>
-      </div>
-    </div>
-
+<!-- DASHBOARD -->
+<div class="tab active" id="tab-dashboard">
+  <div class="kpis">
+    <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Total Pipeline</div><div class="kpi-val" id="k-total" style="color:#185FA5">—</div><div class="kpi-sub" id="k-total-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #854F0B"><div class="kpi-label">Active</div><div class="kpi-val" id="k-active" style="color:#854F0B">—</div><div class="kpi-sub" id="k-active-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #3B6D11"><div class="kpi-label">Submitted</div><div class="kpi-val" id="k-sub" style="color:#3B6D11">—</div><div class="kpi-sub" id="k-sub-s">—</div></div>
+    <div class="kpi" style="border-top:3px solid #A32D2D"><div class="kpi-label">Due This Week</div><div class="kpi-val" id="k-week" style="color:#A32D2D">—</div><div class="kpi-sub">urgent deadlines</div></div>
   </div>
-
-  <!-- PROPOSALS -->
-  <div class="tab-content" id="tab-proposals">
-    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <div style="position:relative"><i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:15px;pointer-events:none"></i><input style="width:200px;padding-left:30px;font-size:13px" type="text" id="p-search" placeholder="Search…" oninput="renderProposals()"></div>
-        <select style="width:auto;font-size:13px;padding:7px 10px" id="f-status" onchange="renderProposals()"><option value="">All statuses</option><option>Draft</option><option>Active</option><option>In review</option><option>Submitted</option><option>Won</option><option>Lost</option></select>
-        <select style="width:auto;font-size:13px;padding:7px 10px" id="f-type" onchange="renderProposals()"><option value="">All types</option><option value="Budgetary">Budgetary</option><option value="Public Tender">Public Tender</option></select>
-        <select style="width:auto;font-size:13px;padding:7px 10px" id="f-priority" onchange="renderProposals()"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
-        <select style="width:auto;font-size:13px;padding:7px 10px" id="f-assignee" onchange="renderProposals()"><option value="">All leads</option></select>
-      </div>
-      <button class="btn btn-primary" onclick="openProposalModal()"><i class="ti ti-plus"></i> New proposal</button>
-    </div>
-    <div class="card"><div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead><tbody id="p-list"></tbody></table></div></div>
+  <div class="charts-row">
+    <div class="chart-card"><div class="chart-title">Pipeline by Status</div><canvas id="ch-status" height="180"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Budgetary vs Tender</div><canvas id="ch-type" height="180"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Team Workload</div><div id="ch-team" style="display:flex;flex-direction:column;gap:10px;margin-top:4px"></div></div>
   </div>
-
-  <!-- TASKS -->
-  <div class="tab-content" id="tab-tasks">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:13px;color:var(--text2)">Drag to update · Double-click to edit</div>
-      <button class="btn btn-primary" onclick="openTaskModal()"><i class="ti ti-plus"></i> New task</button>
+  <div class="bottom-row">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Upcoming Deadlines</span><span style="font-size:12px;color:var(--text2)" id="last-sync"></span></div>
+      <div id="dash-dl"></div>
     </div>
-    <div class="tasks-grid">
-      <div><div class="task-col-hdr"><span>To do</span><span id="cnt-todo" style="background:var(--bg3);border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="task-col" id="col-todo" ondragover="ev(event)" ondrop="dropTask(event,'todo')"></div></div>
-      <div><div class="task-col-hdr"><span>In progress</span><span id="cnt-inprogress" style="background:#E6F1FB;color:#185FA5;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="task-col" id="col-inprogress" ondragover="ev(event)" ondrop="dropTask(event,'inprogress')"></div></div>
-      <div><div class="task-col-hdr"><span>Done</span><span id="cnt-done" style="background:#EAF3DE;color:#3B6D11;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="task-col" id="col-done" ondragover="ev(event)" ondrop="dropTask(event,'done')"></div></div>
-    </div>
-  </div>
-
-  <!-- TEMPLATES -->
-  <div class="tab-content" id="tab-templates">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:13px;color:var(--text2)">Shared document templates for the whole team</div>
-      <button class="btn btn-primary" onclick="openTplModal()"><i class="ti ti-plus"></i> Add template</button>
-    </div>
-    <div class="tpl-grid" id="tpl-grid"></div>
-  </div>
-
-
-  <!-- CLIENTS -->
-  <div class="tab-content" id="tab-clients">
-    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div style="position:relative"><i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:15px;pointer-events:none"></i><input style="width:220px;padding-left:30px;font-size:13px" type="text" id="cl-search" placeholder="Search clients…" oninput="renderClients()"></div>
-        <select style="width:auto;font-size:13px;padding:7px 10px" id="cl-cat" onchange="renderClients()">
-          <option value="">All categories</option>
-          <option>Municipality</option><option>Hospital</option><option>University</option>
-          <option>Ministry</option><option>Region</option><option>Defence</option>
-          <option>Public Body</option><option>Other</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" onclick="openClientModal()"><i class="ti ti-plus"></i> Add client</button>
-    </div>
-    <div class="card"><div class="table-wrap">
-      <table><thead><tr><th>Client</th><th>Category</th><th>Primary Contact</th><th>Email</th><th>Phone</th><th>Proposals</th><th>Value</th><th></th></tr></thead>
-      <tbody id="cl-list"></tbody></table>
-    </div></div>
-  </div>
-
-  <!-- TEAM -->
-  <div class="tab-content" id="tab-team">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:13px;color:var(--text2)">Add team members to assign proposals and tasks</div>
-      <button class="btn btn-primary" onclick="openUserModal()"><i class="ti ti-user-plus"></i> Add member</button>
-    </div>
-    <div class="user-grid" id="user-grid"></div>
+    <div class="chart-card" style="margin-bottom:0"><div class="chart-title">Value by Stage</div><div id="ch-bars" style="display:flex;flex-direction:column;gap:12px"></div></div>
   </div>
 </div>
+
+<!-- PROPOSALS -->
+<div class="tab" id="tab-proposals">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div class="frow" style="margin-bottom:0">
+      <div class="sbar"><i class="ti ti-search"></i><input type="text" id="p-q" placeholder="Search…" oninput="renderProposals()"></div>
+      <select class="fs" id="p-type" onchange="renderProposals()"><option value="">All types</option><option>Budgetary</option><option>Public Tender</option></select>
+      <select class="fs" id="p-status" onchange="renderProposals()"><option value="">All statuses</option><option>Draft</option><option>Active</option><option>In review</option><option>Submitted</option><option>Waiting Result</option><option>Approved</option><option>Converted to RFP</option><option>Won</option><option>Lost</option></select>
+      <select class="fs" id="p-priority" onchange="renderProposals()"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
+      <select class="fs" id="p-lead" onchange="renderProposals()"><option value="">All leads</option></select>
+    </div>
+    <button class="btn btn-p" onclick="openProposalModal()"><i class="ti ti-plus"></i> New proposal</button>
+  </div>
+  <div class="card"><div class="tw">
+    <table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Partner</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead>
+    <tbody id="p-list"></tbody></table>
+  </div></div>
 </div>
 
-<!-- MODALS -->
+<!-- TASKS -->
+<div class="tab" id="tab-tasks">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:13px;color:var(--text2)">Drag to update · Double-click to edit</div>
+    <button class="btn btn-p" onclick="openTaskModal()"><i class="ti ti-plus"></i> New task</button>
+  </div>
+  <div class="kboard">
+    <div><div class="kcol-hdr"><span>To do</span><span id="cnt-todo" style="background:var(--bg3);border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-todo" ondragover="ev(event)" ondrop="dropTask(event,'todo')"></div></div>
+    <div><div class="kcol-hdr"><span>In progress</span><span id="cnt-inprogress" style="background:#E6F1FB;color:#185FA5;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-inprogress" ondragover="ev(event)" ondrop="dropTask(event,'inprogress')"></div></div>
+    <div><div class="kcol-hdr"><span>Done</span><span id="cnt-done" style="background:#EAF3DE;color:#3B6D11;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-done" ondragover="ev(event)" ondrop="dropTask(event,'done')"></div></div>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="tab" id="tab-templates">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:13px;color:var(--text2)">Shared templates for the whole team</div>
+    <button class="btn btn-p" onclick="openModal('m-tpl')"><i class="ti ti-plus"></i> Add template</button>
+  </div>
+  <div class="tpl-grid" id="tpl-grid"></div>
+</div>
+
+<!-- CLIENTS -->
+<div class="tab" id="tab-clients">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div class="frow" style="margin-bottom:0">
+      <div class="sbar"><i class="ti ti-search"></i><input type="text" id="cl-q" placeholder="Search clients…" oninput="renderClients()"></div>
+      <select class="fs" id="cl-cat" onchange="renderClients()"><option value="">All categories</option><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select>
+    </div>
+    <button class="btn btn-p" onclick="openClientModal()"><i class="ti ti-plus"></i> Add client</button>
+  </div>
+  <div class="card"><div class="tw">
+    <table><thead><tr><th>Client</th><th>Category</th><th>Contact</th><th>Email</th><th>Phone</th><th>Proposals</th><th>Value</th><th></th></tr></thead>
+    <tbody id="cl-list"></tbody></table>
+  </div></div>
+</div>
+
+<!-- TEAM -->
+<div class="tab" id="tab-team">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:13px;color:var(--text2)">Manage team members</div>
+    <button class="btn btn-p" onclick="openUserModal()"><i class="ti ti-user-plus"></i> Add member</button>
+  </div>
+  <div class="ugrid" id="team-grid"></div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══ MODALS ═══════════════════════════════════════════════════════════════ -->
+
 <!-- Proposal -->
-<div class="modal-backdrop" id="modal-proposal" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500" id="pm-title">New proposal</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="field"><label>Title</label><input id="pm-name" placeholder="e.g. ClearSkies SIEM — Municipality of Athens"></div>
-      <div class="two-col"><div class="field"><label>Type</label><select id="pm-type" onchange="updateStatusOptions()"><option value="Budgetary">Budgetary</option><option value="Public Tender">Public Tender</option></select></div><div class="field"><label>Client / Authority</label><input id="pm-client"></div><div class="field"><label>Value (€)</label><input id="pm-value" type="number" placeholder="0"></div></div>
-      <div class="two-col"><div class="field"><label>Deadline</label><input id="pm-deadline" type="date"></div><div class="field"><label>Status</label><select id="pm-status"></select></div></div>
-      <div class="two-col"><div class="field"><label>Priority</label><select id="pm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div><div class="field"><label>Lead assignee</label><select id="pm-assignee"></select></div></div>
-      <div class="field"><label>Partner (if any)</label><input id="pm-partner" placeholder="e.g. Vodafone, DotSoft…"></div>
-      <div class="field"><label>Products / Services</label>
-        <div id="pm-products" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px"></div>
-      </div>
-      <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
+<div class="mb" id="m-proposal" style="display:none">
+<div class="modal" style="width:580px">
+  <div class="mhdr"><span style="font-weight:500" id="pm-title">New proposal</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Title</label><input id="pm-name" placeholder="e.g. ClearSkies SIEM — Municipality of Athens"></div>
+    <div class="two">
+      <div class="field"><label>Type</label><select id="pm-type" onchange="updateStatuses()"><option value="Budgetary">Budgetary</option><option value="Public Tender">Public Tender</option></select></div>
+      <div class="field"><label>Client</label><select id="pm-client"><option value="">— Select client —</option></select></div>
     </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="saveProposal()">Save proposal</button></div>
+    <div class="two">
+      <div class="field"><label>Value (€)</label><input id="pm-value" type="number" placeholder="0"></div>
+      <div class="field"><label>Deadline</label><input id="pm-deadline" type="date"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Status</label><select id="pm-status"></select></div>
+      <div class="field"><label>Priority</label><select id="pm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Lead assignee</label><select id="pm-assignee"></select></div>
+      <div class="field"><label>Partner (if any)</label><input id="pm-partner" placeholder="e.g. Vodafone, DotSoft…"></div>
+    </div>
+    <div class="field"><label>Products / Services</label><div class="prod-cb" id="pm-products"></div></div>
+    <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
   </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveProposal()">Save proposal</button></div>
+</div>
 </div>
 
 <!-- Task -->
-<div class="modal-backdrop" id="modal-task" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500" id="tm-title">New task</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="field"><label>Task title</label><input id="tm-name" placeholder="What needs to be done?"></div>
-      <div class="field"><label>Linked proposal</label><select id="tm-proposal"><option value="">— None —</option></select></div>
-      <div class="two-col"><div class="field"><label>Assigned to</label><select id="tm-assignee"></select></div><div class="field"><label>Due date</label><input id="tm-due" type="date"></div></div>
-      <div class="two-col"><div class="field"><label>Start date</label><input id="tm-start" type="date"></div><div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px"><span style="font-size:12px;color:var(--text2)">Leave blank to use today</span></div></div>
-      <div class="two-col"><div class="field"><label>Priority</label><select id="tm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div><div class="field"><label>Status</label><select id="tm-status"><option value="todo">To do</option><option value="inprogress">In progress</option><option value="done">Done</option></select></div></div>
-      <div class="field"><label>Description</label><textarea id="tm-desc" rows="2"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Save task</button></div>
+<div class="mb" id="m-task" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500" id="tm-title">New task</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Task title</label><input id="tm-name" placeholder="What needs to be done?"></div>
+    <div class="field"><label>Linked proposal</label><select id="tm-proposal"><option value="">— None —</option></select></div>
+    <div class="two"><div class="field"><label>Assigned to</label><select id="tm-assignee"></select></div><div class="field"><label>Start date</label><input id="tm-start" type="date"></div></div>
+    <div class="two"><div class="field"><label>Due date</label><input id="tm-due" type="date"></div><div class="field"><label>Priority</label><select id="tm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div></div>
+    <div class="two"><div class="field"><label>Status</label><select id="tm-status"><option value="todo">To do</option><option value="inprogress">In progress</option><option value="done">Done</option></select></div><div class="field"></div></div>
+    <div class="field"><label>Description</label><textarea id="tm-desc" rows="2"></textarea></div>
   </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveTask()">Save task</button></div>
+</div>
 </div>
 
 <!-- Template -->
-<div class="modal-backdrop" id="modal-tpl" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500">Add template</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="field"><label>Template name</label><input id="tpl-name"></div>
-      <div class="two-col"><div class="field"><label>Category</label><select id="tpl-cat"><option>Proposal</option><option>Tender</option><option>Technical</option><option>Financial</option><option>Legal</option><option>Other</option></select></div><div class="field"><label>Description</label><input id="tpl-desc"></div></div>
-      <div class="field"><label>Content</label><textarea id="tpl-body" rows="9" placeholder="Paste template content here…"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="saveTemplate()">Save</button></div>
+<div class="mb" id="m-tpl" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500">Add template</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Name</label><input id="tpl-name"></div>
+    <div class="two"><div class="field"><label>Category</label><select id="tpl-cat"><option>Proposal</option><option>Tender</option><option>Technical</option><option>Financial</option><option>Legal</option><option>Other</option></select></div><div class="field"><label>Description</label><input id="tpl-desc"></div></div>
+    <div class="field"><label>Content</label><textarea id="tpl-body" rows="9" placeholder="Paste template content…"></textarea></div>
   </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveTemplate()">Save</button></div>
+</div>
 </div>
 
-<!-- User -->
-<div class="modal-backdrop" id="modal-user" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500" id="um-title">Add team member</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="two-col"><div class="field"><label>First name</label><input id="um-first"></div><div class="field"><label>Last name</label><input id="um-last"></div></div>
-      <div class="two-col"><div class="field"><label>Role</label><input id="um-role" placeholder="e.g. Bid Manager"></div><div class="field"><label>Email</label><input id="um-email" type="email"></div></div>
-      <div class="field"><label>Avatar color</label>
-        <div class="color-picker">
-          <div class="swatch sel" data-c="#185FA5" style="background:#185FA5" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#3B6D11" style="background:#3B6D11" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#854F0B" style="background:#854F0B" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#993556" style="background:#993556" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#534AB7" style="background:#534AB7" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#A32D2D" style="background:#A32D2D" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#0F6E56" style="background:#0F6E56" onclick="pickColor(this)"></div>
-          <div class="swatch" data-c="#5F5E5A" style="background:#5F5E5A" onclick="pickColor(this)"></div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Save member</button></div>
+<!-- Client -->
+<div class="mb" id="m-client" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500" id="cm-title">Add client</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="two"><div class="field"><label>Client name</label><input id="cm-name" placeholder="e.g. Municipality of Athens"></div><div class="field"><label>Category</label><select id="cm-cat"><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select></div></div>
+    <div class="two"><div class="field"><label>Primary contact</label><input id="cm-contact" placeholder="Full name"></div><div class="field"><label>Title / Role</label><input id="cm-role" placeholder="e.g. IT Director"></div></div>
+    <div class="two"><div class="field"><label>Email</label><input id="cm-email" type="email"></div><div class="field"><label>Phone</label><input id="cm-phone" placeholder="+30 210 …"></div></div>
+    <div class="two"><div class="field"><label>ΑΦΜ</label><input id="cm-afm"></div><div class="field"><label>Address</label><input id="cm-address"></div></div>
+    <div class="field"><label>Notes</label><textarea id="cm-notes" rows="2"></textarea></div>
   </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveClient()">Save client</button></div>
+</div>
+</div>
+
+<!-- Team member -->
+<div class="mb" id="m-user" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500" id="um-title">Add member</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="two"><div class="field"><label>First name</label><input id="um-first"></div><div class="field"><label>Last name</label><input id="um-last"></div></div>
+    <div class="two"><div class="field"><label>Role</label><input id="um-role" placeholder="e.g. Bid Manager"></div><div class="field"><label>Email</label><input id="um-email" type="email"></div></div>
+    <div class="field"><label>Avatar color</label><div class="swatches" id="sw-pick">
+      <div class="sw sel" data-c="#185FA5" style="background:#185FA5" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#3B6D11" style="background:#3B6D11" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#854F0B" style="background:#854F0B" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#993556" style="background:#993556" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#534AB7" style="background:#534AB7" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#A32D2D" style="background:#A32D2D" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#0F6E56" style="background:#0F6E56" onclick="pickColor(this)"></div>
+      <div class="sw" data-c="#5F5E5A" style="background:#5F5E5A" onclick="pickColor(this)"></div>
+    </div></div>
+  </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveUser()">Save member</button></div>
+</div>
+</div>
+
+<!-- Import -->
+<div class="mb" id="m-import" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500">Import from Claude</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div style="font-size:13px;color:var(--text2);background:var(--bg2);border-radius:var(--r);padding:.75rem;line-height:1.6">Paste the updated JSON data Claude gave you. This will overwrite all current workspace data.</div>
+    <div class="field"><label>JSON data</label><textarea id="imp-json" rows="10" placeholder='{"proposals":[...],...}'></textarea></div>
+    <div style="font-size:12px;color:var(--danger-text);display:none" id="imp-err"></div>
+  </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="doImport()"><i class="ti ti-check"></i> Apply</button></div>
+</div>
 </div>
 
 <!-- Settings -->
-<div class="modal-backdrop" id="modal-settings" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500">Workspace settings</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="info-box">
-        <div style="font-weight:500;color:var(--text);margin-bottom:.5rem">Share these with your team</div>
-        <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="settings-bin"></code></div>
-        <div><strong>GitHub Token:</strong> <code id="settings-key"></code></div>
-        <div style="margin-top:.75rem;font-size:12px">They paste these when opening TenderDesk for the first time using the "Join existing workspace" option.</div>
-      </div>
-      <button class="btn" style="color:var(--danger-text);border-color:var(--danger-text)" onclick="resetSetup()"><i class="ti ti-logout"></i> Disconnect from this workspace</button>
+<div class="mb" id="m-settings" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500">Workspace settings</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="info-box">
+      <div style="font-weight:500;color:var(--text);margin-bottom:.5rem">Share with your team</div>
+      <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="cfg-gist"></code></div>
+      <div><strong>Token:</strong> <code id="cfg-token"></code></div>
     </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Close</button></div>
+    <button class="btn" style="color:var(--danger-text);border-color:var(--danger-text)" onclick="resetSetup()"><i class="ti ti-logout"></i> Disconnect</button>
   </div>
+  <div class="mftr"><button class="btn" onclick="closeModals()">Close</button></div>
+</div>
+</div>
+
+<!-- Bid Sheet -->
+<div class="bsb" id="bid-sheet" style="display:none">
+<div class="bsheet">
+  <div class="bshdr">
+    <div>
+      <div style="font-weight:600;font-size:14px">ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ ΣΥΜΜΕΤΟΧΗΣ ΣΕ ΔΗΜΟΣΙΟ ΔΙΑΓΩΝΙΣΜΟ</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px" id="bs-sub"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save</button>
+      <button class="ib" onclick="closeBidSheet()"><i class="ti ti-x"></i></button>
+    </div>
+  </div>
+  <div class="bsbdy">
+    <div class="bssec"><div class="bssec-hdr">Γενικά Στοιχεία</div><div class="bsgrid">
+      <div class="bsf"><label>Ημερομηνία</label><input type="date" id="bs-date"></div>
+      <div class="bsf"><label>Account Manager</label><select id="bs-mgr"></select></div>
+      <div class="bsf"><label>Q No.</label><input id="bs-qno" placeholder="Quote number"></div>
+      <div class="bsf"><label>Status</label><select id="bs-status"></select></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Αναθέτουσα Αρχή</div><div class="bsgrid">
+      <div class="bsf full"><label>Αναθέτουσα Αρχή</label><input id="bs-auth"></div>
+      <div class="bsf"><label>Ημερομηνία Διακήρυξης</label><input type="date" id="bs-pubdate"></div>
+      <div class="bsf"><label>Αρ. Πρωτοκόλλου</label><input id="bs-proto"></div>
+      <div class="bsf"><label>Συστημικός Αρ. Διαγωνισμού</label><input id="bs-sysnum"></div>
+      <div class="bsf"><label>Είδος Διαγωνισμού</label><div class="toggle">
+        <label><input type="radio" name="bs-ttype" value="Ανοικτός"> Ανοικτός</label>
+        <label><input type="radio" name="bs-ttype" value="Πρόσκληση"> Πρόσκληση</label>
+        <label><input type="radio" name="bs-ttype" value="Απ' ευθείας"> Απ' ευθείας Ανάθεση</label>
+      </div></div>
+      <div class="bsf"><label>Διαδικασία Κατάθεσης</label><div class="toggle">
+        <label><input type="checkbox" id="bs-eshdis"> ΕΣΗΔΗΣ</label>
+        <label><input type="checkbox" id="bs-email"> Email</label>
+        <label><input type="checkbox" id="bs-cosmo"> CosmoOne</label>
+        <label><input type="checkbox" id="bs-inperson"> Αυτοπροσώπως</label>
+      </div></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Περιγραφή Έργου</div><div class="bsgrid">
+      <div class="bsf full"><label>Περιγραφή Έργου</label><textarea id="bs-desc" rows="3"></textarea></div>
+      <div class="bsf"><label>CPV Code 1</label><input id="bs-cpv1" placeholder="e.g. 48600000-4"></div>
+      <div class="bsf"><label>CPV Code 2</label><input id="bs-cpv2"></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Συμμετοχή</div><div class="bsgrid">
+      <div class="bsf"><label>Ποσοστό Συμμετοχής</label><div class="toggle" style="margin-bottom:6px">
+        <label><input type="radio" name="bs-part" value="100%" onclick="document.getElementById('bs-partpct').style.display='none'"> 100% ODYSSEY</label>
+        <label><input type="radio" name="bs-part" value="subcontract" onclick="document.getElementById('bs-partpct').style.display='block'"> Υπεργολαβία &lt;30%</label>
+      </div><input id="bs-partpct" placeholder="Subcontract %" style="display:none;margin-top:4px"></div>
+      <div class="bsf"><label>Συνεργάτης</label><input id="bs-partner"></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Οικονομικά Στοιχεία</div><div class="bsgrid">
+      <div class="bsf"><label>Προϋπολογισμός Έργου (€ + ΦΠΑ)</label><input type="number" id="bs-budget"></div>
+      <div class="bsf"><label>Ανάλυση Ποσών</label><input id="bs-analysis"></div>
+      <div class="bsf"><label>ODYSSEY Τιμή Καθαρή (€)</label><input type="number" id="bs-net"></div>
+      <div class="bsf"><label>ODYSSEY Τιμή με ΦΠΑ (€)</label><input type="number" id="bs-vat"></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Προθεσμίες & Εγγυήσεις</div><div class="bsgrid">
+      <div class="bsf"><label>Λήξη Διευκρινήσεων</label><input type="date" id="bs-clarif"></div>
+      <div class="bsf"><label>Τελική Ημερομηνία / Ώρα</label><div style="display:flex;gap:6px"><input type="date" id="bs-subdate" style="flex:1"><input type="time" id="bs-subtime" style="width:90px"></div></div>
+      <div class="bsf"><label>Ποσό Εγγυητικής Συμμετοχής (€)</label><input type="number" id="bs-gamt"></div>
+      <div class="bsf"><label>Ισχύς Ε.Σ. Από → Έως</label><div style="display:flex;gap:4px;align-items:center"><input type="date" id="bs-gfrom" style="flex:1"><span style="font-size:11px;color:var(--text2)">→</span><input type="date" id="bs-gto" style="flex:1"></div></div>
+      <div class="bsf"><label>Εγγυητική Καλής Εκτέλεσης</label><div class="toggle"><label><input type="radio" name="bs-perf" value="Ναι"> Ναι</label><label><input type="radio" name="bs-perf" value="Όχι" checked> Όχι</label></div></div>
+      <div class="bsf"><label>Ισχύς Ε.Κ.Ε. Από → Έως</label><div style="display:flex;gap:4px;align-items:center"><input type="date" id="bs-bfrom" style="flex:1"><span style="font-size:11px;color:var(--text2)">→</span><input type="date" id="bs-bto" style="flex:1"></div></div>
+    </div></div>
+    <div class="bssec"><div class="bssec-hdr">Σημειώσεις</div><div class="bsgrid"><div class="bsf full"><textarea id="bs-notes" rows="3" placeholder="Internal notes, action items…"></textarea></div></div></div>
+  </div>
+  <div class="bsftr"><button class="btn" onclick="closeBidSheet()">Close</button><button class="btn btn-p" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save Bid Sheet</button></div>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const LIGHT_BG={'#185FA5':'#E6F1FB','#3B6D11':'#EAF3DE','#854F0B':'#FAEEDA','#993556':'#FBEAF0','#534AB7':'#EEEDFE','#A32D2D':'#FCEBEB','#0F6E56':'#E1F5EE','#5F5E5A':'#F1EFE8'};
-const GH_API='https://api.github.com';
-const GIST_FILE='tenderdesk.json';
-let CFG={gistId:'',token:''};
-let D={proposals:[],tasks:[],templates:[],team:[],nextPid:1,nextTid:1,nextTplId:1,nextUid:1};
-let editPid=null,editTid=null,editUid=null,dragTid=null,selColor='#185FA5',currentTab='dashboard';
-let autoTimer=null;
+// ═══ CONFIG & STATE ══════════════════════════════════════════════════════════
+const GH = 'https://api.github.com';
+const GFILE = 'tenderdesk.json';
+const LIGHT = {'#185FA5':'#E6F1FB','#3B6D11':'#EAF3DE','#854F0B':'#FAEEDA','#993556':'#FBEAF0','#534AB7':'#EEEDFE','#A32D2D':'#FCEBEB','#0F6E56':'#E1F5EE','#5F5E5A':'#F1EFE8'};
+const BSTAT = ['Draft','Active','Submitted','Approved','Converted to RFP'];
+const TSTAT = ['Draft','Active','Submitted','Waiting Result','Won','Lost'];
+const PRODS = ['EDR','MDR','NIS2','Pen Test','Firewall','ClearSkies','Security Awareness Training','vCISO','BCP/DR','SOC','Vulnerability Management','Email Security'];
+const PCOLS = {'EDR':'#185FA5','MDR':'#534AB7','NIS2':'#3B6D11','Pen Test':'#A32D2D','Firewall':'#854F0B','ClearSkies':'#185FA5','Security Awareness Training':'#0F6E56','vCISO':'#993556','BCP/DR':'#5F5E5A','SOC':'#185FA5','Vulnerability Management':'#A32D2D','Email Security':'#534AB7'};
 
-// ── Storage helpers ──────────────────────────────────────────
-function saveCFG(){localStorage.setItem('td_cfg',JSON.stringify(CFG));}
-function loadCFG(){try{const s=localStorage.getItem('td_cfg');if(s)CFG=JSON.parse(s);}catch(e){}}
+let CFG = {gistId:'',token:''};
+let D = {proposals:[],tasks:[],templates:[],team:[],clients:[],products:PRODS,nextPid:1,nextTid:1,nextTplId:1,nextUid:1,nextCid:1};
+let editPid=null, editTid=null, editUid=null, editCid=null;
+let bidPid=null, dragTid=null, selColor='#185FA5', curTab='dashboard';
+let chartS=null, chartT=null, autoTimer=null;
 
-function ghHeaders(){return{'Authorization':'token '+CFG.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};}
+// ═══ SETUP ═══════════════════════════════════════════════════════════════════
+function showStep(id){document.querySelectorAll('.sstep').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function saveCFG(){localStorage.setItem('td_cfg2',JSON.stringify(CFG));}
+function loadCFG(){try{const s=localStorage.getItem('td_cfg2');if(s)CFG=JSON.parse(s);}catch(e){}}
+function ghH(){return{'Authorization':'token '+CFG.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};}
 
-async function readGist(){
-  const r=await fetch(`${GH_API}/gists/${CFG.gistId}`,{headers:ghHeaders()});
-  if(!r.ok)throw new Error('Read failed: '+r.status);
-  const j=await r.json();
-  return JSON.parse(j.files[GIST_FILE].content);
-}
+async function ghGet(path){const r=await fetch(GH+path,{headers:ghH()});if(!r.ok)throw new Error(r.status);return r.json();}
+async function ghPatch(path,body){const r=await fetch(GH+path,{method:'PATCH',headers:ghH(),body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json();}
+async function ghPost(path,body){const r=await fetch(GH+path,{method:'POST',headers:ghH(),body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json();}
 
-async function writeGist(data){
-  const r=await fetch(`${GH_API}/gists/${CFG.gistId}`,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(data,null,2)}}})});
-  if(!r.ok)throw new Error('Write failed: '+r.status);
-}
+async function readGist(){const g=await ghGet('/gists/'+CFG.gistId);return JSON.parse(g.files[GFILE].content);}
+async function writeGist(data){await ghPatch('/gists/'+CFG.gistId,{files:{[GFILE]:{content:JSON.stringify(data,null,2)}}});}
 
-async function createNewGist(token){
-  const seed=defaultData();
-  const r=await fetch(`${GH_API}/gists`,{method:'POST',headers:{'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json'},body:JSON.stringify({description:'TenderDesk workspace',public:false,files:{[GIST_FILE]:{content:JSON.stringify(seed,null,2)}}})});
-  if(!r.ok)throw new Error('Create failed: '+r.status);
-  const j=await r.json();
-  return j.id;
-}
-
-function defaultData(){
-  return{proposals:[],tasks:[],templates:[{id:1,name:'Executive Summary',cat:'Proposal',desc:'2-page C-level overview',body:'## Executive Summary\n\n**Project:** \n**Client:** \n**Date:** \n\n### Overview\n\n### Proposed solution\n\n### Key benefits\n\n### Investment'},{id:2,name:'Technical Architecture',cat:'Technical',desc:'System design outline',body:'## Technical Architecture\n\n### System overview\n\n### Components\n\n### Integration\n\n### Security controls'},{id:3,name:'Financial Proposal',cat:'Financial',desc:'Pricing and ROI',body:'## Financial Proposal\n\n| Item | Qty | Unit price | Total |\n|------|-----|------------|-------|\n\n### ROI analysis'},{id:4,name:'Tender Cover Letter',cat:'Tender',desc:'Formal submission cover',body:'[Place, Date]\n\nDear Selection Committee,\n\nWe hereby submit our proposal for [Tender Reference]…'}],team:[],nextPid:1,nextTid:1,nextTplId:5,nextUid:1,updatedAt:new Date().toISOString()};
-}
-
-// ── Setup flow ───────────────────────────────────────────────
-function showStep(id){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-
-async function createGist(){
-  const token=document.getElementById('create-key').value.trim();
-  const err=document.getElementById('create-key-err');
-  if(!token){err.style.display='block';return;}
-  err.style.display='none';
-  const btn=document.getElementById('create-btn-txt'),sp=document.getElementById('create-spinner');
-  btn.textContent='Creating…';sp.style.display='inline-block';
+async function doCreate(){
+  const token=document.getElementById('c-token').value.trim();
+  if(!token){alert('Please enter your token');return;}
+  document.getElementById('c-lbl').textContent='Creating…';document.getElementById('c-spin').style.display='inline-block';
   try{
-    const gistId=await createNewGist(token);
-    CFG={gistId,token};saveCFG();
-    document.getElementById('done-msg').textContent='Your workspace is ready. Share the credentials below with your team.';
-    document.getElementById('done-bin-id').textContent=gistId;
-    document.getElementById('done-api-key').textContent=token;
+    const seed={...D,updatedAt:new Date().toISOString()};
+    const g=await ghPost('/gists',{description:'TenderDesk workspace',public:false,files:{[GFILE]:{content:JSON.stringify(seed,null,2)}}});
+    CFG={gistId:g.id,token};saveCFG();
+    document.getElementById('done-msg').textContent='Workspace created. Share these credentials with your team:';
+    document.getElementById('done-gist').textContent=g.id;document.getElementById('done-token').textContent=token;
     document.getElementById('done-creds').style.display='block';
-    showStep('step-done');
-  }catch(e){alert('Could not create gist. Check your token and try again.\n\n'+e.message);}
-  btn.textContent='Create workspace';sp.style.display='none';
+    showStep('ss-done');
+  }catch(e){alert('Failed: '+e.message);}
+  document.getElementById('c-lbl').textContent='Create workspace';document.getElementById('c-spin').style.display='none';
 }
 
-async function joinGist(){
-  const gistId=document.getElementById('join-bin').value.trim(),token=document.getElementById('join-key').value.trim();
-  let ok=true;
-  if(!gistId){document.getElementById('join-bin-err').style.display='block';ok=false;}else document.getElementById('join-bin-err').style.display='none';
-  if(!token){document.getElementById('join-key-err').style.display='block';ok=false;}else document.getElementById('join-key-err').style.display='none';
-  if(!ok)return;
-  const btn=document.getElementById('join-btn-txt'),sp=document.getElementById('join-spinner');
-  btn.textContent='Connecting…';sp.style.display='inline-block';
+async function doJoin(){
+  const gistId=document.getElementById('j-gist').value.trim(),token=document.getElementById('j-token').value.trim();
+  if(!gistId||!token){alert('Please fill in both fields');return;}
+  document.getElementById('j-lbl').textContent='Connecting…';document.getElementById('j-spin').style.display='inline-block';
   try{
-    CFG={gistId,token};
-    await readGist();
-    saveCFG();
-    document.getElementById('done-msg').textContent='Connected! You now have access to the shared workspace.';
-    document.getElementById('done-creds').style.display='none';
-    showStep('step-done');
-  }catch(e){alert('Could not connect. Check the Gist ID and token.\n\n'+e.message);}
-  btn.textContent='Connect';sp.style.display='none';
+    CFG={gistId,token};await readGist();saveCFG();
+    document.getElementById('done-msg').textContent='Connected to the shared workspace.';
+    document.getElementById('done-creds').style.display='none';showStep('ss-done');
+  }catch(e){alert('Could not connect: '+e.message);}
+  document.getElementById('j-lbl').textContent='Connect';document.getElementById('j-spin').style.display='none';
 }
 
 async function launchApp(){
@@ -583,89 +582,50 @@ async function launchApp(){
   autoTimer=setInterval(silentRefresh,30000);
 }
 
-function showSettings(){
-  document.getElementById('settings-bin').textContent=CFG.gistId;
-  document.getElementById('settings-key').textContent=CFG.token;
-  document.getElementById('modal-settings').style.display='flex';
-}
+function showSettings(){document.getElementById('cfg-gist').textContent=CFG.gistId;document.getElementById('cfg-token').textContent=CFG.token;openModal('m-settings');}
+function resetSetup(){if(!confirm('Disconnect from this workspace?'))return;localStorage.removeItem('td_cfg2');location.reload();}
 
-function resetSetup(){
-  if(!confirm('This will disconnect you from the workspace on this browser. The data stays online. Continue?'))return;
-  localStorage.removeItem('td_cfg');location.reload();
-}
-
-// ── Data sync ────────────────────────────────────────────────
-function setSS(state){
-  const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
-  dot.className='sync-dot'+(state==='saving'?' saving':state==='error'?' error':'');
-  lbl.textContent=state==='saving'?'Saving…':state==='error'?'Error':'Synced';
-}
+// ═══ DATA SYNC ═══════════════════════════════════════════════════════════════
+function setSS(s){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-lbl');dot.className='sync-dot'+(s==='saving'?' saving':s==='error'?' error':'');lbl.textContent=s==='saving'?'Saving…':s==='error'?'Error':'Synced';}
 
 async function refreshData(){
   setSS('saving');
-  try{
-    const data=await readGist();
-    if(data&&data.proposals!==undefined) D=data;
-    setSS('ok');
-    document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    renderCurrentTab();populateAssigneeFilter();
-  }catch(e){setSS('error');toast('Sync error — check connection','alert-circle');}
+  try{const data=await readGist();if(data&&data.proposals)D=data;setSS('ok');renderAll();document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+  catch(e){setSS('error');toast('Sync error','alert-circle');}
 }
 
-async function silentRefresh(){try{const data=await readGist();if(data&&data.proposals!==undefined){D=data;renderCurrentTab();document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}}catch(e){}}
+async function silentRefresh(){try{const data=await readGist();if(data&&data.proposals){D=data;renderAll();document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}}catch(e){}}
 
 async function saveData(){
-  setSS('saving');
-  D.updatedAt=new Date().toISOString();
-  try{await writeGist(D);setSS('ok');}
-  catch(e){setSS('error');toast('Save failed — check connection','alert-circle');}
+  setSS('saving');D.updatedAt=new Date().toISOString();
+  try{await writeGist(D);setSS('ok');}catch(e){setSS('error');toast('Save failed','alert-circle');}
 }
 
-// ── App init ─────────────────────────────────────────────────
-loadCFG();
-if(CFG.gistId&&CFG.token){
-  document.getElementById('app').style.display='block';
-  refreshData().then(()=>{autoTimer=setInterval(silentRefresh,30000);});
-}else{
-  document.getElementById('setup-screen').style.display='flex';
+function renderAll(){
+  if(curTab==='dashboard')renderDashboard();
+  else if(curTab==='proposals')renderProposals();
+  else if(curTab==='tasks')renderTasks();
+  else if(curTab==='templates')renderTemplates();
+  else if(curTab==='clients')renderClients();
+  else if(curTab==='team')renderTeam();
 }
 
-function switchTab(tab,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+// ═══ NAVIGATION ══════════════════════════════════════════════════════════════
+function goTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
-  btn.classList.add('active');currentTab=tab;renderCurrentTab();
-}
-function renderCurrentTab(){
-  if(currentTab==='dashboard')renderDashboard();
-  else if(currentTab==='proposals')renderProposals();
-  else if(currentTab==='tasks')renderTasks();
-  else if(currentTab==='templates')renderTemplates();
-  else if(currentTab==='team')renderTeam();
+  btn.classList.add('active');curTab=tab;renderAll();
 }
 
-// ── Helpers ──────────────────────────────────────────────────
-function mbr(id){return D.team.find(t=>t.id===id)||null;}
-function av(id,sz){
-  const m=mbr(id);if(!m)return'';
-  const s=sz||24,bg=LIGHT_BG[m.color]||'#E6F1FB',ini=(m.first[0]||'')+(m.last[0]||'');
-  return`<span class="avatar" style="width:${s}px;height:${s}px;background:${bg};color:${m.color}">${ini}</span>`;
-}
-function sc(s){return{'Draft':'b-draft','Active':'b-active','In review':'b-review','Submitted':'b-submitted','Won':'b-won','Lost':'b-lost','Approved':'b-approved','Converted to RFP':'b-converted','Waiting Result':'b-waiting'}[s]||'b-draft';}
+// ═══ HELPERS ═════════════════════════════════════════════════════════════════
+function mbr(id){return(D.team||[]).find(t=>t.id===id)||null;}
+function av(id,sz){const m=mbr(id);if(!m)return'';const s=sz||24,bg=LIGHT[m.color]||'#E6F1FB',ini=(m.first[0]||'')+(m.last[0]||'');return`<span class="av" style="width:${s}px;height:${s}px;background:${bg};color:${m.color};font-size:${Math.floor(s*.38)}px" title="${m.first} ${m.last}">${ini}</span>`;}
+function cname(p){const c=(D.clients||[]).find(x=>x.id===p.clientId);return c?c.name:(p.client||'—');}
+function sc(s){return{'Draft':'b-draft','Active':'b-active','In review':'b-review','Submitted':'b-submitted','Won':'b-won','Lost':'b-lost','Waiting Result':'b-waiting','Approved':'b-approved','Converted to RFP':'b-converted'}[s]||'b-draft';}
 function pc(p){return{'High':'b-high','Medium':'b-medium','Low':'b-low'}[p]||'b-low';}
-function productTags(prods){
-  if(!prods||!prods.length) return '<span style="color:var(--text2);font-size:11px">—</span>';
-  const colors={'EDR':'#185FA5','MDR':'#534AB7','NIS2':'#3B6D11','Pen Test':'#A32D2D','Firewall':'#854F0B','ClearSkies':'#185FA5','Security Awareness Training':'#0F6E56','vCISO':'#993556','BCP/DR':'#5F5E5A','SOC':'#185FA5','Vulnerability Management':'#A32D2D','Email Security':'#534AB7'};
-  return prods.map(p=>{const c=colors[p]||'#5F5E5A';const bg=c+'22';return`<span style="background:${bg};color:${c};border-radius:4px;padding:1px 6px;font-size:10px;font-weight:500;white-space:nowrap">${p}</span>`;}).join(' ');
-}
-function clientName(clientId,fallback){
-  const c=(D.clients||[]).find(x=>x.id===clientId);
-  return c?c.name:(fallback||'—');
-}
 function tc(t){return t==='Public Tender'?'b-tender':'b-budgetary';}
-const BUDGETARY_STATUSES=['Draft','Active','Submitted','Approved','Converted to RFP'];
-const TENDER_STATUSES=['Draft','Active','Submitted','Waiting Result','Won','Lost'];
-function statusesForType(type){return type==='Public Tender'?TENDER_STATUSES:BUDGETARY_STATUSES;}
+function ptags(prods){if(!prods||!prods.length)return'<span style="color:var(--text2);font-size:11px">—</span>';return prods.map(p=>{const c=PCOLS[p]||'#5F5E5A';return`<span class="ptag" style="background:${c}22;color:${c}">${p}</span>`;}).join('');}
 function dl(d,status){
   if(status==='Submitted'||status==='Waiting Result')return{cls:'dl-waiting',txt:'Waiting result'};
   if(!d)return{cls:'dl-ok',txt:'—'};
@@ -676,442 +636,239 @@ function dl(d,status){
   if(days<=21)return{cls:'dl-soon',txt:days+'d'};
   return{cls:'dl-ok',txt:new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})};
 }
-function toast(msg,icon){
-  const t=document.getElementById('toast');
-  t.innerHTML=(icon?`<i class="ti ti-${icon}" style="font-size:15px"></i>`:'')+(icon?' ':'')+msg;
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);
-}
-function populateAssigneeFilter(){
-  document.getElementById('f-assignee').innerHTML='<option value="">All leads</option>'+D.team.map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
-}
+function toast(msg,icon){const t=document.getElementById('toast');t.innerHTML=(icon?`<i class="ti ti-${icon}" style="font-size:15px"></i> `:'')+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModals(){document.querySelectorAll('.mb').forEach(m=>m.style.display='none');editPid=editTid=editUid=editCid=null;}
+document.querySelectorAll('.mb').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModals();}));
 
-// ── Dashboard ────────────────────────────────────────────────
-let chartStatus=null, chartType=null;
-
+// ═══ DASHBOARD ═══════════════════════════════════════════════════════════════
 function renderDashboard(){
-  const proposals = D.proposals;
-  const now = new Date(), we = new Date(); we.setDate(we.getDate()+7);
+  const P=D.proposals||[],now=new Date(),we=new Date();we.setDate(we.getDate()+7);
+  const tv=P.reduce((s,p)=>s+(p.value||0),0);
+  const ap=P.filter(p=>p.status==='Active'),av2=ap.reduce((s,p)=>s+(p.value||0),0);
+  const sp=P.filter(p=>p.status==='Submitted'),sv=sp.reduce((s,p)=>s+(p.value||0),0);
+  const wk=P.filter(p=>p.deadline&&new Date(p.deadline)>=now&&new Date(p.deadline)<=we).length;
+  document.getElementById('k-total').textContent='€'+tv.toLocaleString('el-GR');
+  document.getElementById('k-total-s').textContent=P.length+' proposals';
+  document.getElementById('k-active').textContent='€'+av2.toLocaleString('el-GR');
+  document.getElementById('k-active-s').textContent=ap.length+' proposals';
+  document.getElementById('k-sub').textContent='€'+sv.toLocaleString('el-GR');
+  document.getElementById('k-sub-s').textContent=sp.length+' waiting result';
+  document.getElementById('k-week').textContent=wk;
 
-  // KPIs
-  const totalVal = proposals.reduce((s,p)=>s+(p.value||0),0);
-  const activeProposals = proposals.filter(p=>p.status==='Active');
-  const activeVal = activeProposals.reduce((s,p)=>s+(p.value||0),0);
-  const submittedProposals = proposals.filter(p=>p.status==='Submitted');
-  const submittedVal = submittedProposals.reduce((s,p)=>s+(p.value||0),0);
-  const weekCount = proposals.filter(p=>{if(!p.deadline)return false;const d=new Date(p.deadline);return d>=now&&d<=we;}).length;
+  const SCS={'Active':'#185FA5','In review':'#854F0B','Submitted':'#3B6D11','Draft':'#9b9b9b','Won':'#27500A','Lost':'#A32D2D','Waiting Result':'#534AB7'};
+  const byS={};P.forEach(p=>{byS[p.status]=(byS[p.status]||0)+(p.value||0);});
+  const sl=Object.keys(byS).filter(s=>byS[s]>0);
+  if(chartS)chartS.destroy();
+  chartS=new Chart(document.getElementById('ch-status').getContext('2d'),{type:'doughnut',data:{labels:sl,datasets:[{data:sl.map(s=>byS[s]),backgroundColor:sl.map(s=>SCS[s]||'#ccc'),borderWidth:2,borderColor:'transparent',hoverOffset:6}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11},padding:8}},tooltip:{callbacks:{label:c=>' €'+c.raw.toLocaleString('el-GR')}}},cutout:'62%'}});
 
-  document.getElementById('kpi-total').textContent = '€'+totalVal.toLocaleString('el-GR');
-  document.getElementById('kpi-total-sub').textContent = proposals.length+' proposals';
-  document.getElementById('kpi-active').textContent = '€'+activeVal.toLocaleString('el-GR');
-  document.getElementById('kpi-active-sub').textContent = activeProposals.length+' proposals';
-  document.getElementById('kpi-submitted').textContent = '€'+submittedVal.toLocaleString('el-GR');
-  document.getElementById('kpi-submitted-sub').textContent = submittedProposals.length+' waiting result';
-  document.getElementById('kpi-week').textContent = weekCount;
+  const byT={};P.forEach(p=>{const t=p.type||'Budgetary';byT[t]=(byT[t]||0)+(p.value||0);});
+  const tl=Object.keys(byT);const TC={'Budgetary':'#854F0B','Public Tender':'#185FA5'};
+  if(chartT)chartT.destroy();
+  chartT=new Chart(document.getElementById('ch-type').getContext('2d'),{type:'doughnut',data:{labels:tl,datasets:[{data:tl.map(t=>byT[t]),backgroundColor:tl.map(t=>TC[t]||'#ccc'),borderWidth:2,borderColor:'transparent',hoverOffset:6}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11},padding:8}},tooltip:{callbacks:{label:c=>' €'+c.raw.toLocaleString('el-GR')}}},cutout:'62%'}});
 
-  // Chart: Pipeline by Status
-  const statusOrder = ['Active','In review','Submitted','Draft','Won','Lost','Waiting Result','Approved','Converted to RFP'];
-  const statusColors = {'Active':'#185FA5','In review':'#854F0B','Submitted':'#3B6D11','Draft':'#9b9b9b','Won':'#27500A','Lost':'#A32D2D','Waiting Result':'#534AB7','Approved':'#0F6E56','Converted to RFP':'#993556'};
-  const byStatus = {};
-  proposals.forEach(p=>{ byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0); });
-  const statusLabels = statusOrder.filter(s=>byStatus[s]>0);
-  const statusData = statusLabels.map(s=>byStatus[s]);
+  const te=document.getElementById('ch-team');const byM={};P.forEach(p=>{if(p.assignee)byM[p.assignee]=(byM[p.assignee]||0)+1;});const mx=Math.max(...Object.values(byM),1);
+  te.innerHTML=(D.team||[]).filter(m=>byM[m.id]).map(m=>{const cnt=byM[m.id]||0,pct=Math.round(cnt/mx*100),bg=LIGHT[m.color]||'#E6F1FB',ini=(m.first[0]||'')+(m.last[0]||'');return`<div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span class="av" style="width:22px;height:22px;background:${bg};color:${m.color};font-size:9px">${ini}</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.first} ${m.last}</span><span style="font-size:12px;font-weight:600">${cnt}</span></div><div style="height:6px;border-radius:999px;background:var(--bg3);overflow:hidden"><div style="height:100%;width:${pct}%;background:${m.color};border-radius:999px;transition:width .4s"></div></div></div>`;}).join('');
 
-  if(chartStatus) chartStatus.destroy();
-  const ctxS = document.getElementById('chart-status').getContext('2d');
-  chartStatus = new Chart(ctxS, {
-    type:'doughnut',
-    data:{ labels:statusLabels, datasets:[{ data:statusData, backgroundColor:statusLabels.map(s=>statusColors[s]||'#ccc'), borderWidth:2, borderColor:'transparent', hoverOffset:6 }] },
-    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:11}, padding:8 } }, tooltip:{ callbacks:{ label: ctx => ' €'+ctx.raw.toLocaleString('el-GR') } } }, cutout:'62%' }
-  });
+  const stages=[['Active','#185FA5'],['Draft','#9b9b9b'],['In review','#854F0B'],['Submitted','#3B6D11'],['Won','#27500A'],['Lost','#A32D2D']];
+  const mx2=Math.max(...stages.map(([s])=>byS[s]||0),1);
+  document.getElementById('ch-bars').innerHTML=stages.filter(([s])=>byS[s]>0).map(([s,c])=>{const v=byS[s]||0,pct=Math.round(v/mx2*100),cnt=P.filter(p=>p.status===s).length;return`<div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;font-weight:500;color:${c}">${s}</span><span style="font-size:12px;color:var(--text2)">€${v.toLocaleString('el-GR')} · ${cnt}</span></div><div style="height:8px;border-radius:999px;background:var(--bg3);overflow:hidden"><div style="height:100%;width:${pct}%;background:${c};border-radius:999px;transition:width .4s"></div></div></div>`;}).join('');
 
-  // Chart: Type breakdown
-  const byType = {};
-  proposals.forEach(p=>{ const t=p.type||'Budgetary'; byType[t]=(byType[t]||0)+(p.value||0); });
-  const typeLabels = Object.keys(byType);
-  const typeColors = {'Budgetary':'#854F0B','Public Tender':'#185FA5'};
-
-  if(chartType) chartType.destroy();
-  const ctxT = document.getElementById('chart-type').getContext('2d');
-  chartType = new Chart(ctxT, {
-    type:'doughnut',
-    data:{ labels:typeLabels, datasets:[{ data:typeLabels.map(t=>byType[t]), backgroundColor:typeLabels.map(t=>typeColors[t]||'#ccc'), borderWidth:2, borderColor:'transparent', hoverOffset:6 }] },
-    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:11}, padding:8 } }, tooltip:{ callbacks:{ label: ctx => ' €'+ctx.raw.toLocaleString('el-GR') } } }, cutout:'62%' }
-  });
-
-  // Team Workload bars
-  const teamEl = document.getElementById('chart-team');
-  const byTeam = {};
-  proposals.forEach(p=>{ if(p.assignee) byTeam[p.assignee]=(byTeam[p.assignee]||0)+1; });
-  const maxCount = Math.max(...Object.values(byTeam), 1);
-  teamEl.innerHTML = D.team.filter(m=>byTeam[m.id]).map(m=>{
-    const count = byTeam[m.id]||0;
-    const pct = Math.round(count/maxCount*100);
-    const bg = (LIGHT_BG[m.color]||'#E6F1FB');
-    const ini = (m.first[0]||'')+(m.last[0]||'');
-    return `<div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span class="avatar" style="width:22px;height:22px;background:${bg};color:${m.color};font-size:9px;flex-shrink:0">${ini}</span>
-        <span style="font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.first} ${m.last}</span>
-        <span style="font-size:12px;font-weight:600;color:var(--text)">${count}</span>
-      </div>
-      <div style="height:6px;border-radius:999px;background:var(--bg3);overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${m.color};border-radius:999px;transition:width .4s"></div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Pipeline Value Bars
-  const barsEl = document.getElementById('pipeline-bars');
-  const stageOrder = [['Active','#185FA5'],['Draft','#9b9b9b'],['In review','#854F0B'],['Submitted','#3B6D11'],['Won','#27500A'],['Lost','#A32D2D']];
-  const maxVal = Math.max(...stageOrder.map(([s])=>byStatus[s]||0), 1);
-  barsEl.innerHTML = stageOrder.filter(([s])=>byStatus[s]>0).map(([s,color])=>{
-    const v = byStatus[s]||0;
-    const pct = Math.round(v/maxVal*100);
-    const cnt = proposals.filter(p=>p.status===s).length;
-    return `<div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:12px;font-weight:500;color:${color}">${s}</span>
-        <span style="font-size:12px;color:var(--text2)">€${v.toLocaleString('el-GR')} · ${cnt}</span>
-      </div>
-      <div style="height:8px;border-radius:999px;background:var(--bg3);overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${color};border-radius:999px;transition:width .4s"></div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Urgent Deadlines
-  const deadlinesEl = document.getElementById('dash-deadlines');
-  const sorted = [...proposals].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
-  if(!sorted.length){ deadlinesEl.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>'; return; }
-  deadlinesEl.innerHTML = sorted.map(p=>{
-    const d = dl(p.deadline, p.status);
-    const isOverdue = new Date(p.deadline) < now && p.status !== 'Submitted';
-    return `<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:0.5px solid var(--border);transition:background .15s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
-      <div style="width:52px;text-align:center;flex-shrink:0">
-        <div style="font-size:13px;font-weight:700;color:${isOverdue?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5'}">${d.txt}</div>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
-        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.client}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>
-        ${av(p.assignee,22)}
-      </div>
-    </div>`;
-  }).join('');
+  const sorted=[...P].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
+  const de=document.getElementById('dash-dl');
+  if(!sorted.length){de.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>';return;}
+  de.innerHTML=sorted.map(p=>{const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''"><div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:11px;color:var(--text2)">${cname(p)}</div></div><div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div></div>`;}).join('');
 }
 
-// ── Proposals ────────────────────────────────────────────────
+// ═══ PROPOSALS ═══════════════════════════════════════════════════════════════
+function fillLeadFilter(){const sel=document.getElementById('p-lead');sel.innerHTML='<option value="">All leads</option>'+(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');}
+
 function renderProposals(){
-  const q=document.getElementById('p-search').value.toLowerCase(),fs=document.getElementById('f-status').value,fp=document.getElementById('f-priority').value,fa=document.getElementById('f-assignee').value;
-  const ft=document.getElementById('f-type').value;
-  const list=D.proposals.filter(p=>(!q||p.name.toLowerCase().includes(q)||(p.client||'').toLowerCase().includes(q))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa)&&(!ft||p.type===ft));
+  fillLeadFilter();
+  const q=document.getElementById('p-q').value.toLowerCase(),ft=document.getElementById('p-type').value,fs=document.getElementById('p-status').value,fp=document.getElementById('p-priority').value,fa=document.getElementById('p-lead').value;
+  const list=(D.proposals||[]).filter(p=>(!q||p.name.toLowerCase().includes(q)||cname(p).toLowerCase().includes(q))&&(!ft||( ft==='Budgetary'?(p.type||'Budgetary')==='Budgetary':p.type==='Public Tender'))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa));
   const tb=document.getElementById('p-list');
-  if(!list.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><i class="ti ti-file-off"></i>No proposals found</div></td></tr>`;return;}
-  const grandTotal=list.reduce((s,p)=>s+(p.value||0),0);
-  const byStatus={};list.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+(p.value||0);});
-  const summaryParts=Object.entries(byStatus).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:4px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
-  tb.innerHTML=list.map(p=>{const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';const typeLabel=p.type==='Public Tender'?'Tender':'Budgetary';const cname=clientName(p.clientId,p.client);return`<tr><td style="font-weight:500;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td><td><span class="badge ${tc(p.type)}">${typeLabel}</span></td><td style="color:var(--text2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cname}</td><td style="max-width:160px">${productTags(p.products)}</td><td>${v}</td><td class="${d.cls}">${d.txt}</td><td><span class="badge ${sc(p.status)}">${p.status}</span></td><td><span class="badge ${pc(p.priority)}">${p.priority}</span></td><td>${av(p.assignee)}</td><td><div class="row-actions"><button class="icon-btn" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button>${p.type==='Public Tender'?`<button class="icon-btn" onclick="openBidSheet(${p.id})" title="Bid Sheet" style="color:var(--info-text)"><i class="ti ti-clipboard-list"></i></button>`:''}<button class="icon-btn" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;}).join('')
-  +`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="4" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grandTotal).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${summaryParts}</div></td></tr>`;
+  const grand=list.reduce((s,p)=>s+(p.value||0),0);
+  const byS2={};list.forEach(p=>{byS2[p.status]=(byS2[p.status]||0)+(p.value||0);});
+  const sumParts=Object.entries(byS2).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:3px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
+  if(!list.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty"><i class="ti ti-file-off"></i>No proposals found</div></td></tr>`;return;}
+  tb.innerHTML=list.map(p=>{
+    const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';
+    const tl=(p.type||'Budgetary')==='Public Tender'?'Tender':'Budgetary';
+    return`<tr>
+      <td style="font-weight:500;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td>
+      <td><span class="badge ${tc(p.type||'Budgetary')}">${tl}</span></td>
+      <td style="color:var(--text2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cname(p)}</td>
+      <td><div class="prod-tags">${ptags(p.products)}</div></td>
+      <td style="color:var(--text2);font-size:12px">${p.partner||'—'}</td>
+      <td style="font-weight:500">${v}</td>
+      <td class="${d.cls}">${d.txt}</td>
+      <td><span class="badge ${sc(p.status)}">${p.status}</span></td>
+      <td><span class="badge ${pc(p.priority)}">${p.priority}</span></td>
+      <td>${av(p.assignee)}</td>
+      <td><div class="ra">
+        <button class="ib" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button>
+        ${p.type==='Public Tender'?`<button class="ib" onclick="openBidSheet(${p.id})" style="color:var(--info-text)"><i class="ti ti-clipboard-list"></i></button>`:''}
+        <button class="ib" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('')+`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="5" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grand).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px">${sumParts}</div></td></tr>`;
 }
 
-function updateStatusOptions(){
-  const type=document.getElementById('pm-type').value;
-  const sel=document.getElementById('pm-status');
-  const cur=sel.value;
-  sel.innerHTML=statusesForType(type).map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
+function updateStatuses(){
+  const type=document.getElementById('pm-type').value,sel=document.getElementById('pm-status'),cur=sel.value;
+  const stats=type==='Public Tender'?TSTAT:BSTAT;
+  sel.innerHTML=stats.map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
 }
+
+function fillClientDrop(){
+  const sel=document.getElementById('pm-client'),cur=sel.value;
+  sel.innerHTML='<option value="">— Select client —</option>'+(D.clients||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+
+function fillProdCheckboxes(sel){
+  const prods=D.products||PRODS;
+  document.getElementById('pm-products').innerHTML=prods.map(p=>`<label class="prod-cb" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:var(--bg2);border:.5px solid var(--border);border-radius:6px;padding:3px 8px"><input type="checkbox" value="${p}" ${(sel||[]).includes(p)?'checked':''} style="width:auto;padding:0;border:none"> ${p}</label>`).join('');
+}
+
+function getProds(){return[...document.querySelectorAll('#pm-products input:checked')].map(x=>x.value);}
 
 function openProposalModal(id){
   editPid=id||null;
-  document.getElementById('pm-assignee').innerHTML=D.team.map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  fillClientDrop();
+  document.getElementById('pm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
   if(id){
-    const p=D.proposals.find(x=>x.id===id);
+    const p=(D.proposals||[]).find(x=>x.id===id);
     document.getElementById('pm-title').textContent='Edit proposal';
-    document.getElementById('pm-name').value=p.name;
-    populateClientDropdown();document.getElementById('pm-client').value=p.clientId||'';
-    document.getElementById('pm-value').value=p.value||'';document.getElementById('pm-deadline').value=p.deadline||'';document.getElementById('pm-type').value=p.type||'Budgetary';updateStatusOptions();document.getElementById('pm-status').value=p.status;document.getElementById('pm-priority').value=p.priority;document.getElementById('pm-assignee').value=p.assignee||'';
+    document.getElementById('pm-name').value=p.name||'';
+    document.getElementById('pm-type').value=p.type||'Budgetary';updateStatuses();
+    document.getElementById('pm-client').value=p.clientId||'';
+    document.getElementById('pm-value').value=p.value||'';
+    document.getElementById('pm-deadline').value=p.deadline||'';
+    document.getElementById('pm-status').value=p.status||'Draft';
+    document.getElementById('pm-priority').value=p.priority||'Medium';
+    document.getElementById('pm-assignee').value=p.assignee||'';
     document.getElementById('pm-partner').value=p.partner||'';
-    renderProductCheckboxes(p.products||[]);
+    fillProdCheckboxes(p.products||[]);
     document.getElementById('pm-notes').value=p.notes||'';
   }else{
     document.getElementById('pm-title').textContent='New proposal';
-    ['pm-name','pm-client','pm-value','pm-deadline','pm-notes'].forEach(f=>document.getElementById(f).value='');
-    document.getElementById('pm-type').value='Budgetary';updateStatusOptions();document.getElementById('pm-status').value='Draft';document.getElementById('pm-priority').value='Medium';
-    if(D.team.length)document.getElementById('pm-assignee').value=D.team[0].id;
-    populateClientDropdown();
-    document.getElementById('pm-partner').value='';
-    renderProductCheckboxes([]);
+    ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('pm-type').value='Budgetary';updateStatuses();
+    document.getElementById('pm-status').value='Draft';
+    document.getElementById('pm-priority').value='Medium';
+    if(D.team&&D.team.length)document.getElementById('pm-assignee').value=D.team[0].id;
+    fillProdCheckboxes([]);
   }
-  document.getElementById('modal-proposal').style.display='flex';
+  openModal('m-proposal');
 }
 
 function saveProposal(){
   const name=document.getElementById('pm-name').value.trim();if(!name){document.getElementById('pm-name').focus();return;}
   const clientId=document.getElementById('pm-client').value;
   const clientObj=(D.clients||[]).find(c=>c.id===clientId);
-  const d={name,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,type:document.getElementById('pm-type').value,status:document.getElementById('pm-status').value,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getSelectedProducts(),notes:document.getElementById('pm-notes').value.trim()};
+  const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:document.getElementById('pm-status').value,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
+  if(!D.proposals)D.proposals=[];
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
-  else D.proposals.push({id:D.nextPid++,...d});
+  else{D.proposals.push({id:D.nextPid++,...d});}
   saveData();closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
 }
 
 function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData();renderProposals();renderDashboard();}
 
-// ── Tasks ────────────────────────────────────────────────────
+// ═══ TASKS ═══════════════════════════════════════════════════════════════════
 function renderTasks(){
   ['todo','inprogress','done'].forEach(col=>{
-    const el=document.getElementById('col-'+col),items=D.tasks.filter(t=>t.status===col);
+    const el=document.getElementById('col-'+col),items=(D.tasks||[]).filter(t=>t.status===col);
     document.getElementById('cnt-'+col).textContent=items.length;
     if(!items.length){el.innerHTML=`<div style="text-align:center;padding:1.5rem;font-size:12px;color:var(--text2)">Drop tasks here</div>`;return;}
     el.innerHTML=items.map(t=>{
-      const p=D.proposals.find(x=>x.id===t.proposal),d=dl(t.due);
-      const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:10px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:''; return`<div class="task-card" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})"><div class="task-title">${t.title}</div><div class="task-meta">${av(t.assignee)}${p?`<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.client}</span>`:''}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="icon-btn" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div></div>`;
+      const p=(D.proposals||[]).find(x=>x.id===t.proposal),d=dl(t.due,'');
+      const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:9px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'';
+      return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})"><div class="ktitle">${t.title}</div><div class="kmeta">${av(t.assignee)}${p?`<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${cname(p)}</span>`:''}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div></div>`;
     }).join('');
   });
 }
 
 function openTaskModal(id){
   editTid=id||null;
-  document.getElementById('tm-assignee').innerHTML=D.team.map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
-  document.getElementById('tm-proposal').innerHTML='<option value="">— None —</option>'+D.proposals.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('tm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  document.getElementById('tm-proposal').innerHTML='<option value="">— None —</option>'+(D.proposals||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   if(id){
-    const t=D.tasks.find(x=>x.id===id);
+    const t=(D.tasks||[]).find(x=>x.id===id);
     document.getElementById('tm-title').textContent='Edit task';
-    document.getElementById('tm-name').value=t.title;document.getElementById('tm-proposal').value=t.proposal||'';document.getElementById('tm-assignee').value=t.assignee||'';document.getElementById('tm-due').value=t.due||'';document.getElementById('tm-start').value=t.start||'';document.getElementById('tm-priority').value=t.priority;document.getElementById('tm-status').value=t.status;document.getElementById('tm-desc').value=t.desc||'';
+    document.getElementById('tm-name').value=t.title||'';
+    document.getElementById('tm-proposal').value=t.proposal||'';
+    document.getElementById('tm-assignee').value=t.assignee||'';
+    document.getElementById('tm-start').value=t.start||'';
+    document.getElementById('tm-due').value=t.due||'';
+    document.getElementById('tm-priority').value=t.priority||'Medium';
+    document.getElementById('tm-status').value=t.status||'todo';
+    document.getElementById('tm-desc').value=t.desc||'';
   }else{
     document.getElementById('tm-title').textContent='New task';
-    ['tm-name','tm-desc'].forEach(f=>document.getElementById(f).value='');
-    document.getElementById('tm-due').value='';
-    document.getElementById('tm-start').value='';document.getElementById('tm-priority').value='Medium';document.getElementById('tm-status').value='todo';
-    if(D.team.length)document.getElementById('tm-assignee').value=D.team[0].id;
+    ['tm-name','tm-desc','tm-start','tm-due'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('tm-priority').value='Medium';document.getElementById('tm-status').value='todo';
+    if(D.team&&D.team.length)document.getElementById('tm-assignee').value=D.team[0].id;
   }
-  document.getElementById('modal-task').style.display='flex';
+  openModal('m-task');
 }
 
 function saveTask(){
   const title=document.getElementById('tm-name').value.trim();if(!title){document.getElementById('tm-name').focus();return;}
   const d={title,proposal:parseInt(document.getElementById('tm-proposal').value)||null,assignee:document.getElementById('tm-assignee').value,start:document.getElementById('tm-start').value,due:document.getElementById('tm-due').value,priority:document.getElementById('tm-priority').value,status:document.getElementById('tm-status').value,desc:document.getElementById('tm-desc').value.trim()};
+  if(!D.tasks)D.tasks=[];
   if(editTid){const i=D.tasks.findIndex(t=>t.id===editTid);D.tasks[i]={...D.tasks[i],...d};}
-  else D.tasks.push({id:D.nextTid++,...d});
+  else{D.tasks.push({id:D.nextTid++,...d});}
   saveData();closeModals();renderTasks();toast('Task saved','check');
 }
-
-function delTask(id){D.tasks=D.tasks.filter(t=>t.id!==id);saveData();renderTasks();}
+function delTask(id){D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData();renderTasks();}
 function startDrag(e,id){dragTid=id;e.dataTransfer.effectAllowed='move';}
 function ev(e){e.preventDefault();}
-function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=D.tasks.find(x=>x.id===dragTid);if(t){t.status=col;saveData();renderTasks();}dragTid=null;}
+function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=(D.tasks||[]).find(x=>x.id===dragTid);if(t){t.status=col;saveData();renderTasks();}dragTid=null;}
 
-// ── Templates ────────────────────────────────────────────────
+// ═══ TEMPLATES ═══════════════════════════════════════════════════════════════
 function renderTemplates(){
-  const ICONS={Proposal:'ti-file-description',Tender:'ti-gavel',Technical:'ti-cpu',Financial:'ti-calculator',Legal:'ti-scale',Other:'ti-file'};
-  const COLS={Proposal:'#185FA5',Tender:'#3B6D11',Technical:'#854F0B',Financial:'#993556',Legal:'#534AB7',Other:'#5F5E5A'};
-  const grid=document.getElementById('tpl-grid');
-  if(!D.templates.length){grid.innerHTML=`<div class="empty"><i class="ti ti-template"></i>No templates yet</div>`;return;}
-  grid.innerHTML=D.templates.map(t=>{const c=COLS[t.cat]||'#5F5E5A',bg=LIGHT_BG[c]||'#F1EFE8';return`<div class="tpl-card"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:var(--radius);background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${ICONS[t.cat]||'ti-file'}" style="color:${c};font-size:18px"></i></div><div><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:11px;color:var(--text2)">${t.cat}</div></div></div><div style="font-size:12px;color:var(--text2);line-height:1.5;flex:1">${t.desc||''}</div><div style="display:flex;gap:6px"><button class="btn" style="font-size:12px;padding:5px 10px" onclick="copyTpl(${t.id})"><i class="ti ti-copy"></i> Copy</button><button class="icon-btn" onclick="delTpl(${t.id})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');
+  const TICS={Proposal:'ti-file-description',Tender:'ti-gavel',Technical:'ti-cpu',Financial:'ti-calculator',Legal:'ti-scale',Other:'ti-file'};
+  const TCOLS={Proposal:'#185FA5',Tender:'#3B6D11',Technical:'#854F0B',Financial:'#993556',Legal:'#534AB7',Other:'#5F5E5A'};
+  const g=document.getElementById('tpl-grid');
+  if(!(D.templates||[]).length){g.innerHTML='<div class="empty"><i class="ti ti-template"></i>No templates yet</div>';return;}
+  g.innerHTML=D.templates.map(t=>{const c=TCOLS[t.cat]||'#5F5E5A',bg=LIGHT[c]||'#F1EFE8';return`<div class="tpl-card"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:var(--r);background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${TICS[t.cat]||'ti-file'}" style="color:${c};font-size:18px"></i></div><div><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:11px;color:var(--text2)">${t.cat}</div></div></div><div style="font-size:12px;color:var(--text2);line-height:1.5;flex:1">${t.desc||''}</div><div style="display:flex;gap:6px"><button class="btn" style="font-size:12px;padding:5px 10px" onclick="copyTpl(${t.id})"><i class="ti ti-copy"></i> Copy</button><button class="ib" onclick="delTpl(${t.id})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');
 }
-
-function openTplModal(){['tpl-name','tpl-desc','tpl-body'].forEach(f=>document.getElementById(f).value='');document.getElementById('modal-tpl').style.display='flex';}
 function saveTemplate(){
   const name=document.getElementById('tpl-name').value.trim();if(!name){document.getElementById('tpl-name').focus();return;}
+  if(!D.templates)D.templates=[];
   D.templates.push({id:D.nextTplId++,name,cat:document.getElementById('tpl-cat').value,desc:document.getElementById('tpl-desc').value.trim(),body:document.getElementById('tpl-body').value});
   saveData();closeModals();renderTemplates();toast('Template saved','check');
 }
-function copyTpl(id){const t=D.templates.find(x=>x.id===id);if(!t)return;navigator.clipboard.writeText(t.body).then(()=>toast('Copied to clipboard!','copy')).catch(()=>prompt('Copy this content:',t.body));}
-function delTpl(id){if(!confirm('Delete this template?'))return;D.templates=D.templates.filter(t=>t.id!==id);saveData();renderTemplates();}
+function copyTpl(id){const t=(D.templates||[]).find(x=>x.id===id);if(!t)return;navigator.clipboard.writeText(t.body).then(()=>toast('Copied!','copy')).catch(()=>prompt('Copy:',t.body));}
+function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);saveData();renderTemplates();}
 
-// ── Team ─────────────────────────────────────────────────────
-function renderTeam(){
-  const grid=document.getElementById('user-grid');
-  if(!D.team.length){grid.innerHTML=`<div class="empty"><i class="ti ti-users"></i>No team members yet. Add your first member.</div>`;return;}
-  grid.innerHTML=D.team.map(u=>{
-    const bg=LIGHT_BG[u.color]||'#E6F1FB',ini=(u.first[0]||'')+(u.last[0]||'');
-    const props=D.proposals.filter(p=>p.assignee===u.id).length,open=D.tasks.filter(t=>t.assignee===u.id&&t.status!=='done').length;
-    return`<div class="user-card"><div class="avatar" style="width:44px;height:44px;background:${bg};color:${u.color};font-size:16px;flex-shrink:0">${ini}</div><div style="flex:1;min-width:0"><div style="font-weight:500;font-size:14px">${u.first} ${u.last}</div><div style="font-size:12px;color:var(--text2)">${u.role||'—'}</div>${u.email?`<div style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.email}</div>`:''}<div style="font-size:11px;color:var(--text2);margin-top:5px;display:flex;gap:12px"><span><i class="ti ti-file-description" style="font-size:11px"></i> ${props}</span><span><i class="ti ti-check-square" style="font-size:11px"></i> ${open} open</span></div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="icon-btn" onclick="openUserModal('${u.id}')"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delUser('${u.id}')" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></div>`;
-  }).join('');
-}
-
-function pickColor(el){document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');selColor=el.dataset.c;}
-
-function openUserModal(id){
-  editUid=id||null;
-  if(id){
-    const u=D.team.find(x=>x.id===id);
-    document.getElementById('um-title').textContent='Edit member';
-    document.getElementById('um-first').value=u.first;document.getElementById('um-last').value=u.last;document.getElementById('um-role').value=u.role||'';document.getElementById('um-email').value=u.email||'';
-    selColor=u.color;document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('sel',s.dataset.c===u.color));
-  }else{
-    document.getElementById('um-title').textContent='Add team member';
-    ['um-first','um-last','um-role','um-email'].forEach(f=>document.getElementById(f).value='');
-    selColor='#185FA5';document.querySelectorAll('.swatch').forEach((s,i)=>s.classList.toggle('sel',i===0));
-  }
-  document.getElementById('modal-user').style.display='flex';
-}
-
-function saveUser(){
-  const first=document.getElementById('um-first').value.trim();if(!first){document.getElementById('um-first').focus();return;}
-  const d={first,last:document.getElementById('um-last').value.trim(),role:document.getElementById('um-role').value.trim(),email:document.getElementById('um-email').value.trim(),color:selColor};
-  if(editUid){const i=D.team.findIndex(u=>u.id===editUid);D.team[i]={...D.team[i],...d};}
-  else D.team.push({id:'u'+D.nextUid++,...d});
-  saveData();closeModals();renderTeam();populateAssigneeFilter();toast('Member saved','check');
-}
-
-function delUser(id){
-  const inUse=D.proposals.some(p=>p.assignee===id)||D.tasks.some(t=>t.assignee===id);
-  if(inUse&&!confirm('This member is assigned to proposals or tasks. Remove anyway?'))return;
-  D.team=D.team.filter(u=>u.id!==id);saveData();renderTeam();populateAssigneeFilter();
-}
-
-function closeModals(){document.querySelectorAll('.modal-backdrop').forEach(m=>m.style.display='none');editPid=null;editTid=null;editUid=null;}
-document.querySelectorAll('.modal-backdrop').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModals();}));
-
-
-// ── Bid Sheet ────────────────────────────────────────────────────────────────
-let bidProposalId = null;
-
-function openBidSheet(id) {
-  bidProposalId = id;
-  const p = D.proposals.find(x => x.id === id);
-  if (!p) return;
-
-  // Populate manager dropdown
-  const mgr = document.getElementById('bs-manager');
-  mgr.innerHTML = D.team.map(t => `<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
-
-  // Populate status dropdown with tender statuses
-  const sts = document.getElementById('bs-status');
-  sts.innerHTML = TENDER_STATUSES.map(s => `<option${s===p.status?' selected':''}>${s}</option>`).join('');
-
-  // Set subtitle
-  document.getElementById('bs-subtitle').textContent = p.name + ' — ' + p.client;
-
-  // Load existing bid data or defaults
-  const b = p.bidSheet || {};
-
-  document.getElementById('bs-date').value = b.date || new Date().toISOString().split('T')[0];
-  mgr.value = b.manager || p.assignee || (D.team[0]||{}).id || '';
-  document.getElementById('bs-qno').value = b.qno || '';
-  document.getElementById('bs-authority').value = b.authority || p.client || '';
-  document.getElementById('bs-pub-date').value = b.pubDate || '';
-  document.getElementById('bs-protocol').value = b.protocol || '';
-  document.getElementById('bs-sys-num').value = b.sysNum || '';
-  document.getElementById('bs-desc').value = b.desc || p.notes || '';
-  document.getElementById('bs-cpv1').value = b.cpv1 || '';
-  document.getElementById('bs-cpv2').value = b.cpv2 || '';
-  document.getElementById('bs-partner').value = b.partner || '';
-  document.getElementById('bs-part-pct').value = b.partPct || '';
-  document.getElementById('bs-budget').value = b.budget || p.value || '';
-  document.getElementById('bs-amount-analysis').value = b.amountAnalysis || '';
-  document.getElementById('bs-price-net').value = b.priceNet || '';
-  document.getElementById('bs-price-vat').value = b.priceVat || '';
-  document.getElementById('bs-clarif-date').value = b.clarifDate || '';
-  document.getElementById('bs-submit-date').value = b.submitDate || p.deadline || '';
-  document.getElementById('bs-submit-time').value = b.submitTime || '';
-  document.getElementById('bs-guarantee-amt').value = b.guaranteeAmt || '';
-  document.getElementById('bs-guarantee-from').value = b.guaranteeFrom || '';
-  document.getElementById('bs-guarantee-to').value = b.guaranteeTo || '';
-  document.getElementById('bs-bond-from').value = b.bondFrom || '';
-  document.getElementById('bs-bond-to').value = b.bondTo || '';
-  document.getElementById('bs-notes').value = b.notes || '';
-
-  // Radio buttons
-  const tenderType = b.tenderType || 'Ανοικτός';
-  document.querySelectorAll('input[name="bs-tender-type"]').forEach(r => r.checked = r.value === tenderType);
-  const partType = b.partType || '100%';
-  document.querySelectorAll('input[name="bs-part"]').forEach(r => r.checked = r.value === partType);
-  togglePartner(partType === 'subcontract');
-  const perfBond = b.perfBond || 'Όχι';
-  document.querySelectorAll('input[name="bs-perf-bond"]').forEach(r => r.checked = r.value === perfBond);
-
-  // Checkboxes
-  document.getElementById('bs-sub-eshdis').checked = !!(b.subProcess||{}).eshdis;
-  document.getElementById('bs-sub-email').checked = !!(b.subProcess||{}).email;
-  document.getElementById('bs-sub-cosmo').checked = !!(b.subProcess||{}).cosmo;
-  document.getElementById('bs-sub-inperson').checked = !!(b.subProcess||{}).inperson;
-
-  document.getElementById('bid-sheet').style.display = 'flex';
-}
-
-function togglePartner(show) {
-  document.getElementById('bs-part-pct').style.display = show ? 'block' : 'none';
-}
-
-async function saveBidSheet() {
-  const p = D.proposals.find(x => x.id === bidProposalId);
-  if (!p) return;
-
-  p.status = document.getElementById('bs-status').value;
-  p.assignee = document.getElementById('bs-manager').value;
-
-  p.bidSheet = {
-    date: document.getElementById('bs-date').value,
-    manager: document.getElementById('bs-manager').value,
-    qno: document.getElementById('bs-qno').value,
-    authority: document.getElementById('bs-authority').value,
-    pubDate: document.getElementById('bs-pub-date').value,
-    protocol: document.getElementById('bs-protocol').value,
-    sysNum: document.getElementById('bs-sys-num').value,
-    tenderType: document.querySelector('input[name="bs-tender-type"]:checked')?.value || 'Ανοικτός',
-    subProcess: {
-      eshdis: document.getElementById('bs-sub-eshdis').checked,
-      email: document.getElementById('bs-sub-email').checked,
-      cosmo: document.getElementById('bs-sub-cosmo').checked,
-      inperson: document.getElementById('bs-sub-inperson').checked,
-    },
-    desc: document.getElementById('bs-desc').value,
-    cpv1: document.getElementById('bs-cpv1').value,
-    cpv2: document.getElementById('bs-cpv2').value,
-    partType: document.querySelector('input[name="bs-part"]:checked')?.value || '100%',
-    partPct: document.getElementById('bs-part-pct').value,
-    partner: document.getElementById('bs-partner').value,
-    budget: parseFloat(document.getElementById('bs-budget').value) || 0,
-    amountAnalysis: document.getElementById('bs-amount-analysis').value,
-    priceNet: parseFloat(document.getElementById('bs-price-net').value) || 0,
-    priceVat: parseFloat(document.getElementById('bs-price-vat').value) || 0,
-    clarifDate: document.getElementById('bs-clarif-date').value,
-    submitDate: document.getElementById('bs-submit-date').value,
-    submitTime: document.getElementById('bs-submit-time').value,
-    guaranteeAmt: parseFloat(document.getElementById('bs-guarantee-amt').value) || 0,
-    guaranteeFrom: document.getElementById('bs-guarantee-from').value,
-    guaranteeTo: document.getElementById('bs-guarantee-to').value,
-    perfBond: document.querySelector('input[name="bs-perf-bond"]:checked')?.value || 'Όχι',
-    bondFrom: document.getElementById('bs-bond-from').value,
-    bondTo: document.getElementById('bs-bond-to').value,
-    notes: document.getElementById('bs-notes').value,
-  };
-
-  await saveData();
-  closeBidSheet();
-  renderProposals();
-  toast('Bid sheet saved', 'check');
-}
-
-function closeBidSheet() {
-  document.getElementById('bid-sheet').style.display = 'none';
-  bidProposalId = null;
-}
-
-document.getElementById('bid-sheet').addEventListener('click', e => {
-  if (e.target === document.getElementById('bid-sheet')) closeBidSheet();
-});
-
-
-// ── Clients ──────────────────────────────────────────────────────────────────
-let editCid = null;
-
+// ═══ CLIENTS ═════════════════════════════════════════════════════════════════
 function renderClients(){
-  const q=(document.getElementById('cl-search')||{value:''}).value.toLowerCase();
+  const q=(document.getElementById('cl-q')||{value:''}).value.toLowerCase();
   const cat=(document.getElementById('cl-cat')||{value:''}).value;
   const clients=(D.clients||[]).filter(c=>(!q||c.name.toLowerCase().includes(q)||(c.contact||'').toLowerCase().includes(q))&&(!cat||c.category===cat));
-  const tb=document.getElementById('cl-list');
-  if(!tb)return;
-  if(!clients.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><i class="ti ti-building-off"></i>No clients found</div></td></tr>`;return;}
+  const tb=document.getElementById('cl-list');if(!tb)return;
+  if(!clients.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><i class="ti ti-building-off"></i>No clients found</div></td></tr>';return;}
+  const CCS={'Municipality':'b-Municipality','Hospital':'b-Hospital','University':'b-University','Ministry':'b-Ministry','Region':'b-Region','Defence':'b-Defence','Public Body':'b-Public','Other':'b-Other'};
   tb.innerHTML=clients.map(c=>{
-    const props=D.proposals.filter(p=>p.clientId===c.id||p.client===c.name);
+    const props=(D.proposals||[]).filter(p=>p.clientId===c.id||p.client===c.name);
     const val=props.reduce((s,p)=>s+(p.value||0),0);
-    const catColors={'Municipality':'b-active','Hospital':'b-review','University':'b-submitted','Ministry':'b-draft','Region':'b-medium','Defence':'b-high','Public Body':'b-low','Other':'b-draft'};
-    return`<tr><td style="font-weight:500">${c.name}</td><td><span class="badge ${catColors[c.category]||'b-draft'}">${c.category}</span></td><td>${c.contact||'—'}</td><td style="color:var(--text2);font-size:12px">${c.email||'—'}</td><td style="color:var(--text2);font-size:12px">${c.phone||'—'}</td><td style="text-align:center">${props.length}</td><td style="font-weight:500;color:var(--info-text)">${val?'€'+Number(val).toLocaleString('el-GR'):'—'}</td><td><div class="row-actions"><button class="icon-btn" onclick="openClientModal('${c.id}')"><i class="ti ti-edit"></i></button><button class="icon-btn" onclick="delClient('${c.id}')" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></td></tr>`;
+    return`<tr>
+      <td style="font-weight:500">${c.name}</td>
+      <td><span class="badge ${CCS[c.category]||'b-Other'}">${c.category}</span></td>
+      <td>${c.contact||'—'}<br><span style="font-size:11px;color:var(--text2)">${c.role||''}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
+      <td style="font-size:12px;color:var(--text2)">${c.phone||'—'}</td>
+      <td style="text-align:center;font-weight:500">${props.length}</td>
+      <td style="font-weight:500;color:var(--info-text)">${val?'€'+Number(val).toLocaleString('el-GR'):'—'}</td>
+      <td><div class="ra">
+        <button class="ib" onclick="openClientModal('${c.id}')"><i class="ti ti-edit"></i></button>
+        <button class="ib" onclick="delClient('${c.id}')" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
   }).join('');
 }
 
@@ -1119,6 +876,7 @@ function openClientModal(id){
   editCid=id||null;
   if(id){
     const c=(D.clients||[]).find(x=>x.id===id);
+    if(!c)return;
     document.getElementById('cm-title').textContent='Edit client';
     document.getElementById('cm-name').value=c.name||'';
     document.getElementById('cm-cat').value=c.category||'Other';
@@ -1134,215 +892,124 @@ function openClientModal(id){
     ['cm-name','cm-contact','cm-role','cm-email','cm-phone','cm-afm','cm-address','cm-notes'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('cm-cat').value='Municipality';
   }
-  document.getElementById('modal-client').style.display='flex';
+  openModal('m-client');
 }
 
 function saveClient(){
-  const name=document.getElementById('cm-name').value.trim();
-  if(!name){document.getElementById('cm-name').focus();return;}
+  const name=document.getElementById('cm-name').value.trim();if(!name){document.getElementById('cm-name').focus();return;}
   const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim()};
-  if(!D.clients) D.clients=[];
-  if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);D.clients[i]={...D.clients[i],...d};}
-  else{D.clients.push({id:'c'+(D.nextCid=D.nextCid?D.nextCid+1:100),...d});}
-  saveData();closeModals();renderClients();populateClientDropdown();toast('Client saved','check');
+  if(!D.clients)D.clients=[];
+  if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);if(i>=0)D.clients[i]={...D.clients[i],...d};}
+  else{if(!D.nextCid)D.nextCid=100;D.clients.push({id:'c'+D.nextCid,...d});D.nextCid++;}
+  saveData();closeModals();renderClients();fillClientDrop();toast('Client saved','check');
 }
+function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);saveData();renderClients();}
 
-function delClient(id){
-  const inUse=D.proposals.some(p=>p.clientId===id);
-  if(inUse&&!confirm('This client has linked proposals. Remove anyway?'))return;
-  D.clients=D.clients.filter(c=>c.id!==id);saveData();renderClients();toast('Client removed');
+// ═══ TEAM ═════════════════════════════════════════════════════════════════════
+function renderTeam(){
+  const g=document.getElementById('team-grid');
+  if(!(D.team||[]).length){g.innerHTML='<div class="empty"><i class="ti ti-users"></i>No team members</div>';return;}
+  g.innerHTML=D.team.map(u=>{
+    const bg=LIGHT[u.color]||'#E6F1FB',ini=(u.first[0]||'')+(u.last[0]||'');
+    const props=(D.proposals||[]).filter(p=>p.assignee===u.id).length;
+    const open=(D.tasks||[]).filter(t=>t.assignee===u.id&&t.status!=='done').length;
+    return`<div class="ucard"><div class="av" style="width:44px;height:44px;background:${bg};color:${u.color};font-size:16px">${ini}</div><div style="flex:1;min-width:0"><div style="font-weight:500;font-size:14px">${u.first} ${u.last}</div><div style="font-size:12px;color:var(--text2)">${u.role||'—'}</div>${u.email?`<div style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis">${u.email}</div>`:''}<div style="font-size:11px;color:var(--text2);margin-top:5px;display:flex;gap:12px"><span><i class="ti ti-file-description" style="font-size:11px"></i> ${props}</span><span><i class="ti ti-check-square" style="font-size:11px"></i> ${open} open</span></div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="ib" onclick="openUserModal('${u.id}')"><i class="ti ti-edit"></i></button><button class="ib" onclick="delUser('${u.id}')" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button></div></div>`;
+  }).join('');
 }
+function pickColor(el){document.querySelectorAll('.sw').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');selColor=el.dataset.c;}
+function openUserModal(id){
+  editUid=id||null;
+  if(id){
+    const u=(D.team||[]).find(x=>x.id===id);if(!u)return;
+    document.getElementById('um-title').textContent='Edit member';
+    document.getElementById('um-first').value=u.first||'';document.getElementById('um-last').value=u.last||'';
+    document.getElementById('um-role').value=u.role||'';document.getElementById('um-email').value=u.email||'';
+    selColor=u.color;document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('sel',s.dataset.c===u.color));
+  }else{
+    document.getElementById('um-title').textContent='Add member';
+    ['um-first','um-last','um-role','um-email'].forEach(f=>document.getElementById(f).value='');
+    selColor='#185FA5';document.querySelectorAll('.sw').forEach((s,i)=>s.classList.toggle('sel',i===0));
+  }
+  openModal('m-user');
+}
+function saveUser(){
+  const first=document.getElementById('um-first').value.trim();if(!first){document.getElementById('um-first').focus();return;}
+  const d={first,last:document.getElementById('um-last').value.trim(),role:document.getElementById('um-role').value.trim(),email:document.getElementById('um-email').value.trim(),color:selColor};
+  if(!D.team)D.team=[];
+  if(editUid){const i=D.team.findIndex(u=>u.id===editUid);D.team[i]={...D.team[i],...d};}
+  else{D.team.push({id:'u'+D.nextUid++,...d});}
+  saveData();closeModals();renderTeam();toast('Member saved','check');
+}
+function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);saveData();renderTeam();}
 
-function populateClientDropdown(){
-  const sel=document.getElementById('pm-client');
-  if(!sel)return;
-  const cur=sel.value;
-  sel.innerHTML='<option value="">— Select client —</option>'+(D.clients||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  if(cur) sel.value=cur;
+// ═══ BID SHEET ═══════════════════════════════════════════════════════════════
+function openBidSheet(id){
+  bidPid=id;const p=(D.proposals||[]).find(x=>x.id===id);if(!p)return;
+  document.getElementById('bs-sub').textContent=p.name+' — '+cname(p);
+  document.getElementById('bs-mgr').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  document.getElementById('bs-status').innerHTML=TSTAT.map(s=>`<option${s===p.status?' selected':''}>${s}</option>`).join('');
+  const b=p.bidSheet||{};
+  document.getElementById('bs-date').value=b.date||new Date().toISOString().split('T')[0];
+  document.getElementById('bs-mgr').value=b.manager||p.assignee||'';
+  document.getElementById('bs-qno').value=b.qno||'';
+  document.getElementById('bs-auth').value=b.auth||cname(p);
+  document.getElementById('bs-pubdate').value=b.pubdate||'';
+  document.getElementById('bs-proto').value=b.proto||'';
+  document.getElementById('bs-sysnum').value=b.sysnum||'';
+  document.getElementById('bs-desc').value=b.desc||p.notes||'';
+  document.getElementById('bs-cpv1').value=b.cpv1||'';
+  document.getElementById('bs-cpv2').value=b.cpv2||'';
+  document.getElementById('bs-partner').value=b.partner||p.partner||'';
+  document.getElementById('bs-partpct').value=b.partpct||'';
+  document.getElementById('bs-partpct').style.display=b.parttype==='subcontract'?'block':'none';
+  document.getElementById('bs-budget').value=b.budget||p.value||'';
+  document.getElementById('bs-analysis').value=b.analysis||'';
+  document.getElementById('bs-net').value=b.net||'';
+  document.getElementById('bs-vat').value=b.vat||'';
+  document.getElementById('bs-clarif').value=b.clarif||'';
+  document.getElementById('bs-subdate').value=b.subdate||p.deadline||'';
+  document.getElementById('bs-subtime').value=b.subtime||'';
+  document.getElementById('bs-gamt').value=b.gamt||'';
+  document.getElementById('bs-gfrom').value=b.gfrom||'';
+  document.getElementById('bs-gto').value=b.gto||'';
+  document.getElementById('bs-bfrom').value=b.bfrom||'';
+  document.getElementById('bs-bto').value=b.bto||'';
+  document.getElementById('bs-notes').value=b.notes||'';
+  const tt=b.ttype||'Ανοικτός';document.querySelectorAll('input[name="bs-ttype"]').forEach(r=>r.checked=r.value===tt);
+  const pt=b.parttype||'100%';document.querySelectorAll('input[name="bs-part"]').forEach(r=>r.checked=r.value===pt);
+  const pf=b.perf||'Όχι';document.querySelectorAll('input[name="bs-perf"]').forEach(r=>r.checked=r.value===pf);
+  document.getElementById('bs-eshdis').checked=!!(b.sub||{}).eshdis;
+  document.getElementById('bs-email').checked=!!(b.sub||{}).email;
+  document.getElementById('bs-cosmo').checked=!!(b.sub||{}).cosmo;
+  document.getElementById('bs-inperson').checked=!!(b.sub||{}).inperson;
+  document.getElementById('bid-sheet').style.display='flex';
 }
+async function saveBidSheet(){
+  const p=(D.proposals||[]).find(x=>x.id===bidPid);if(!p)return;
+  p.status=document.getElementById('bs-status').value;
+  p.assignee=document.getElementById('bs-mgr').value;
+  p.bidSheet={date:document.getElementById('bs-date').value,manager:document.getElementById('bs-mgr').value,qno:document.getElementById('bs-qno').value,auth:document.getElementById('bs-auth').value,pubdate:document.getElementById('bs-pubdate').value,proto:document.getElementById('bs-proto').value,sysnum:document.getElementById('bs-sysnum').value,ttype:document.querySelector('input[name="bs-ttype"]:checked')?.value||'Ανοικτός',sub:{eshdis:document.getElementById('bs-eshdis').checked,email:document.getElementById('bs-email').checked,cosmo:document.getElementById('bs-cosmo').checked,inperson:document.getElementById('bs-inperson').checked},desc:document.getElementById('bs-desc').value,cpv1:document.getElementById('bs-cpv1').value,cpv2:document.getElementById('bs-cpv2').value,parttype:document.querySelector('input[name="bs-part"]:checked')?.value||'100%',partpct:document.getElementById('bs-partpct').value,partner:document.getElementById('bs-partner').value,budget:parseFloat(document.getElementById('bs-budget').value)||0,analysis:document.getElementById('bs-analysis').value,net:parseFloat(document.getElementById('bs-net').value)||0,vat:parseFloat(document.getElementById('bs-vat').value)||0,clarif:document.getElementById('bs-clarif').value,subdate:document.getElementById('bs-subdate').value,subtime:document.getElementById('bs-subtime').value,gamt:parseFloat(document.getElementById('bs-gamt').value)||0,gfrom:document.getElementById('bs-gfrom').value,gto:document.getElementById('bs-gto').value,perf:document.querySelector('input[name="bs-perf"]:checked')?.value||'Όχι',bfrom:document.getElementById('bs-bfrom').value,bto:document.getElementById('bs-bto').value,notes:document.getElementById('bs-notes').value};
+  await saveData();closeBidSheet();renderProposals();toast('Bid sheet saved','check');
+}
+function closeBidSheet(){document.getElementById('bid-sheet').style.display='none';bidPid=null;}
+document.getElementById('bid-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('bid-sheet'))closeBidSheet();});
 
-function renderProductCheckboxes(selected){
-  const prods=D.products||['EDR','MDR','NIS2','Pen Test','Firewall','ClearSkies','Security Awareness Training','vCISO','BCP/DR','SOC','Vulnerability Management','Email Security'];
-  const el=document.getElementById('pm-products');if(!el)return;
-  el.innerHTML=prods.map(p=>`<label style="display:inline-flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:var(--bg2);border:0.5px solid var(--border);border-radius:6px;padding:3px 8px"><input type="checkbox" value="${p}" ${(selected||[]).includes(p)?'checked':''} style="width:auto;padding:0;border:none"> ${p}</label>`).join('');
-}
-
-function getSelectedProducts(){
-  return [...document.querySelectorAll('#pm-products input:checked')].map(x=>x.value);
-}
-
-// ── Export / Import for Claude ──────────────────────────────
-function exportForClaude(){
-  const snap=JSON.stringify(D,null,2);
-  navigator.clipboard.writeText(snap).then(()=>toast('Data copied — paste into Claude!','check')).catch(()=>{const t=document.createElement('textarea');t.value=snap;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('Copied!','check');});
-}
-function openImportModal(){document.getElementById('import-json').value='';document.getElementById('import-err').style.display='none';document.getElementById('modal-import').style.display='flex';}
+// ═══ EXPORT / IMPORT ═════════════════════════════════════════════════════════
+function exportForClaude(){const s=JSON.stringify(D,null,2);navigator.clipboard.writeText(s).then(()=>toast('Copied — paste into Claude!','check')).catch(()=>prompt('Copy this:',s));}
 async function doImport(){
-  const raw=document.getElementById('import-json').value.trim(),err=document.getElementById('import-err');
-  try{
-    const p=JSON.parse(raw);
-    if(!p.proposals||!p.tasks||!p.team){err.textContent='Invalid data — paste the full JSON from Claude.';err.style.display='block';return;}
-    D=p;await saveData();closeModals();renderCurrentTab();populateAssigneeFilter();toast('Workspace updated!','check');
-  }catch(e){err.textContent='Could not parse JSON. Copy the full response from Claude.';err.style.display='block';}
+  const raw=document.getElementById('imp-json').value.trim(),err=document.getElementById('imp-err');
+  try{const p=JSON.parse(raw);if(!p.proposals||!p.team){err.textContent='Invalid data';err.style.display='block';return;}D=p;await saveData();closeModals();renderAll();toast('Workspace updated!','check');}
+  catch(e){err.textContent='Could not parse JSON';err.style.display='block';}
+}
+
+// ═══ BOOT ═════════════════════════════════════════════════════════════════════
+loadCFG();
+if(CFG.gistId&&CFG.token){
+  document.getElementById('app').style.display='block';
+  refreshData().then(()=>{autoTimer=setInterval(silentRefresh,30000);});
+}else{
+  document.getElementById('setup-screen').style.display='flex';
 }
 </script>
-
-<!-- Import modal -->
-<div class="modal-backdrop" id="modal-import" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500">Import from Claude</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div style="font-size:13px;color:var(--text2);line-height:1.6;padding:.75rem;background:var(--bg2);border-radius:8px;margin-bottom:.25rem"><strong style="color:var(--text)">How it works:</strong> click <em>Export for Claude</em>, paste into Claude and ask for changes or reports. When Claude returns updated JSON, paste it here.</div>
-      <div class="field"><label>Paste Claude response here</label><textarea id="import-json" rows="10" placeholder='{"proposals":[...],"tasks":[...],...}'></textarea></div>
-      <div style="font-size:12px;color:#A32D2D;display:none" id="import-err"></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="doImport()"><i class="ti ti-check"></i> Apply changes</button></div>
-  </div>
-</div>
-
-
-<!-- Client Modal -->
-<div class="modal-backdrop" id="modal-client" style="display:none">
-  <div class="modal">
-    <div class="modal-header"><span style="font-weight:500" id="cm-title">Add client</span><button class="icon-btn" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <div class="two-col"><div class="field"><label>Client name</label><input id="cm-name" placeholder="e.g. Municipality of Athens"></div><div class="field"><label>Category</label><select id="cm-cat"><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select></div></div>
-      <div class="two-col"><div class="field"><label>Primary contact</label><input id="cm-contact" placeholder="Full name"></div><div class="field"><label>Title / Role</label><input id="cm-role" placeholder="e.g. IT Director"></div></div>
-      <div class="two-col"><div class="field"><label>Email</label><input id="cm-email" type="email" placeholder="contact@org.gr"></div><div class="field"><label>Phone</label><input id="cm-phone" placeholder="+30 210 ..."></div></div>
-      <div class="two-col"><div class="field"><label>ΑΦΜ</label><input id="cm-afm" placeholder="Tax ID"></div><div class="field"><label>Address</label><input id="cm-address" placeholder="Street, City"></div></div>
-      <div class="field"><label>Notes</label><textarea id="cm-notes" rows="2" placeholder="Internal notes…"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-primary" onclick="saveClient()">Save client</button></div>
-  </div>
-</div>
-
-<!-- Bid Sheet Modal -->
-<div class="bid-backdrop" id="bid-sheet" style="display:none">
-  <div class="bid-sheet">
-    <div class="bid-header">
-      <div>
-        <div class="bid-title">ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ ΣΥΜΜΕΤΟΧΗΣ ΣΕ ΔΗΜΟΣΙΟ ΔΙΑΓΩΝΙΣΜΟ</div>
-        <div class="bid-subtitle" id="bs-subtitle">Public Tender Bid Sheet</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-primary" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save</button>
-        <button class="icon-btn" onclick="closeBidSheet()"><i class="ti ti-x"></i></button>
-      </div>
-    </div>
-    <div class="bid-body">
-
-      <!-- Section 1: General -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Γενικά Στοιχεία</div>
-        <div class="bid-grid">
-          <div class="bid-field"><label>Ημερομηνία</label><input type="date" id="bs-date"></div>
-          <div class="bid-field"><label>Account Manager</label><select id="bs-manager"></select></div>
-          <div class="bid-field"><label>Q No.</label><input type="text" id="bs-qno" placeholder="Quote number"></div>
-          <div class="bid-field"><label>Status</label><select id="bs-status"></select></div>
-        </div>
-      </div>
-
-      <!-- Section 2: Tender Authority -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Αναθέτουσα Αρχή</div>
-        <div class="bid-grid">
-          <div class="bid-field full"><label>Αναθέτουσα Αρχή</label><input type="text" id="bs-authority" placeholder="e.g. Δήμος Παλαιού Φαλήρου"></div>
-          <div class="bid-field"><label>Ημερομηνία Διακήρυξης</label><input type="date" id="bs-pub-date"></div>
-          <div class="bid-field"><label>Αρ. Πρωτοκόλλου</label><input type="text" id="bs-protocol" placeholder="e.g. 6001971"></div>
-          <div class="bid-field"><label>Συστημικός Αρ. Διαγωνισμού</label><input type="text" id="bs-sys-num" placeholder="e.g. 421049"></div>
-          <div class="bid-field"><label>Είδος Διαγωνισμού</label>
-            <div class="bid-toggle">
-              <label><input type="radio" name="bs-tender-type" value="Ανοικτός" checked> Ανοικτός</label>
-              <label><input type="radio" name="bs-tender-type" value="Πρόσκληση"> Πρόσκληση</label>
-              <label><input type="radio" name="bs-tender-type" value="Απ' ευθείας Ανάθεση"> Απ' ευθείας Ανάθεση</label>
-            </div>
-          </div>
-          <div class="bid-field"><label>Διαδικασία Κατάθεσης</label>
-            <div class="bid-toggle">
-              <label><input type="checkbox" id="bs-sub-eshdis"> ΕΣΗΔΗΣ</label>
-              <label><input type="checkbox" id="bs-sub-email"> Email</label>
-              <label><input type="checkbox" id="bs-sub-cosmo"> CosmoOne</label>
-              <label><input type="checkbox" id="bs-sub-inperson"> Αυτοπροσώπως</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 3: Project -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Περιγραφή Έργου</div>
-        <div class="bid-grid">
-          <div class="bid-field full"><label>Περιγραφή Έργου</label><textarea id="bs-desc" rows="3" placeholder="Detailed project description…"></textarea></div>
-          <div class="bid-field"><label>CPV Code 1</label><input type="text" id="bs-cpv1" placeholder="e.g. 48600000-4"></div>
-          <div class="bid-field"><label>CPV Code 2</label><input type="text" id="bs-cpv2" placeholder="Optional"></div>
-        </div>
-      </div>
-
-      <!-- Section 4: Participation -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Συμμετοχή</div>
-        <div class="bid-grid">
-          <div class="bid-field"><label>Ποσοστό Συμμετοχής</label>
-            <div class="bid-toggle" style="margin-bottom:6px">
-              <label><input type="radio" name="bs-part" value="100%" id="bs-part-100" checked onclick="togglePartner(false)"> 100% ODYSSEY</label>
-              <label><input type="radio" name="bs-part" value="subcontract" onclick="togglePartner(true)"> Υπεργολαβία &lt;30%</label>
-            </div>
-            <input type="text" id="bs-part-pct" placeholder="Subcontract %" style="display:none;margin-top:4px">
-          </div>
-          <div class="bid-field"><label>Συνεργάτης (αν υπάρχει)</label><input type="text" id="bs-partner" placeholder="Partner name if any"></div>
-        </div>
-      </div>
-
-      <!-- Section 5: Financial -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Οικονομικά Στοιχεία</div>
-        <div class="bid-grid">
-          <div class="bid-field"><label>Προϋπολογισμός Έργου (€ + ΦΠΑ)</label><input type="number" id="bs-budget" placeholder="0.00"></div>
-          <div class="bid-field"><label>Ανάλυση Ποσών</label><input type="text" id="bs-amount-analysis" placeholder="Breakdown notes"></div>
-          <div class="bid-field"><label>ODYSSEY Τιμή (Καθαρή) €</label><input type="number" id="bs-price-net" placeholder="0.00"></div>
-          <div class="bid-field"><label>ODYSSEY Τιμή (με ΦΠΑ) €</label><input type="number" id="bs-price-vat" placeholder="0.00"></div>
-        </div>
-      </div>
-
-      <!-- Section 6: Deadlines & Guarantees -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Προθεσμίες & Εγγυήσεις</div>
-        <div class="bid-grid">
-          <div class="bid-field"><label>Ημερομηνία Λήξης Διευκρινήσεων</label><input type="date" id="bs-clarif-date"></div>
-          <div class="bid-field"><label>Τελική Ημερομηνία / Ώρα Κατάθεσης</label>
-            <div style="display:flex;gap:6px"><input type="date" id="bs-submit-date" style="flex:1"><input type="time" id="bs-submit-time" style="width:90px"></div>
-          </div>
-          <div class="bid-field"><label>Ποσό Εγγυητικής Συμμετοχής (€)</label><input type="number" id="bs-guarantee-amt" placeholder="0.00"></div>
-          <div class="bid-field"><label>Ημερομηνίες Ισχύος Ε.Σ.</label>
-            <div style="display:flex;gap:6px;align-items:center"><input type="date" id="bs-guarantee-from" style="flex:1"><span style="font-size:12px;color:var(--text2)">έως</span><input type="date" id="bs-guarantee-to" style="flex:1"></div>
-          </div>
-          <div class="bid-field"><label>Εγγυητική Καλής Εκτέλεσης</label>
-            <div class="bid-toggle">
-              <label><input type="radio" name="bs-perf-bond" value="Ναι"> Ναι</label>
-              <label><input type="radio" name="bs-perf-bond" value="Όχι" checked> Όχι</label>
-            </div>
-          </div>
-          <div class="bid-field"><label>Ημερομηνίες Ισχύος Ε.Κ.Ε.</label>
-            <div style="display:flex;gap:6px;align-items:center"><input type="date" id="bs-bond-from" style="flex:1"><span style="font-size:12px;color:var(--text2)">έως</span><input type="date" id="bs-bond-to" style="flex:1"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 7: Notes -->
-      <div class="bid-section">
-        <div class="bid-section-hdr">Σημειώσεις Bid Manager</div>
-        <div class="bid-grid">
-          <div class="bid-field full"><textarea id="bs-notes" rows="3" placeholder="Internal notes, action items, reminders…"></textarea></div>
-        </div>
-      </div>
-
-    </div>
-    <div class="bid-footer">
-      <button class="btn" onclick="closeBidSheet()">Close</button>
-      <button class="btn btn-primary" onclick="saveBidSheet()"><i class="ti ti-device-floppy"></i> Save Bid Sheet</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
