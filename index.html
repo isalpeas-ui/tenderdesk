@@ -750,7 +750,7 @@ async function refreshData(){
   catch(e){setSS('error');toast('Sync error','alert-circle');}
 }
 
-async function silentRefresh(){try{const data=await readGist();if(data&&data.proposals){D=data;renderAll();document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}}catch(e){}}
+async function silentRefresh(){try{const data=await readGist();if(data&&data.proposals){D=data;renderAll(true);document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}}catch(e){}}
 
 async function saveData(){
   setSS('saving');D.updatedAt=new Date().toISOString();
@@ -1251,16 +1251,65 @@ function statusColor(s,alpha){
   return`rgba(200,200,200,${a})`;
 }
 
-function geoMatchStatus(featName){
-  const fn=(featName||'').toLowerCase().replace(/δήμος?\s*/,'').replace(/αθηναίων/,'αθήνα').trim();
+// NUTS3 ID → English region name mapping for Greece
+const NUTS_EN={
+  'EL301':'Attica North','EL302':'Attica West','EL303':'Piraeus','EL304':'Athens',
+  'EL305':'Eastern Attica','EL306':'Western Attica','EL307':'Islands',
+  'EL411':'Lesvos Limnos','EL412':'Samos','EL413':'Chios',
+  'EL421':'Dodecanese','EL422':'Cyclades',
+  'EL431':'Irakleio','EL432':'Lasithi','EL433':'Rethymno','EL434':'Chania',
+  'EL511':'Evros','EL512':'Xanthi','EL513':'Rhodope','EL514':'Kavala','EL515':'Drama','EL516':'Thassos',
+  'EL521':'Thessaloniki','EL522':'Chalkidiki','EL523':'Serres','EL524':'Kilkis',
+  'EL525':'Pella','EL526':'Imathia','EL527':'Pieria',
+  'EL531':'Grevena','EL532':'Kastoria','EL533':'Kozani','EL534':'Florina',
+  'EL541':'Ioannina','EL542':'Thesprotia','EL543':'Arta','EL544':'Preveza',
+  'EL551':'Karditsa','EL552':'Larissa','EL553':'Magnesia','EL554':'Trikala','EL555':'Sporades',
+  'EL561':'Achaia','EL562':'Ilia','EL563':'Aetolia-Akarnania',
+  'EL571':'Zakynthos','EL572':'Kerkyra','EL573':'Lefkada','EL574':'Kefalonia',
+  'EL581':'Argolida','EL582':'Arkadia','EL583':'Korinthia','EL584':'Laconia','EL585':'Messinia',
+  'EL611':'Boeotia','EL612':'Euboea','EL613':'Evrytania','EL614':'Phthiotis','EL615':'Fokida',
+  'EL621':'Imathia','EL622':'Thessaloniki','EL623':'Kilkis',
+  'EL631':'Kavala','EL632':'Xanthi','EL633':'Rodopi',
+  'EL641':'Drama','EL642':'Serres',
+  'EL651':'Kastoria','EL652':'Grevena','EL653':'Kozani','EL654':'Florina'
+};
+
+// Client city → NUTS3 region mapping
+const CITY_NUTS={
+  'athens':'EL304','attica':'EL304','piraeus':'EL303','nea smyrni':'EL304',
+  'glyfada':'EL304','galatsi':'EL304','maroussi':'EL304','amarousion':'EL304',
+  'palaio faliro':'EL304','keratsini':'EL303','nikaia':'EL303','kaisariani':'EL304',
+  'agioi anargyroi':'EL304','agia varvara':'EL304','chalandri':'EL304',
+  'iraklio attikis':'EL305','philothei':'EL304','nea filadelfia':'EL304',
+  'thessaloniki':'EL521','thermaikos':'EL521','oraiokastro':'EL521',
+  'serres':'EL523','kilkis':'EL524','kavala':'EL514','drama':'EL515',
+  'prosotsani':'EL515','nestos':'EL514','sidiki':'EL524','alexandreia':'EL525',
+  'almopia':'EL525','nea propontida':'EL522',
+  'larissa':'EL552','karditsa':'EL551','trikala':'EL554','farsala':'EL552',
+  'domokos':'EL614','almyros':'EL553','volos':'EL553',
+  'ioannina':'EL541','arta':'EL543','preveza':'EL544','igoumenitsa':'EL542',
+  'lefkada':'EL573','argostoli':'EL574','kerkyra':'EL572','corfu':'EL572',
+  'agrinio':'EL563','xylokastro':'EL561','aigialeia':'EL561','kalavrita':'EL561',
+  'nafplio':'EL581','nemea':'EL583','messini':'EL585','kalamata':'EL585',
+  'oichalias':'EL585','faistos':'EL431','rethymni':'EL433','rethymno':'EL433',
+  'heraklion':'EL431','tinos':'EL422','amyntaio':'EL534','florina':'EL534',
+  'kastoria':'EL532','kozani':'EL533','grevena':'EL531',
+  'orestiada':'EL511','katerini':'EL527','amfikleia':'EL614',
+};
+
+function geoMatchStatus(featName, nutsId){
   const clients=D.clients||[];
-  for(const c of clients){
-    const cn=c.name.toLowerCase().replace('municipality of ','').replace('δήμος ','').trim();
-    // Direct match
-    if(fn===cn||fn.includes(cn)||cn.includes(fn))return clientStatus(c);
-    // English→Greek lookup
-    const gr=EL_MAP[cn];
-    if(gr&&(fn===gr||fn.includes(gr)||gr.includes(fn)))return clientStatus(c);
+  // First try NUTS ID match via city lookup
+  if(nutsId){
+    for(const c of clients){
+      const cn=c.name.toLowerCase().replace('municipality of ','').replace('general hospital of ','').replace('university of ','').trim();
+      const nutsMatch=CITY_NUTS[cn];
+      if(nutsMatch===nutsId)return clientStatus(c);
+      // Try partial
+      for(const [city,nuts] of Object.entries(CITY_NUTS)){
+        if(nuts===nutsId&&(cn.includes(city)||city.includes(cn.split(' ')[0]))){return clientStatus(c);}
+      }
+    }
   }
   return null;
 }
