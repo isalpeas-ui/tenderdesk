@@ -6,8 +6,11 @@
 <title>TenderDesk</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--info-bg:#e6f1fb;--info-text:#185FA5;--info-border:#b5d4f4;--success-bg:#eaf3de;--success-text:#3B6D11;--warn-bg:#faeeda;--warn-text:#854F0B;--danger-bg:#fcebeb;--danger-text:#A32D2D;--r:8px;--rl:12px}
@@ -325,21 +328,44 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div class="kpi" style="border-top:3px solid #A32D2D"><div class="kpi-label">No proposals</div><div class="kpi-val" id="map-k-none" style="color:#A32D2D">—</div><div class="kpi-sub">in client list</div></div>
   </div>
 
-  <!-- Geocoding progress -->
-  <div id="map-progress" style="display:none;background:var(--warn-bg);border:.5px solid #D4A84B;border-radius:var(--r);padding:.75rem 1.25rem;margin-bottom:1rem;font-size:13px;color:#854F0B;display:flex;align-items:center;gap:10px">
-    <div class="spinner" style="border-top-color:#854F0B"></div>
-    <span id="map-progress-txt">Locating municipalities on the map…</span>
+  <!-- Controls -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
+    <button class="btn" id="map-f-all" onclick="mapFilter('all',this)" style="background:var(--bg2)"><span style="width:10px;height:10px;border-radius:50%;background:#555;display:inline-block;margin-right:4px"></span> All</button>
+    <button class="btn" id="map-f-won" onclick="mapFilter('won',this)"><span style="width:10px;height:10px;border-radius:50%;background:#27500A;display:inline-block;margin-right:4px"></span> Won</button>
+    <button class="btn" id="map-f-proposals" onclick="mapFilter('proposals',this)"><span style="width:10px;height:10px;border-radius:50%;background:#185FA5;display:inline-block;margin-right:4px"></span> Proposals sent</button>
+    <button class="btn" id="map-f-none" onclick="mapFilter('none',this)"><span style="width:10px;height:10px;border-radius:50%;background:#A32D2D;display:inline-block;margin-right:4px"></span> No proposals</button>
+    <div style="margin-left:auto;font-size:12px;color:var(--text2)" id="map-geo-status"></div>
   </div>
 
-  <!-- Map + Legend -->
+  <!-- Map -->
   <div style="position:relative">
-    <div id="map-container" style="height:580px;border-radius:var(--rl);overflow:hidden;border:.5px solid var(--border)"></div>
+    <div id="map-container" style="height:620px;border-radius:var(--rl);overflow:hidden;border:.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.08)"></div>
+
     <!-- Legend -->
-    <div style="position:absolute;bottom:24px;left:12px;z-index:1000;background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-      <div style="font-weight:600;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Legend</div>
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:12px;height:12px;border-radius:50%;background:#27500A;display:inline-block;flex-shrink:0"></span> Won at least one proposal</div>
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:12px;height:12px;border-radius:50%;background:#185FA5;display:inline-block;flex-shrink:0"></span> Proposals sent</div>
-      <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:50%;background:#A32D2D;display:inline-block;flex-shrink:0"></span> No proposals yet</div>
+    <div style="position:absolute;bottom:28px;left:12px;z-index:1000;background:white;border:1px solid #ddd;border-radius:8px;padding:.875rem 1rem;font-size:12px;box-shadow:0 2px 10px rgba(0,0,0,.15);min-width:180px">
+      <div style="font-weight:700;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#555">Coverage legend</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="width:14px;height:14px;border-radius:3px;background:#2D6A2D;display:inline-block;flex-shrink:0;opacity:.8"></span>
+        <span style="color:#222">Won — at least one contract</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="width:14px;height:14px;border-radius:3px;background:#185FA5;display:inline-block;flex-shrink:0;opacity:.8"></span>
+        <span style="color:#222">Proposals sent</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="width:14px;height:14px;border-radius:3px;background:#C0392B;display:inline-block;flex-shrink:0;opacity:.8"></span>
+        <span style="color:#222">Client — no proposals</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:14px;height:14px;border-radius:3px;background:#e0e0e0;display:inline-block;flex-shrink:0"></span>
+        <span style="color:#888">No activity</span>
+      </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="map-loading" style="position:absolute;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:500;border-radius:var(--rl)">
+      <div class="spinner" style="width:28px;height:28px;border-width:3px"></div>
+      <div style="font-size:13px;color:#666" id="map-loading-txt">Loading municipality boundaries…</div>
     </div>
   </div>
 </div>
@@ -1189,105 +1215,127 @@ async function doImport(){
 
 
 // ═══ MAP ═════════════════════════════════════════════════════════════════════
-let mapInst = null, markersLayer = null, geoLayer = null;
-let geocoding = false;
+let mapInst=null, clusterLayer=null, geoLayer=null, allMarkers=[], mapFilterState='all';
 
-async function renderMap(){
-  // Init map
-  if(!mapInst){
-    mapInst = L.map('map-container', {zoomControl:true}).setView([38.5, 23.0], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',
-      maxZoom:18
-    }).addTo(mapInst);
-    markersLayer = L.layerGroup().addTo(mapInst);
-  }
+// English → Greek municipality name lookup for GeoJSON matching
+const EL_MAP = {
+  'serres':'σέρρες','kilkis':'κιλκίς','larissa':'λάρισα','ioannina':'ιωάννινα',
+  'agrinio':'αγρίνιο','karditsa':'καρδίτσα','katerini':'κατερίνη','arta':'άρτα',
+  'nafplio':'ναύπλιο','kalavrita':'καλάβρυτα','farsala':'φάρσαλα','nemea':'νεμέα',
+  'messini':'μεσσήνη','tinos':'τήνος','domokos':'δομοκός','amyntaio':'αμύνταιο',
+  'orestiada':'ορεστιάδα','almopia':'αλμωπία','nestos':'νέστος','prosotsani':'προσοτσάνη',
+  'igoumenitsa':'ηγουμενίτσα','lefkada':'λευκάδα','faistos':'φαιστός','sidiki':'σιθωνία',
+  'thermaikos':'θερμαϊκός','xylokastro':'ξυλόκαστρο','amfikleia':'αμφίκλεια',
+  'aigialeia':'αιγιάλεια','rethymnis':'ρεθύμνης','oichalias':'οιχαλίας',
+  'argostoli':'αργοστόλι','nea propontida':'νέα προποντίδα','oraiokastro':'ωραιόκαστρο',
+  'alexandreia':'αλεξάνδρεια','kalamata':'καλαμάτα','galatsi':'γαλάτσι',
+  'glyfada':'γλυφάδα','maroussi':'μαρούσι','nea smyrni':'νέα σμύρνη',
+  'keratsini':'κερατσίνι','agioi anargyroi':'άγιοι ανάργυροι','nikaia':'νίκαια',
+  'kaisariani':'καισαριανή','chalandri':'χαλάνδρι','amarousion':'μαρούσι',
+  'palaio faliro':'παλαιό φάληρο','agia varvara':'αγία βαρβάρα',
+  'iraklio attikis':'ηράκλειο αττικής','philothei':'φιλοθέη'
+};
 
-  // Try loading Greek municipalities GeoJSON for choropleth background
-  if(!geoLayer){
-    const geoUrls=[
-      'https://raw.githubusercontent.com/stefanikostopoulos/Greece-GeoJSON/master/GR_Municipalities.geojson',
-      'https://raw.githubusercontent.com/codefornl/geojson-municipalities/master/GR/GR.geojson'
-    ];
-    for(const url of geoUrls){
-      try{
-        const r=await fetch(url);
-        if(r.ok){
-          const gj=await r.json();
-          geoLayer=L.geoJSON(gj,{
-            style:feat=>{
-              const name=(feat.properties.NAME_3||feat.properties.NAME||feat.properties.name||'').toLowerCase();
-              const status=getMunicipalityStatus(name);
-              return{fillColor:status==='won'?'#2D6A2D':status==='proposals'?'#185FA5':'#E8E8E8',fillOpacity:status==='none'?0.15:0.45,color:'#fff',weight:0.5,opacity:0.6};
-            },
-            onEachFeature:(feat,layer)=>{
-              const name=feat.properties.NAME_3||feat.properties.NAME||feat.properties.name||'Unknown';
-              layer.bindPopup(`<strong>${name}</strong>`);
-            }
-          }).addTo(mapInst);
-          break;
-        }
-      }catch(e){}
-    }
-  }
-
-  // Geocode clients that don't have coordinates yet
-  await geocodeClients();
-
-  // Render markers
-  renderMapMarkers();
-}
-
-function getMunicipalityStatus(geoName){
-  const clients=D.clients||[];
-  const proposals=D.proposals||[];
-  // Find matching client
-  const client=clients.find(c=>{
-    const cn=c.name.toLowerCase().replace('municipality of ','').replace('δήμος ','').replace('δήμο ','').trim();
-    return geoName.includes(cn)||cn.includes(geoName)||geoName.replace('dimos ','').includes(cn);
-  });
-  if(!client)return'none';
-  const cProps=proposals.filter(p=>p.clientId===client.id||p.client===client.name);
-  if(!cProps.length)return'none';
-  if(cProps.some(p=>p.status==='Won'))return'won';
+function clientStatus(c){
+  const props=(D.proposals||[]).filter(p=>p.clientId===c.id||p.client===c.name);
+  if(!props.length)return'none';
+  if(props.some(p=>p.status==='Won'))return'won';
   return'proposals';
 }
 
-async function geocodeClients(){
+function statusColor(s,alpha){
+  const a=alpha||0.8;
+  if(s==='won')return`rgba(45,106,45,${a})`;
+  if(s==='proposals')return`rgba(24,95,165,${a})`;
+  if(s==='none')return`rgba(192,57,43,${a})`;
+  return`rgba(200,200,200,${a})`;
+}
+
+function geoMatchStatus(featName){
+  const fn=(featName||'').toLowerCase().replace(/δήμος?\s*/,'').replace(/αθηναίων/,'αθήνα').trim();
   const clients=D.clients||[];
-  const needsGeo=clients.filter(c=>!c.lat||!c.lng);
-  if(!needsGeo.length)return;
+  for(const c of clients){
+    const cn=c.name.toLowerCase().replace('municipality of ','').replace('δήμος ','').trim();
+    // Direct match
+    if(fn===cn||fn.includes(cn)||cn.includes(fn))return clientStatus(c);
+    // English→Greek lookup
+    const gr=EL_MAP[cn];
+    if(gr&&(fn===gr||fn.includes(gr)||gr.includes(fn)))return clientStatus(c);
+  }
+  return null;
+}
 
-  const prog=document.getElementById('map-progress');
-  const progTxt=document.getElementById('map-progress-txt');
-  prog.style.display='flex';
-
-  let saved=false;
-  for(let i=0;i<needsGeo.length;i++){
-    const c=needsGeo[i];
-    progTxt.textContent=`Locating ${i+1}/${needsGeo.length}: ${c.name}…`;
-    try{
-      const q=encodeURIComponent(c.name+', Greece');
-      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gr`,{headers:{'Accept-Language':'en','User-Agent':'TenderDesk/1.0'}});
-      if(r.ok){
-        const data=await r.json();
-        if(data&&data.length>0){
-          const idx=(D.clients||[]).findIndex(x=>x.id===c.id);
-          if(idx>=0){D.clients[idx].lat=parseFloat(data[0].lat);D.clients[idx].lng=parseFloat(data[0].lon);saved=true;}
-        }
-      }
-    }catch(e){}
-    // Rate limit: 1 request per second (Nominatim policy)
-    if(i<needsGeo.length-1)await new Promise(res=>setTimeout(res,1100));
+async function renderMap(){
+  // Init map with CartoDB Positron tiles (clean professional look)
+  if(!mapInst){
+    mapInst=L.map('map-container',{zoomControl:true,preferCanvas:true}).setView([38.8,23.5],6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+      attribution:'© <a href="https://openstreetmap.org">OSM</a> © <a href="https://carto.com">CARTO</a>',
+      subdomains:'abcd',maxZoom:19
+    }).addTo(mapInst);
   }
 
-  prog.style.display='none';
-  if(saved){await saveData();}
+  // Load municipality boundaries GeoJSON
+  if(!geoLayer){
+    document.getElementById('map-loading').style.display='flex';
+    document.getElementById('map-loading-txt').textContent='Loading municipality boundaries from geodata.gov.gr…';
+    const WFS_URLS=[
+      'https://geodata.gov.gr/geoserver/ows?service=WFS&request=GetFeature&version=2.0.0&outputFormat=json&srsName=EPSG:4326&typeNames=geodata.gov.gr:c7b5978b-aca9-4d74-b8a5-d3a48d02f6d0',
+      'http://geodata.gov.gr/geoserver/ows?service=WFS&request=GetFeature&version=2.0.0&outputFormat=json&srsName=EPSG:4326&typeNames=geodata.gov.gr:c7b5978b-aca9-4d74-b8a5-d3a48d02f6d0'
+    ];
+    for(const url of WFS_URLS){
+      try{
+        const r=await fetch(url);
+        if(r.ok){
+          document.getElementById('map-loading-txt').textContent='Coloring municipalities…';
+          const gj=await r.json();
+          geoLayer=L.geoJSON(gj,{
+            style:feat=>{
+              const name=feat.properties.NAME||feat.properties.Name||feat.properties.LNAME||feat.properties.name||'';
+              const st=geoMatchStatus(name);
+              if(!st)return{fillColor:'#e8e8e8',fillOpacity:0.3,color:'#aaa',weight:0.5,opacity:0.6};
+              return{fillColor:statusColor(st,1),fillOpacity:st==='won'?0.7:0.55,color:'#fff',weight:1,opacity:0.8};
+            },
+            onEachFeature:(feat,layer)=>{
+              const name=feat.properties.NAME||feat.properties.Name||feat.properties.LNAME||'';
+              const st=geoMatchStatus(name);
+              if(st){
+                layer.on('mouseover',function(e){this.setStyle({fillOpacity:0.9,weight:2});});
+                layer.on('mouseout',function(e){geoLayer.resetStyle(this);});
+                layer.bindTooltip(name,{sticky:true,className:'leaflet-tooltip'});
+              }
+            }
+          }).addTo(mapInst);
+          geoLayer.bringToBack();
+          document.getElementById('map-geo-status').textContent='✓ Municipality boundaries loaded';
+          break;
+        }
+      }catch(e){
+        document.getElementById('map-geo-status').textContent='Map tiles only — boundaries unavailable';
+      }
+    }
+    document.getElementById('map-loading').style.display='none';
+  }
+
+  renderMapMarkers();
 }
 
 function renderMapMarkers(){
-  if(!markersLayer)return;
-  markersLayer.clearLayers();
+  if(!mapInst)return;
+  if(clusterLayer)mapInst.removeLayer(clusterLayer);
+  allMarkers=[];
+
+  clusterLayer=L.markerClusterGroup({
+    maxClusterRadius:50,
+    iconCreateFunction:function(cluster){
+      const children=cluster.getAllChildMarkers();
+      const hasWon=children.some(m=>m.options.status==='won');
+      const hasProposals=children.some(m=>m.options.status==='proposals');
+      const color=hasWon?'#2D6A2D':hasProposals?'#185FA5':'#C0392B';
+      const n=cluster.getChildCount();
+      return L.divIcon({html:`<div style="background:${color};color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3)">${n}</div>`,iconSize:[36,36],className:''});
+    }
+  });
 
   const clients=D.clients||[];
   const proposals=D.proposals||[];
@@ -1298,46 +1346,65 @@ function renderMapMarkers(){
     mapped++;
     const cProps=proposals.filter(p=>p.clientId===c.id||p.client===c.name);
     const hasWon=cProps.some(p=>p.status==='Won');
-    const hasProposals=cProps.length>0;
-    const color=hasWon?'#27500A':hasProposals?'#185FA5':'#A32D2D';
+    const st=!cProps.length?'none':hasWon?'won':'proposals';
+    const color=statusColor(st,1);
     const totalVal=cProps.reduce((s,p)=>s+(p.value||0),0);
+    if(st==='won')won++;else if(st==='proposals')active++;else none++;
 
-    if(hasWon)won++;
-    else if(hasProposals)active++;
-    else none++;
+    // Skip if filter active
+    if(mapFilterState!=='all'&&mapFilterState!==st)return;
 
     const marker=L.circleMarker([c.lat,c.lng],{
-      radius:hasWon?10:hasProposals?8:6,
-      fillColor:color,color:'#fff',weight:2,opacity:1,fillOpacity:0.85
+      radius:hasWon?11:cProps.length?9:7,
+      fillColor:color,color:'white',weight:2,opacity:1,fillOpacity:0.9,
+      status:st
     });
 
-    const propList=cProps.slice(0,5).map(p=>`<div style="font-size:11px;padding:2px 0;border-bottom:1px solid #eee"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.status==='Won'?'#27500A':p.status==='Lost'?'#A32D2D':'#185FA5'};margin-right:4px"></span>${p.name.slice(0,40)}${p.name.length>40?'…':''}</div>`).join('');
-    const moreStr=cProps.length>5?`<div style="font-size:11px;color:#888;margin-top:3px">+${cProps.length-5} more</div>`:'';
+    const propRows=cProps.slice(0,6).map(p=>{
+      const sc2=p.status==='Won'?'#2D6A2D':p.status==='Lost'?'#C0392B':'#185FA5';
+      return`<div style="font-size:11px;padding:3px 0;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:${sc2};flex-shrink:0"></span>${p.name.slice(0,42)}${p.name.length>42?'…':''}</div>`;
+    }).join('');
+    const more=cProps.length>6?`<div style="font-size:11px;color:#888;padding-top:3px">+${cProps.length-6} more</div>`:'';
 
     marker.bindPopup(`
-      <div style="min-width:200px;font-family:Arial,sans-serif">
-        <div style="font-weight:600;font-size:13px;margin-bottom:4px">${c.name}</div>
-        <div style="font-size:11px;color:#666;margin-bottom:8px">${c.category||''}${c.contact?' · '+c.contact:''}</div>
-        <div style="display:flex;gap:12px;margin-bottom:8px">
-          <div><div style="font-size:18px;font-weight:700;color:${color}">${cProps.length}</div><div style="font-size:10px;color:#888">proposals</div></div>
-          <div><div style="font-size:18px;font-weight:700;color:${color}">${totalVal?'€'+totalVal.toLocaleString('el-GR'):'—'}</div><div style="font-size:10px;color:#888">value</div></div>
+      <div style="min-width:220px;max-width:260px;font-family:-apple-system,sans-serif">
+        <div style="font-weight:700;font-size:14px;margin-bottom:3px;color:${color}">${c.name}</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px">${c.category||''}${c.contact?' · '+c.contact:''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;background:#f8f8f8;padding:8px;border-radius:6px">
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${color}">${cProps.length}</div><div style="font-size:10px;color:#888">proposals</div></div>
+          <div style="text-align:center"><div style="font-size:14px;font-weight:700;color:${color}">${totalVal?'€'+totalVal.toLocaleString('el-GR'):'—'}</div><div style="font-size:10px;color:#888">total value</div></div>
         </div>
-        ${propList}${moreStr}
+        ${propRows}${more}
       </div>
-    `,{maxWidth:260});
+    `,{maxWidth:280});
 
-    markersLayer.addLayer(marker);
+    clusterLayer.addLayer(marker);
+    allMarkers.push(marker);
   });
 
-  // Update KPIs
+  mapInst.addLayer(clusterLayer);
+
   document.getElementById('map-k-total').textContent=mapped;
   document.getElementById('map-k-won').textContent=won;
   document.getElementById('map-k-active').textContent=active;
   document.getElementById('map-k-none').textContent=none;
 
-  // Invalidate map size after tab becomes visible
-  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},100);
+  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},150);
 }
+
+function mapFilter(state,btn){
+  mapFilterState=state;
+  document.querySelectorAll('[id^="map-f-"]').forEach(b=>b.style.background='');
+  if(btn)btn.style.background='var(--bg2)';
+  renderMapMarkers();
+}
+
+async function geocodeClients(){
+  // Geocoding is now pre-done server-side
+  // This is kept as a no-op since all 76 clients are already geocoded
+  return;
+}
+
 
 // ═══ FORECAST ════════════════════════════════════════════════════════════════
 let editFid = null, lostPid = null, chartFC = null;
