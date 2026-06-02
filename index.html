@@ -781,7 +781,7 @@ function renderDashboard(){
 }
 
 // ═══ PROPOSALS ═══════════════════════════════════════════════════════════════
-function fillLeadFilter(){const sel=document.getElementById('p-lead');sel.innerHTML='<option value="">All leads</option>'+(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');}
+function fillLeadFilter(){const sel=document.getElementById('p-lead');const cur=sel.value;sel.innerHTML='<option value="">All leads</option>'+(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');if(cur)sel.value=cur;}
 
 function renderProposals(){
   fillLeadFilter();
@@ -868,11 +868,19 @@ function saveProposal(){
   const name=document.getElementById('pm-name').value.trim();if(!name){document.getElementById('pm-name').focus();return;}
   const clientId=document.getElementById('pm-client').value;
   const clientObj=(D.clients||[]).find(c=>c.id===clientId);
-  const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:document.getElementById('pm-status').value,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
+  const newStatus=document.getElementById('pm-status').value;
+  const prevStatus=editPid?(D.proposals||[]).find(p=>p.id===editPid)?.status:null;
+  const wasNotLost=prevStatus&&prevStatus!=='Lost';
+  const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:newStatus,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
   if(!D.proposals)D.proposals=[];
+  let savedId=editPid;
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
-  else{D.proposals.push({id:D.nextPid++,...d});}
+  else{const np={id:D.nextPid++,...d};D.proposals.push(np);savedId=np.id;}
   saveData();closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
+  // Offer forecast if just marked as Lost
+  if(newStatus==='Lost'&&wasNotLost&&savedId){
+    setTimeout(()=>showLostForecastPopup(savedId),400);
+  }
 }
 
 function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData();renderProposals();renderDashboard();}
@@ -1284,18 +1292,7 @@ function saveLostForecast(){
   saveData();toast('Forecast created!','crystal-ball');
 }
 
-// ── Patch saveProposal to trigger popup on Lost ───────────────────────────────
-const _origSaveProposal=saveProposal;
-saveProposal=function(){
-  const prevStatus=editPid?(D.proposals||[]).find(p=>p.id===editPid)?.status:null;
-  const newStatus=document.getElementById('pm-status').value;
-  const pid=editPid;
-  _origSaveProposal();
-  // After save, if status changed to Lost, offer forecast
-  if(pid&&prevStatus&&prevStatus!=='Lost'&&newStatus==='Lost'){
-    setTimeout(()=>showLostForecastPopup(pid),300);
-  }
-};
+
 
 // ═══ BOOT ═════════════════════════════════════════════════════════════════════
 loadCFG();
