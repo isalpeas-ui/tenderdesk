@@ -388,7 +388,11 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div class="field"><label>Products / Services</label><div class="prod-cb" id="pm-products"></div></div>
     <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
   </div>
-  <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveProposal()">Save proposal</button></div>
+  <div class="mftr">
+    <button class="btn" id="pm-schedule-btn" onclick="scheduleFromModal()" style="margin-right:auto;color:#3B6D11;border-color:#3B6D11;display:none"><i class="ti ti-calendar-plus"></i> Schedule task</button>
+    <button class="btn" onclick="closeModals()">Cancel</button>
+    <button class="btn btn-p" onclick="saveProposal()">Save proposal</button>
+  </div>
 </div>
 </div>
 
@@ -860,6 +864,7 @@ function openProposalModal(id){
     document.getElementById('pm-priority').value='Medium';
     if(D.team&&D.team.length)document.getElementById('pm-assignee').value=D.team[0].id;
     fillProdCheckboxes([]);
+    document.getElementById('pm-schedule-btn').style.display='none';
   }
   openModal('m-proposal');
 }
@@ -883,6 +888,13 @@ function saveProposal(){
   }
 }
 
+
+function scheduleFromModal(){
+  // Save the proposal first, then open the task modal pre-filled
+  const pid = editPid;
+  saveProposal(); // saves and closes modal
+  if(pid) setTimeout(()=>scheduleTask(pid), 400);
+}
 
 function scheduleTask(proposalId){
   const p=(D.proposals||[]).find(x=>x.id===proposalId);if(!p)return;
