@@ -273,7 +273,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="btn btn-p" onclick="openProposalModal()"><i class="ti ti-plus"></i> New proposal</button>
   </div>
   <div class="card"><div class="tw">
-    <table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Partner</th><th>Value</th><th>Deadline</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead>
+    <table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Partner</th><th>Value</th><th>Deadline</th><th>Submitted On</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead>
     <tbody id="p-list"></tbody></table>
   </div></div>
 </div>
@@ -445,6 +445,11 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
     <div class="field"><label>Products / Services</label><div class="prod-cb" id="pm-products"></div></div>
     <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
+    <div id="pm-submitted-row" style="display:none;padding:6px 0;font-size:12px;color:var(--text2);border-top:.5px solid var(--border);margin-top:4px">
+      <i class="ti ti-send" style="font-size:11px;margin-right:4px"></i>
+      Submitted on <strong id="pm-submitted-date" style="color:var(--text1)"></strong>
+      <span style="margin-left:8px;opacity:.6">· Follow-up task auto-created 15 days later</span>
+    </div>
   </div>
   <div class="mftr">
     <button class="btn" id="pm-schedule-btn" onclick="scheduleFromModal()" style="margin-right:auto;color:#3B6D11;border-color:#3B6D11"><i class="ti ti-calendar-plus"></i> Schedule task</button>
@@ -866,6 +871,7 @@ function renderProposals(){
       <td style="color:var(--text2);font-size:12px">${p.partner||'—'}</td>
       <td style="font-weight:500">${v}</td>
       <td class="${d.cls}">${d.txt}</td>
+      <td style="font-size:11px;color:var(--text2)">${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—'}</td>
       <td><span class="badge ${sc(p.status)}">${p.status}</span></td>
       <td><span class="badge ${pc(p.priority)}">${p.priority}</span></td>
       <td>${av(p.assignee)}</td>
@@ -875,7 +881,7 @@ function renderProposals(){
         <button class="ib" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
       </div></td>
     </tr>`;
-  }).join('')+`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="5" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grand).toLocaleString('el-GR')}</td><td colspan="5"><div style="display:flex;flex-wrap:wrap;gap:4px">${sumParts}</div></td></tr>`;
+  }).join('')+`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="5" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grand).toLocaleString('el-GR')}</td><td colspan="6"><div style="display:flex;flex-wrap:wrap;gap:4px">${sumParts}</div></td></tr>`;
 }
 
 function updateStatuses(){
@@ -916,6 +922,13 @@ function openProposalModal(id){
     fillProdCheckboxes(p.products||[]);
     document.getElementById('pm-notes').value=p.notes||'';
     document.getElementById('pm-schedule-btn').style.display='inline-flex';
+    // Show submission date if already submitted
+    if(p.submittedAt){
+      document.getElementById('pm-submitted-row').style.display='block';
+      document.getElementById('pm-submitted-date').textContent=new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    } else {
+      document.getElementById('pm-submitted-row').style.display='none';
+    }
   }else{
     document.getElementById('pm-title').textContent='New proposal';
     ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes'].forEach(f=>document.getElementById(f).value='');
@@ -925,6 +938,7 @@ function openProposalModal(id){
     if(D.team&&D.team.length)document.getElementById('pm-assignee').value=D.team[0].id;
     fillProdCheckboxes([]);
     document.getElementById('pm-schedule-btn').style.display='none';
+    document.getElementById('pm-submitted-row').style.display='none';
   }
   openModal('m-proposal');
 }
@@ -934,14 +948,33 @@ function saveProposal(){
   const clientId=document.getElementById('pm-client').value;
   const clientObj=(D.clients||[]).find(c=>c.id===clientId);
   const newStatus=document.getElementById('pm-status').value;
-  const prevStatus=editPid?(D.proposals||[]).find(p=>p.id===editPid)?.status:null;
+  const prevProposal=editPid?(D.proposals||[]).find(p=>p.id===editPid):null;
+  const prevStatus=prevProposal?prevProposal.status:null;
   const wasNotLost=prevStatus&&prevStatus!=='Lost';
+  const wasNotSubmitted=prevStatus!=='Submitted';
   const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:newStatus,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
+  // Stamp submission date when first moved to Submitted
+  if(newStatus==='Submitted'&&wasNotSubmitted){
+    d.submittedAt=new Date().toISOString().slice(0,10);
+  } else if(prevProposal&&prevProposal.submittedAt){
+    d.submittedAt=prevProposal.submittedAt; // preserve existing stamp
+  }
   if(!D.proposals)D.proposals=[];
   let savedId=editPid;
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
   else{const np={id:D.nextPid++,...d};D.proposals.push(np);savedId=np.id;}
   saveData();closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
+  // Auto-create follow-up task 15 days after submission
+  if(newStatus==='Submitted'&&wasNotSubmitted&&savedId){
+    const followDate=new Date(d.submittedAt);followDate.setDate(followDate.getDate()+15);
+    const followDue=followDate.toISOString().slice(0,10);
+    const savedP=(D.proposals||[]).find(p=>p.id===savedId);
+    const taskTitle=`Follow-up: ${name}`;
+    if(!D.tasks)D.tasks=[];
+    D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
+    saveData();renderTasks();
+    toast('Follow-up task created for '+followDue,'calendar-plus');
+  }
   // Offer forecast if just marked as Lost
   if(newStatus==='Lost'&&wasNotLost&&savedId){
     setTimeout(()=>showLostForecastPopup(savedId),400);
