@@ -176,21 +176,19 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <ol class="steps">
         <li>Go to <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></li>
         <li>Click <strong>Generate new token (classic)</strong></li>
-        <li>Tick the <strong>gist</strong> scope → Generate</li>
+        <li>Tick the <strong>repo</strong> scope → Generate</li>
         <li>Copy the token (starts with <code>ghp_</code>)</li>
       </ol>
-      <div class="field" style="margin-bottom:1rem">
-        <label>GitHub Token</label>
-        <input id="c-token" placeholder="ghp_..." type="password">
-      </div>
+      <div class="field" style="margin-bottom:.75rem"><label>GitHub Token</label><input id="c-token" placeholder="ghp_..." type="password"></div>
+      <div class="field" style="margin-bottom:1rem"><label>Repository</label><input id="c-repo" placeholder="owner/repo-name" value="isalpeas-ui/tenderdesk"></div>
       <div style="display:flex;gap:8px;justify-content:space-between">
         <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
-        <button class="btn btn-p" onclick="doCreate()"><span id="c-lbl">Create workspace</span> <span id="c-spin" style="display:none" class="spinner"></span></button>
+        <button class="btn btn-p" onclick="doCreate()"><span id="c-lbl">Connect workspace</span> <span id="c-spin" style="display:none" class="spinner"></span></button>
       </div>
     </div>
     <div class="sstep" id="ss-join">
       <div class="setup-title">Join existing workspace</div>
-      <div class="field" style="margin-bottom:.75rem"><label>Gist ID</label><input id="j-gist" placeholder="e.g. 8c6684b13a4e4d14f000aa8e720ff9ee"></div>
+      <div class="field" style="margin-bottom:.75rem"><label>Repository</label><input id="j-repo" placeholder="owner/repo-name" value="isalpeas-ui/tenderdesk"></div>
       <div class="field" style="margin-bottom:1rem"><label>GitHub Token</label><input id="j-token" placeholder="ghp_..." type="password"></div>
       <div style="display:flex;gap:8px;justify-content:space-between">
         <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
@@ -204,7 +202,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
         <div class="setup-sub" id="done-msg"></div>
         <div class="info-box" id="done-creds" style="text-align:left;display:none">
           <div style="font-weight:500;margin-bottom:.5rem;color:var(--text)">Share with your team:</div>
-          <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="done-gist"></code></div>
+          <div style="margin-bottom:4px"><strong>Repository:</strong> <code id="done-repo"></code></div>
           <div><strong>Token:</strong> <code id="done-token"></code></div>
         </div>
         <button class="btn btn-p" style="margin-top:1rem" onclick="launchApp()"><i class="ti ti-rocket"></i> Open TenderDesk</button>
@@ -545,7 +543,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="mbdy">
     <div class="info-box">
       <div style="font-weight:500;color:var(--text);margin-bottom:.5rem">Share with your team</div>
-      <div style="margin-bottom:4px"><strong>Gist ID:</strong> <code id="cfg-gist"></code></div>
+      <div style="margin-bottom:4px"><strong>Repository:</strong> <code id="cfg-repo"></code></div>
       <div><strong>Token:</strong> <code id="cfg-token"></code></div>
     </div>
     <button class="btn" style="color:var(--danger-text);border-color:var(--danger-text)" onclick="resetSetup()"><i class="ti ti-logout"></i> Disconnect</button>
@@ -682,54 +680,95 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
 <script>
 // ═══ CONFIG & STATE ══════════════════════════════════════════════════════════
 const GH = 'https://api.github.com';
-const GFILE = 'tenderdesk.json';
 const LIGHT = {'#185FA5':'#E6F1FB','#3B6D11':'#EAF3DE','#854F0B':'#FAEEDA','#993556':'#FBEAF0','#534AB7':'#EEEDFE','#A32D2D':'#FCEBEB','#0F6E56':'#E1F5EE','#5F5E5A':'#F1EFE8'};
 const BSTAT = ['Draft','Active','Submitted','Approved','Converted to RFP'];
 const TSTAT = ['Draft','Active','Submitted','Waiting Result','Won','Lost'];
 const PRODS = ['EDR','MDR','NIS2','Pen Test','Firewall','ClearSkies','Security Awareness Training','vCISO','BCP/DR','SOC','Vulnerability Management','Email Security'];
 const PCOLS = {'EDR':'#185FA5','MDR':'#534AB7','NIS2':'#3B6D11','Pen Test':'#A32D2D','Firewall':'#854F0B','ClearSkies':'#185FA5','Security Awareness Training':'#0F6E56','vCISO':'#993556','BCP/DR':'#5F5E5A','SOC':'#185FA5','Vulnerability Management':'#A32D2D','Email Security':'#534AB7'};
 
-let CFG = {gistId:'',token:''};
-let D = {proposals:[],tasks:[],templates:[],team:[],clients:[],products:PRODS,nextPid:1,nextTid:1,nextTplId:1,nextUid:1,nextCid:1};
+let CFG = {repo:'isalpeas-ui/tenderdesk',token:''};
+let D = {proposals:[],tasks:[],templates:[],team:[],clients:[],products:PRODS,nextPid:1,nextTid:1,nextTplId:1,nextUid:1,nextCid:1,nextFid:1};
 let editPid=null, editTid=null, editUid=null, editCid=null;
 let bidPid=null, dragTid=null, selColor='#185FA5', curTab='dashboard';
 let chartS=null, chartT=null, autoTimer=null;
 
+// Per-file SHAs — required by GitHub Contents API for updates
+let FILE_SHAS = {};
+const DATA_FILES = ['clients','proposals','tasks','team','forecasts','templates','meta'];
+
 // ═══ SETUP ═══════════════════════════════════════════════════════════════════
 function showStep(id){document.querySelectorAll('.sstep').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function saveCFG(){localStorage.setItem('td_cfg2',JSON.stringify(CFG));}
-function loadCFG(){try{const s=localStorage.getItem('td_cfg2');if(s)CFG=JSON.parse(s);}catch(e){}}
+function saveCFG(){localStorage.setItem('td_cfg3',JSON.stringify(CFG));}
+function loadCFG(){
+  try{
+    const s=localStorage.getItem('td_cfg3');
+    if(s){CFG=JSON.parse(s);return;}
+    // Migrate from old Gist-based config
+    const old=localStorage.getItem('td_cfg2');
+    if(old){const o=JSON.parse(old);CFG={repo:'isalpeas-ui/tenderdesk',token:o.token||''};}
+  }catch(e){}
+}
 function ghH(){return{'Authorization':'token '+CFG.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};}
 
-async function ghGet(path){const r=await fetch(GH+path,{headers:ghH()});if(!r.ok)throw new Error(r.status);return r.json();}
-async function ghPatch(path,body){const r=await fetch(GH+path,{method:'PATCH',headers:ghH(),body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json();}
-async function ghPost(path,body){const r=await fetch(GH+path,{method:'POST',headers:ghH(),body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json();}
+// ═══ REPO FILE API ═══════════════════════════════════════════════════════════
+function b64encode(str){
+  const bytes=new TextEncoder().encode(str);
+  let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));
+  return btoa(binary);
+}
+function b64decode(b64){
+  const binary=atob(b64.replace(/\n/g,''));
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
 
-async function readGist(){const g=await ghGet('/gists/'+CFG.gistId);return JSON.parse(g.files[GFILE].content);}
-async function writeGist(data){await ghPatch('/gists/'+CFG.gistId,{files:{[GFILE]:{content:JSON.stringify(data,null,2)}}});}
+async function readFile(name){
+  const r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{headers:ghH()});
+  if(!r.ok)throw new Error(`${name}: ${r.status}`);
+  const f=await r.json();
+  FILE_SHAS[name]=f.sha;
+  return JSON.parse(b64decode(f.content));
+}
+
+async function writeFile(name, data){
+  const content=b64encode(JSON.stringify(data,null,2));
+  const body={message:`TenderDesk: update ${name}`,content,sha:FILE_SHAS[name]};
+  const r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||r.status);}
+  const resp=await r.json();
+  FILE_SHAS[name]=resp.content.sha; // Update SHA for next write
+}
+
+async function readAllFiles(){
+  const results=await Promise.all(DATA_FILES.map(n=>readFile(n)));
+  const [clients,proposals,tasks,team,forecasts,templates,meta]=results;
+  return{clients,proposals,tasks,team,forecasts,templates,products:PRODS,...meta};
+}
 
 async function doCreate(){
   const token=document.getElementById('c-token').value.trim();
+  const repo=document.getElementById('c-repo').value.trim()||'isalpeas-ui/tenderdesk';
   if(!token){alert('Please enter your token');return;}
-  document.getElementById('c-lbl').textContent='Creating…';document.getElementById('c-spin').style.display='inline-block';
+  document.getElementById('c-lbl').textContent='Connecting…';document.getElementById('c-spin').style.display='inline-block';
   try{
-    const seed={...D,updatedAt:new Date().toISOString()};
-    const g=await ghPost('/gists',{description:'TenderDesk workspace',public:false,files:{[GFILE]:{content:JSON.stringify(seed,null,2)}}});
-    CFG={gistId:g.id,token};saveCFG();
-    document.getElementById('done-msg').textContent='Workspace created. Share these credentials with your team:';
-    document.getElementById('done-gist').textContent=g.id;document.getElementById('done-token').textContent=token;
+    CFG={repo,token};saveCFG();
+    await readAllFiles(); // Verify connectivity
+    document.getElementById('done-msg').textContent='Connected to workspace successfully.';
+    document.getElementById('done-repo').textContent=repo;document.getElementById('done-token').textContent=token;
     document.getElementById('done-creds').style.display='block';
     showStep('ss-done');
-  }catch(e){alert('Failed: '+e.message);}
-  document.getElementById('c-lbl').textContent='Create workspace';document.getElementById('c-spin').style.display='none';
+  }catch(e){alert('Failed to connect: '+e.message);}
+  document.getElementById('c-lbl').textContent='Connect workspace';document.getElementById('c-spin').style.display='none';
 }
 
 async function doJoin(){
-  const gistId=document.getElementById('j-gist').value.trim(),token=document.getElementById('j-token').value.trim();
-  if(!gistId||!token){alert('Please fill in both fields');return;}
+  const repo=document.getElementById('j-repo').value.trim()||'isalpeas-ui/tenderdesk';
+  const token=document.getElementById('j-token').value.trim();
+  if(!repo||!token){alert('Please fill in both fields');return;}
   document.getElementById('j-lbl').textContent='Connecting…';document.getElementById('j-spin').style.display='inline-block';
   try{
-    CFG={gistId,token};await readGist();saveCFG();
+    CFG={repo,token};await readAllFiles();saveCFG();
     document.getElementById('done-msg').textContent='Connected to the shared workspace.';
     document.getElementById('done-creds').style.display='none';showStep('ss-done');
   }catch(e){alert('Could not connect: '+e.message);}
@@ -743,23 +782,45 @@ async function launchApp(){
   autoTimer=setInterval(silentRefresh,30000);
 }
 
-function showSettings(){document.getElementById('cfg-gist').textContent=CFG.gistId;document.getElementById('cfg-token').textContent=CFG.token;openModal('m-settings');}
-function resetSetup(){if(!confirm('Disconnect from this workspace?'))return;localStorage.removeItem('td_cfg2');location.reload();}
+function showSettings(){document.getElementById('cfg-repo').textContent=CFG.repo;document.getElementById('cfg-token').textContent=CFG.token;openModal('m-settings');}
+function resetSetup(){if(!confirm('Disconnect from this workspace?'))return;localStorage.removeItem('td_cfg3');location.reload();}
 
 // ═══ DATA SYNC ═══════════════════════════════════════════════════════════════
 function setSS(s){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-lbl');dot.className='sync-dot'+(s==='saving'?' saving':s==='error'?' error':'');lbl.textContent=s==='saving'?'Saving…':s==='error'?'Error':'Synced';}
 
 async function refreshData(){
   setSS('saving');
-  try{const data=await readGist();if(data&&data.proposals)D=data;setSS('ok');renderAll();document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
-  catch(e){setSS('error');toast('Sync error','alert-circle');}
+  try{
+    const data=await readAllFiles();
+    if(data&&data.proposals)D=data;
+    setSS('ok');renderAll();
+    document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){setSS('error');toast('Sync error','alert-circle');}
 }
 
-async function silentRefresh(){try{const data=await readGist();if(data&&data.proposals){D=data;renderAll(true);document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}}catch(e){}}
+async function silentRefresh(){
+  try{
+    // Lightweight: only re-read frequently changing files
+    const [proposals,tasks,forecasts]=await Promise.all([
+      readFile('proposals'),readFile('tasks'),readFile('forecasts')
+    ]);
+    D.proposals=proposals;D.tasks=tasks;D.forecasts=forecasts;
+    renderAll(true);
+    document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){}
+}
 
-async function saveData(){
-  setSS('saving');D.updatedAt=new Date().toISOString();
-  try{await writeGist(D);setSS('ok');}catch(e){setSS('error');toast('Save failed','alert-circle');}
+// entity: string like 'proposals' | array like ['proposals','tasks'] | 'all'
+async function saveData(entity='proposals'){
+  setSS('saving');
+  const meta={nextPid:D.nextPid,nextTid:D.nextTid,nextTplId:D.nextTplId,nextUid:D.nextUid,nextCid:D.nextCid,nextFid:D.nextFid||1,updatedAt:new Date().toISOString()};
+  const targets=entity==='all'
+    ?['clients','proposals','tasks','team','forecasts','templates','meta']
+    :Array.isArray(entity)?[...new Set([...entity,'meta'])]:[entity,'meta'];
+  try{
+    await Promise.all(targets.map(e=>writeFile(e,e==='meta'?meta:(D[e]||[]))));
+    setSS('ok');
+  }catch(e){setSS('error');toast('Save failed — '+e.message,'alert-circle');}
 }
 
 function renderAll(){
@@ -963,7 +1024,7 @@ function saveProposal(){
   let savedId=editPid;
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
   else{const np={id:D.nextPid++,...d};D.proposals.push(np);savedId=np.id;}
-  saveData();closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
+  saveData('proposals');closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
   // Auto-create follow-up task 15 days after submission
   if(newStatus==='Submitted'&&wasNotSubmitted&&savedId){
     const followDate=new Date(d.submittedAt);followDate.setDate(followDate.getDate()+15);
@@ -972,7 +1033,7 @@ function saveProposal(){
     const taskTitle=`Follow-up: ${name}`;
     if(!D.tasks)D.tasks=[];
     D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
-    saveData();renderTasks();
+    saveData('tasks');renderTasks();
     toast('Follow-up task created for '+followDue,'calendar-plus');
   }
   // Offer forecast if just marked as Lost
@@ -1012,7 +1073,7 @@ function scheduleTask(proposalId){
   setTimeout(()=>document.getElementById('tm-name').focus(),100);
 }
 
-function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData();renderProposals();renderDashboard();}
+function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData('proposals');renderProposals();renderDashboard();}
 
 // ═══ TASKS ═══════════════════════════════════════════════════════════════════
 function renderTasks(){
@@ -1064,12 +1125,12 @@ function saveTask(){
   if(!D.tasks)D.tasks=[];
   if(editTid){const i=D.tasks.findIndex(t=>t.id===editTid);D.tasks[i]={...D.tasks[i],...d};}
   else{D.tasks.push({id:D.nextTid++,...d});}
-  saveData();closeModals();renderTasks();toast('Task saved','check');
+  saveData('tasks');closeModals();renderTasks();toast('Task saved','check');
 }
-function delTask(id){D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData();renderTasks();}
+function delTask(id){D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData('tasks');renderTasks();}
 function startDrag(e,id){dragTid=id;e.dataTransfer.effectAllowed='move';}
 function ev(e){e.preventDefault();}
-function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=(D.tasks||[]).find(x=>x.id===dragTid);if(t){t.status=col;saveData();renderTasks();}dragTid=null;}
+function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=(D.tasks||[]).find(x=>x.id===dragTid);if(t){t.status=col;saveData('tasks');renderTasks();}dragTid=null;}
 
 // ═══ TEMPLATES ═══════════════════════════════════════════════════════════════
 function renderTemplates(){
@@ -1083,10 +1144,10 @@ function saveTemplate(){
   const name=document.getElementById('tpl-name').value.trim();if(!name){document.getElementById('tpl-name').focus();return;}
   if(!D.templates)D.templates=[];
   D.templates.push({id:D.nextTplId++,name,cat:document.getElementById('tpl-cat').value,desc:document.getElementById('tpl-desc').value.trim(),body:document.getElementById('tpl-body').value});
-  saveData();closeModals();renderTemplates();toast('Template saved','check');
+  saveData('templates');closeModals();renderTemplates();toast('Template saved','check');
 }
 function copyTpl(id){const t=(D.templates||[]).find(x=>x.id===id);if(!t)return;navigator.clipboard.writeText(t.body).then(()=>toast('Copied!','copy')).catch(()=>prompt('Copy:',t.body));}
-function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);saveData();renderTemplates();}
+function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);saveData('templates');renderTemplates();}
 
 // ═══ CLIENTS ═════════════════════════════════════════════════════════════════
 function renderClients(){
@@ -1144,9 +1205,9 @@ function saveClient(){
   if(!D.clients)D.clients=[];
   if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);if(i>=0)D.clients[i]={...D.clients[i],...d};}
   else{if(!D.nextCid)D.nextCid=100;D.clients.push({id:'c'+D.nextCid,...d});D.nextCid++;}
-  saveData();closeModals();renderClients();fillClientDrop();toast('Client saved','check');
+  saveData('clients');closeModals();renderClients();fillClientDrop();toast('Client saved','check');
 }
-function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);saveData();renderClients();}
+function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);saveData('clients');renderClients();}
 
 // ═══ TEAM ═════════════════════════════════════════════════════════════════════
 function renderTeam(){
@@ -1181,9 +1242,9 @@ function saveUser(){
   if(!D.team)D.team=[];
   if(editUid){const i=D.team.findIndex(u=>u.id===editUid);D.team[i]={...D.team[i],...d};}
   else{D.team.push({id:'u'+D.nextUid++,...d});}
-  saveData();closeModals();renderTeam();toast('Member saved','check');
+  saveData('team');closeModals();renderTeam();toast('Member saved','check');
 }
-function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);saveData();renderTeam();}
+function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);saveData('team');renderTeam();}
 
 // ═══ BID SHEET ═══════════════════════════════════════════════════════════════
 function openBidSheet(id){
@@ -1232,7 +1293,7 @@ async function saveBidSheet(){
   p.status=document.getElementById('bs-status').value;
   p.assignee=document.getElementById('bs-mgr').value;
   p.bidSheet={date:document.getElementById('bs-date').value,manager:document.getElementById('bs-mgr').value,qno:document.getElementById('bs-qno').value,auth:document.getElementById('bs-auth').value,pubdate:document.getElementById('bs-pubdate').value,proto:document.getElementById('bs-proto').value,sysnum:document.getElementById('bs-sysnum').value,ttype:document.querySelector('input[name="bs-ttype"]:checked')?.value||'Ανοικτός',sub:{eshdis:document.getElementById('bs-eshdis').checked,email:document.getElementById('bs-email').checked,cosmo:document.getElementById('bs-cosmo').checked,inperson:document.getElementById('bs-inperson').checked},desc:document.getElementById('bs-desc').value,cpv1:document.getElementById('bs-cpv1').value,cpv2:document.getElementById('bs-cpv2').value,parttype:document.querySelector('input[name="bs-part"]:checked')?.value||'100%',partpct:document.getElementById('bs-partpct').value,partner:document.getElementById('bs-partner').value,budget:parseFloat(document.getElementById('bs-budget').value)||0,analysis:document.getElementById('bs-analysis').value,net:parseFloat(document.getElementById('bs-net').value)||0,vat:parseFloat(document.getElementById('bs-vat').value)||0,clarif:document.getElementById('bs-clarif').value,subdate:document.getElementById('bs-subdate').value,subtime:document.getElementById('bs-subtime').value,gamt:parseFloat(document.getElementById('bs-gamt').value)||0,gfrom:document.getElementById('bs-gfrom').value,gto:document.getElementById('bs-gto').value,perf:document.querySelector('input[name="bs-perf"]:checked')?.value||'Όχι',bfrom:document.getElementById('bs-bfrom').value,bto:document.getElementById('bs-bto').value,notes:document.getElementById('bs-notes').value};
-  await saveData();closeBidSheet();renderProposals();toast('Bid sheet saved','check');
+  await saveData('proposals');closeBidSheet();renderProposals();toast('Bid sheet saved','check');
 }
 function closeBidSheet(){document.getElementById('bid-sheet').style.display='none';bidPid=null;}
 document.getElementById('bid-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('bid-sheet'))closeBidSheet();});
@@ -1241,7 +1302,7 @@ document.getElementById('bid-sheet').addEventListener('click',e=>{if(e.target===
 function exportForClaude(){const s=JSON.stringify(D,null,2);navigator.clipboard.writeText(s).then(()=>toast('Copied — paste into Claude!','check')).catch(()=>prompt('Copy this:',s));}
 async function doImport(){
   const raw=document.getElementById('imp-json').value.trim(),err=document.getElementById('imp-err');
-  try{const p=JSON.parse(raw);if(!p.proposals||!p.team){err.textContent='Invalid data';err.style.display='block';return;}D=p;await saveData();closeModals();renderAll();toast('Workspace updated!','check');}
+  try{const p=JSON.parse(raw);if(!p.proposals||!p.team){err.textContent='Invalid data';err.style.display='block';return;}D=p;await saveData('all');closeModals();renderAll();toast('Workspace updated!','check');}
   catch(e){err.textContent='Could not parse JSON';err.style.display='block';}
 }
 
@@ -1600,10 +1661,10 @@ function saveForecast(){
   if(!D.nextFid)D.nextFid=1;
   if(editFid){const i=D.forecasts.findIndex(f=>f.id===editFid);D.forecasts[i]={...D.forecasts[i],...d};}
   else{D.forecasts.push({id:D.nextFid++,...d});}
-  saveData();closeModals();renderForecast();toast('Forecast saved','check');
+  saveData('forecasts');closeModals();renderForecast();toast('Forecast saved','check');
 }
 
-function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts=(D.forecasts||[]).filter(f=>f.id!==id);saveData();renderForecast();}
+function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts=(D.forecasts||[]).filter(f=>f.id!==id);saveData('forecasts');renderForecast();}
 
 function convertForecast(id){
   const f=(D.forecasts||[]).find(x=>x.id===id);if(!f)return;
@@ -1613,7 +1674,7 @@ function convertForecast(id){
   D.proposals.push(p);
   // Mark forecast as converted
   const fi=D.forecasts.findIndex(x=>x.id===id);if(fi>=0)D.forecasts[fi].convertedToProposalId=p.id;
-  saveData();goTab('proposals',document.querySelector('.nb:nth-child(2)'));toast('Converted to proposal!','check');
+  saveData('proposals');goTab('proposals',document.querySelector('.nb:nth-child(2)'));toast('Converted to proposal!','check');
 }
 
 // ── Lost → Forecast popup ─────────────────────────────────────────────────────
@@ -1647,14 +1708,14 @@ function saveLostForecast(){
   });
   document.getElementById('m-lost-fc').style.display='none';
   lostPid=null;
-  saveData();toast('Forecast created!','crystal-ball');
+  saveData('forecasts');toast('Forecast created!','crystal-ball');
 }
 
 
 
 // ═══ BOOT ═════════════════════════════════════════════════════════════════════
 loadCFG();
-if(CFG.gistId&&CFG.token){
+if(CFG.repo&&CFG.token){
   document.getElementById('app').style.display='block';
   refreshData().then(()=>{autoTimer=setInterval(silentRefresh,30000);});
 }else{
