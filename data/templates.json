@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Executive Summary",
+    "cat": "Proposal",
+    "desc": "2-page C-level overview",
+    "body": "## Executive Summary\n\n**Project:** \n**Client:** \n**Date:** \n\n### Overview\n\n### Proposed solution\n\n### Key benefits\n\n### Investment"
+  },
+  {
+    "id": 2,
+    "name": "Technical Architecture",
+    "cat": "Technical",
+    "desc": "System design outline",
+    "body": "## Technical Architecture\n\n### System overview\n\n### Components\n\n### Integration\n\n### Security controls"
+  },
+  {
+    "id": 3,
+    "name": "Financial Proposal",
+    "cat": "Financial",
+    "desc": "Pricing and ROI",
+    "body": "## Financial Proposal\n\n| Item | Qty | Unit price | Total |\n|------|-----|------------|-------|\n\n### ROI analysis"
+  },
+  {
+    "id": 4,
+    "name": "Tender Cover Letter",
+    "cat": "Tender",
+    "desc": "Formal submission cover",
+    "body": "[Place, Date]\n\nDear Selection Committee,\n\nWe hereby submit our proposal for [Tender Reference]…"
+  }
+]
