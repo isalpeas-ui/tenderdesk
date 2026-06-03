@@ -69,6 +69,7 @@ tr:hover .ra{opacity:1}
 .b-Municipality{background:#E6F1FB;color:#185FA5}.b-Hospital{background:#FAEEDA;color:#854F0B}.b-University{background:#EAF3DE;color:#3B6D11}.b-Ministry{background:#F1EFE8;color:#5F5E5A}.b-Region{background:#FAEEDA;color:#854F0B}.b-Defence{background:#FCEBEB;color:#A32D2D}.b-Public{background:#E6F1FB;color:#185FA5}.b-Other{background:#F1EFE8;color:#5F5E5A}
 .b-tender{background:#E6F1FB;color:#185FA5}.b-budgetary{background:#FAEEDA;color:#854F0B}
 .dl-urgent{color:#A32D2D;font-weight:500}.dl-soon{color:#854F0B}.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
+.age-fresh{color:#3B6D11}.age-warn{color:#854F0B;font-weight:500}.age-danger{color:#A32D2D;font-weight:600}
 /* Modal */
 .mb{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal{background:var(--bg);border-radius:var(--rl);border:.5px solid var(--border);width:520px;max-width:100%;max-height:90vh;overflow-y:auto}
@@ -446,6 +447,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div id="pm-submitted-row" style="display:none;padding:6px 0;font-size:12px;color:var(--text2);border-top:.5px solid var(--border);margin-top:4px">
       <i class="ti ti-send" style="font-size:11px;margin-right:4px"></i>
       Submitted on <strong id="pm-submitted-date" style="color:var(--text1)"></strong>
+      <span id="pm-submitted-age" style="margin-left:6px;font-size:11px"></span>
       <span style="margin-left:8px;opacity:.6">· Follow-up task auto-created 15 days later</span>
     </div>
   </div>
@@ -860,6 +862,13 @@ function dl(d,status){
   if(days<=21)return{cls:'dl-soon',txt:days+'d'};
   return{cls:'dl-ok',txt:new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})};
 }
+function aging(submittedAt){
+  if(!submittedAt)return null;
+  const days=Math.floor((Date.now()-new Date(submittedAt).getTime())/86400000);
+  const cls=days>30?'age-danger':days>14?'age-warn':'age-fresh';
+  const txt=days===0?'Today':days===1?'1 day ago':days+'d ago';
+  return{days,cls,txt};
+}
 function toast(msg,icon){const t=document.getElementById('toast');t.innerHTML=(icon?`<i class="ti ti-${icon}" style="font-size:15px"></i> `:'')+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
 function openModal(id){document.getElementById(id).style.display='flex';}
 function closeModals(){document.querySelectorAll('.mb').forEach(m=>m.style.display='none');editPid=editTid=editUid=editCid=null;}
@@ -906,7 +915,20 @@ function renderDashboard(){
   const fcAlert=document.getElementById('dash-fc-alert');
   if(fcAlert){if(fcSoon.length>0){fcAlert.style.display='flex';document.getElementById('dash-fc-msg').textContent=fcSoon.length+' forecast tender'+(fcSoon.length>1?'s':'')+' expected within 60 days — €'+fcSoon.reduce((s,f)=>s+(f.value||0),0).toLocaleString('el-GR');}else{fcAlert.style.display='none';}}
 
-  de.innerHTML=sorted.map(p=>{const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''"><div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:11px;color:var(--text2)">${cname(p)}</div></div><div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div></div>`;}).join('');
+  de.innerHTML=sorted.map(p=>{
+    const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';
+    const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';
+    const ag=aging(p.submittedAt);
+    const agBadge=ag?`<span class="${ag.cls}" style="font-size:10px;margin-left:4px"><i class="ti ti-clock" style="font-size:9px"></i> ${ag.txt}</span>`:'';
+    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+      <div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${cname(p)}${agBadge}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div>
+    </div>`;
+  }).join('');
 }
 
 // ═══ PROPOSALS ═══════════════════════════════════════════════════════════════
@@ -924,6 +946,7 @@ function renderProposals(){
   tb.innerHTML=list.map(p=>{
     const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';
     const tl=(p.type||'Budgetary')==='Public Tender'?'Tender':'Budgetary';
+    const ag=aging(p.submittedAt);
     return`<tr>
       <td style="font-weight:500;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td>
       <td><span class="badge ${tc(p.type||'Budgetary')}">${tl}</span></td>
@@ -932,7 +955,7 @@ function renderProposals(){
       <td style="color:var(--text2);font-size:12px">${p.partner||'—'}</td>
       <td style="font-weight:500">${v}</td>
       <td class="${d.cls}">${d.txt}</td>
-      <td style="font-size:11px;color:var(--text2)">${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—'}</td>
+      <td style="font-size:11px">${ag?`<div style="color:var(--text2)">${new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div><div class="${ag.cls}" style="font-size:11px;margin-top:1px"><i class="ti ti-clock" style="font-size:10px"></i> ${ag.txt}</div>`:'—'}</td>
       <td><span class="badge ${sc(p.status)}">${p.status}</span></td>
       <td><span class="badge ${pc(p.priority)}">${p.priority}</span></td>
       <td>${av(p.assignee)}</td>
@@ -987,6 +1010,10 @@ function openProposalModal(id){
     if(p.submittedAt){
       document.getElementById('pm-submitted-row').style.display='block';
       document.getElementById('pm-submitted-date').textContent=new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      const ag=aging(p.submittedAt);
+      const ageEl=document.getElementById('pm-submitted-age');
+      if(ag){ageEl.className=ag.cls;ageEl.innerHTML=`<i class="ti ti-clock" style="font-size:10px"></i> ${ag.txt}`;}
+      else{ageEl.textContent='';}
     } else {
       document.getElementById('pm-submitted-row').style.display='none';
     }
