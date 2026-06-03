@@ -1,0 +1,42 @@
+[
+  {
+    "id": "u1",
+    "first": "Ilias",
+    "last": "Salpeas",
+    "role": "Sales Manager",
+    "email": "isalpeas@odysseycs.com",
+    "color": "#A32D2D"
+  },
+  {
+    "id": "u2",
+    "first": "Zeta",
+    "last": "Kartagkouli",
+    "role": "Account Manager",
+    "email": "zkartsagkouli@odysseycs.com",
+    "color": "#534AB7"
+  },
+  {
+    "id": "u3",
+    "first": "Tzeni",
+    "last": "Saiti",
+    "role": "Bid Manager",
+    "email": "jboutselaki@odysseycs.com",
+    "color": "#5F5E5A"
+  },
+  {
+    "id": "u4",
+    "first": "Stavroula",
+    "last": "Panagiotopoulou",
+    "role": "Account Manager",
+    "email": "spanagiotopoulou@odysseycs.com",
+    "color": "#185FA5"
+  },
+  {
+    "id": "u5",
+    "first": "Stefanos",
+    "last": "Kostaridakis",
+    "role": "Account Manager",
+    "email": "SKostaridakis@odysseycs.com",
+    "color": "#854F0B"
+  }
+]
