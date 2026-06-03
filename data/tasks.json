@@ -1,0 +1,211 @@
+[
+  {
+    "id": 1,
+    "title": "email to presales team",
+    "proposal": 7,
+    "assignee": "u4",
+    "start": "2026-05-26",
+    "due": "2026-06-18",
+    "priority": "Medium",
+    "status": "done",
+    "desc": "Q016332- Municipality of Igoumenitsa"
+  },
+  {
+    "id": 2,
+    "title": "email to presales team",
+    "proposal": 1,
+    "assignee": "u4",
+    "start": "2026-05-20",
+    "due": "2026-05-31",
+    "priority": "High",
+    "status": "done",
+    "desc": "Q016310 NIS2 Gap Assessment & Risk Report 003475 Municipality of Likovrisi-Pefki"
+  },
+  {
+    "id": 3,
+    "title": "email to presales team",
+    "proposal": 3,
+    "assignee": "u4",
+    "start": "2026-05-14",
+    "due": "2026-05-31",
+    "priority": "Medium",
+    "status": "done",
+    "desc": "Q016282 Cybersecurity Services compliant to NIS2 003448 General Hospital-Health Center of Filiates"
+  },
+  {
+    "id": 4,
+    "title": "email to presales team",
+    "proposal": 2,
+    "assignee": "u4",
+    "start": "2026-05-21",
+    "due": "2026-05-29",
+    "priority": "High",
+    "status": "done",
+    "desc": "Q016312 NIS2 Gap Assessment, Policies & Training 003476 Centre of Greek language, budgetary"
+  },
+  {
+    "id": 5,
+    "title": "email to presales team",
+    "proposal": 30,
+    "assignee": "u4",
+    "start": "2026-05-26",
+    "due": "2026-06-30",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 6,
+    "title": "email to presales team",
+    "proposal": 37,
+    "assignee": "u4",
+    "start": "2026-05-26",
+    "due": "2026-06-15",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 7,
+    "title": "email to bid manager",
+    "proposal": 37,
+    "assignee": "u4",
+    "start": "2026-05-26",
+    "due": "2026-06-15",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 8,
+    "title": "presales prep",
+    "proposal": 1,
+    "assignee": "u4",
+    "start": "2026-05-27",
+    "due": "2026-05-29",
+    "priority": "High",
+    "status": "done",
+    "desc": "το ειδαν 27/05"
+  },
+  {
+    "id": 9,
+    "title": "presales prep",
+    "proposal": 2,
+    "assignee": "u4",
+    "start": "2026-05-27",
+    "due": "2026-05-29",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 10,
+    "title": "email to presales team",
+    "proposal": 25,
+    "assignee": "u4",
+    "start": "2026-05-27",
+    "due": "2026-06-11",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 11,
+    "title": "Call Hellenic Naval Academy",
+    "proposal": 14,
+    "assignee": "u4",
+    "start": "2026-05-28",
+    "due": "",
+    "priority": "Medium",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 13,
+    "title": "send offer",
+    "proposal": 2,
+    "assignee": "u4",
+    "start": "2026-05-20",
+    "due": "2026-05-29",
+    "priority": "Medium",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 14,
+    "title": "send offer",
+    "proposal": 1,
+    "assignee": "u4",
+    "start": "2026-05-27",
+    "due": "2026-06-01",
+    "priority": "Medium",
+    "status": "todo",
+    "desc": ""
+  },
+  {
+    "id": 15,
+    "title": "meeting with general hospital of lefkada",
+    "proposal": 14,
+    "assignee": "u4",
+    "start": "2026-05-29",
+    "due": "2026-06-06",
+    "priority": "Medium",
+    "status": "todo",
+    "desc": ""
+  },
+  {
+    "id": 16,
+    "title": "coord prep",
+    "proposal": 2,
+    "assignee": "u4",
+    "start": "2026-05-20",
+    "due": "2026-05-27",
+    "priority": "High",
+    "status": "inprogress",
+    "desc": ""
+  },
+  {
+    "id": 17,
+    "title": "provide prices",
+    "proposal": 2,
+    "assignee": "u1",
+    "start": "2026-06-02",
+    "due": "2026-06-03",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 18,
+    "title": "provide prices",
+    "proposal": 1,
+    "assignee": "u1",
+    "start": "2026-06-02",
+    "due": "2026-06-05",
+    "priority": "High",
+    "status": "done",
+    "desc": ""
+  },
+  {
+    "id": 19,
+    "title": "presales prep",
+    "proposal": 37,
+    "assignee": "u4",
+    "start": "2026-05-26",
+    "due": "2026-06-15",
+    "priority": "High",
+    "status": "inprogress",
+    "desc": ""
+  },
+  {
+    "id": 21,
+    "title": "send offer",
+    "proposal": 92,
+    "assignee": "u2",
+    "start": "",
+    "due": "2026-06-05",
+    "priority": "High",
+    "status": "todo",
+    "desc": ""
+  }
+]
