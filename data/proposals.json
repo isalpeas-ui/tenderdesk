@@ -1777,5 +1777,24 @@
     "notes": "",
     "submittedAt": "2026-06-11",
     "createdAt": "2026-06-11"
+  },
+  {
+    "id": 98,
+    "name": "NIS2 Gap Analysis",
+    "type": "Budgetary",
+    "clientId": "c378",
+    "client": "Papanikolaou General Hospital",
+    "value": 7000,
+    "deadline": "2026-06-10",
+    "status": "Submitted",
+    "priority": "Low",
+    "assignee": "u2",
+    "partner": "",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "submittedAt": "2026-06-11",
+    "createdAt": "2026-06-11"
   }
 ]
