@@ -207,5 +207,16 @@
     "priority": "High",
     "status": "todo",
     "desc": ""
+  },
+  {
+    "id": 22,
+    "title": "Follow-up: Cybersecurity Services",
+    "proposal": 11,
+    "assignee": "u2",
+    "start": "2026-06-11",
+    "due": "2026-06-26",
+    "priority": "High",
+    "status": "todo",
+    "desc": "Submitted on 2026-06-11. Follow up with Municipality of Lefkada to get an update on the proposal status."
   }
 ]
