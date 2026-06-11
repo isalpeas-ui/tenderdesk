@@ -22,7 +22,7 @@
     "client": "Centre of Greek language",
     "value": 11000,
     "deadline": "2026-05-29",
-    "status": "",
+    "status": "Submitted",
     "priority": "Medium",
     "assignee": "u4",
     "notes": "ενιαια προσφορα για να επιλεξουν πακετο και να παμε σε απευθειας",
@@ -32,7 +32,8 @@
       "NIS2",
       "Security Awareness Training"
     ],
-    "partner": ""
+    "partner": "",
+    "submittedAt": "2026-06-11"
   },
   {
     "id": 3,
