@@ -32,5 +32,24 @@
     "products": [],
     "notes": "",
     "linkedProposalId": 5
+  },
+  {
+    "id": 3,
+    "name": "EDR & NIS2 SERVICES",
+    "clientId": "c16",
+    "client": "Municipality Of Palaio Faliro",
+    "value": 150000,
+    "winner": "",
+    "prevDate": "2026-06-11",
+    "repeatDate": "2027-06-11",
+    "period": "12",
+    "intent": "Participate",
+    "assignee": "u4",
+    "products": [
+      "EDR",
+      "NIS2"
+    ],
+    "notes": "",
+    "linkedProposalId": 18
   }
 ]
