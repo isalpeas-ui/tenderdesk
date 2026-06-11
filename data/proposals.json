@@ -1758,5 +1758,24 @@
       "NIS2"
     ],
     "notes": "3/6: σε επικοινωνια για να λαβουμε προσκληση στην ερευνα αγορας και να συμβαλουμε στις τεχνικες προδιαγραφες"
+  },
+  {
+    "id": 97,
+    "name": "NIS2 Gap Assessment",
+    "type": "Budgetary",
+    "clientId": "c18",
+    "client": "General Hospital \"Venizeleio\"",
+    "value": 7000,
+    "deadline": "2026-06-10",
+    "status": "Submitted",
+    "priority": "Low",
+    "assignee": "u2",
+    "partner": "",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "submittedAt": "2026-06-11",
+    "createdAt": "2026-06-11"
   }
 ]
