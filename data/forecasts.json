@@ -16,5 +16,21 @@
     ],
     "notes": "fortinet was with another partner",
     "linkedProposalId": 25
+  },
+  {
+    "id": 2,
+    "name": "University of Thraki - Cybersecurity Services",
+    "clientId": "c5",
+    "client": "University of Thraki",
+    "value": 700000,
+    "winner": "",
+    "prevDate": "2026-06-11",
+    "repeatDate": "2027-06-11",
+    "period": "12",
+    "intent": "Participate",
+    "assignee": "u2",
+    "products": [],
+    "notes": "",
+    "linkedProposalId": 5
   }
 ]
