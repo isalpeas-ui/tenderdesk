@@ -746,10 +746,20 @@ async function readFile(name){
 async function writeFile(name, data){
   const content=b64encode(JSON.stringify(data,null,2));
   const body={message:`TenderDesk: update ${name}`,content,sha:FILE_SHAS[name]};
-  const r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
-  if(!r.ok){const e=await r.json();throw new Error(e.message||r.status);}
+  let r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
+  // Handle stale SHA — refresh and retry once
+  if(r.status===409||r.status===422){
+    const fresh=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{headers:ghH()});
+    if(fresh.ok){
+      const ff=await fresh.json();
+      FILE_SHAS[name]=ff.sha;
+      body.sha=ff.sha;
+      r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
+    }
+  }
+  if(!r.ok){const e=await r.json().catch(()=>({message:r.statusText}));throw new Error(e.message||r.status);}
   const resp=await r.json();
-  FILE_SHAS[name]=resp.content.sha; // Update SHA for next write
+  FILE_SHAS[name]=resp.content.sha;
 }
 
 async function readAllFiles(){
@@ -822,17 +832,27 @@ async function silentRefresh(){
   }catch(e){}
 }
 
-// entity: string like 'proposals' | array like ['proposals','tasks'] | 'all'
-async function saveData(entity='proposals'){
+// Serial write queue — prevents concurrent meta writes (which cause 409/422 SHA conflicts)
+let saveQueue = Promise.resolve();
+
+function saveData(entity='proposals'){
+  saveQueue = saveQueue.then(()=>doSave(entity)).catch(()=>{});
+  return saveQueue;
+}
+
+async function doSave(entity){
   setSS('saving');
   const meta={nextPid:D.nextPid,nextTid:D.nextTid,nextTplId:D.nextTplId,nextUid:D.nextUid,nextCid:D.nextCid,nextFid:D.nextFid||1,updatedAt:new Date().toISOString()};
   const targets=entity==='all'
     ?['clients','proposals','tasks','team','forecasts','templates','meta']
     :Array.isArray(entity)?[...new Set([...entity,'meta'])]:[entity,'meta'];
   try{
-    await Promise.all(targets.map(e=>writeFile(e,e==='meta'?meta:(D[e]||[]))));
+    // Write sequentially within a single saveData call to avoid SHA collisions on shared files
+    for(const e of targets){
+      await writeFile(e, e==='meta'?meta:(D[e]||[]));
+    }
     setSS('ok');
-  }catch(e){setSS('error');toast('Save failed — '+e.message,'alert-circle');}
+  }catch(e){setSS('error');toast('Save failed — '+e.message,'alert-circle');throw e;}
 }
 
 function renderAll(){
