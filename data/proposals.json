@@ -418,7 +418,7 @@
     "client": "General Hospital of Lefkada",
     "value": 27590,
     "deadline": "2026-05-31",
-    "status": "Active",
+    "status": "Lost",
     "priority": "Medium",
     "assignee": "u4",
     "notes": "προϋπολογισμος, εχουμε μιλησει, θα ξαναμιλησουμε την αλλη εβδομαδα μηπως τους γραψουμε τις τεχνικες",
@@ -426,7 +426,8 @@
     "products": [
       "NIS2"
     ],
-    "partner": ""
+    "partner": "",
+    "type": "Public Tender"
   },
   {
     "id": 20,
