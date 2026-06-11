@@ -218,5 +218,16 @@
     "priority": "High",
     "status": "todo",
     "desc": "Submitted on 2026-06-11. Follow up with Municipality of Lefkada to get an update on the proposal status."
+  },
+  {
+    "id": 23,
+    "title": "Follow-up: NIS2 Gap Assessment, Policies & Training",
+    "proposal": 2,
+    "assignee": "u4",
+    "start": "2026-06-11",
+    "due": "2026-06-26",
+    "priority": "Medium",
+    "status": "todo",
+    "desc": "Submitted on 2026-06-11. Follow up with Centre of Greek language to get an update on the proposal status."
   }
 ]
