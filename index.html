@@ -715,9 +715,14 @@ function loadCFG(){
   try{
     const s=localStorage.getItem('td_cfg3');
     if(s){CFG=JSON.parse(s);return;}
-    // Migrate from old Gist-based config
+    // One-time migration from old Gist-based config — then remove it
     const old=localStorage.getItem('td_cfg2');
-    if(old){const o=JSON.parse(old);CFG={repo:'isalpeas-ui/tenderdesk',token:o.token||''};}
+    if(old){
+      const o=JSON.parse(old);
+      CFG={repo:'isalpeas-ui/tenderdesk',token:o.token||''};
+      saveCFG(); // persist as td_cfg3
+      localStorage.removeItem('td_cfg2'); // and remove the legacy key
+    }
   }catch(e){}
 }
 function ghH(){return{'Authorization':'token '+CFG.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};}
@@ -805,7 +810,12 @@ async function launchApp(){
 }
 
 function showSettings(){document.getElementById('cfg-repo').textContent=CFG.repo;document.getElementById('cfg-token').textContent=CFG.token;openModal('m-settings');}
-function resetSetup(){if(!confirm('Disconnect from this workspace?'))return;localStorage.removeItem('td_cfg3');location.reload();}
+function resetSetup(){
+  if(!confirm('Disconnect from this workspace?'))return;
+  localStorage.removeItem('td_cfg3');
+  localStorage.removeItem('td_cfg2'); // also clear legacy Gist config
+  location.reload();
+}
 
 // ═══ DATA SYNC ═══════════════════════════════════════════════════════════════
 function setSS(s){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-lbl');dot.className='sync-dot'+(s==='saving'?' saving':s==='error'?' error':'');lbl.textContent=s==='saving'?'Saving…':s==='error'?'Error':'Synced';}
