@@ -1815,5 +1815,24 @@
     ],
     "notes": "",
     "createdAt": "2026-06-11"
+  },
+  {
+    "id": 100,
+    "name": "MDR & IR&OR",
+    "type": "Public Tender",
+    "clientId": "c380",
+    "client": "Hellenic Gaming Commission (EEEP)",
+    "value": 29876,
+    "deadline": "2026-06-11",
+    "status": "Won",
+    "priority": "Medium",
+    "assignee": "u2",
+    "partner": "",
+    "products": [
+      "MDR",
+      "ClearSkies"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-11"
   }
 ]
