@@ -207,7 +207,7 @@
     "client": "Municipality of Lefkada",
     "value": 0,
     "deadline": "2026-06-08",
-    "status": "Active",
+    "status": "Submitted",
     "priority": "High",
     "assignee": "u2",
     "notes": "Checkpoint \nwith Dotsoft",
@@ -218,7 +218,8 @@
       "Firewall",
       "SOC"
     ],
-    "partner": ""
+    "partner": "",
+    "submittedAt": "2026-06-11"
   },
   {
     "id": 12,
