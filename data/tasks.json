@@ -240,5 +240,16 @@
     "priority": "Low",
     "status": "todo",
     "desc": "Submitted on 2026-06-11. Follow up with General Hospital \"Venizeleio\" to get an update on the proposal status."
+  },
+  {
+    "id": 24,
+    "title": "Follow-up: NIS2 Gap Analysis",
+    "proposal": 98,
+    "assignee": "u2",
+    "start": "2026-06-11",
+    "due": "2026-06-26",
+    "priority": "Low",
+    "status": "todo",
+    "desc": "Submitted on 2026-06-11. Follow up with Papanikolaou General Hospital to get an update on the proposal status."
   }
 ]
