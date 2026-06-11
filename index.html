@@ -92,6 +92,12 @@ tr:hover .ra{opacity:1}
 .trow-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0}
 .ns-badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:#E6F1FB;color:#185FA5;letter-spacing:.3px;display:inline-flex;align-items:center;gap:3px}
 
+/* Client subgroup inside task list */
+.tclient-group{margin-bottom:6px}
+.tclient-hdr{display:flex;align-items:center;gap:6px;padding:4px 8px;background:linear-gradient(to right,#F1EFE8 0%,transparent 60%);border-left:3px solid #534AB7;font-size:12px;font-weight:600;color:#534AB7;margin:6px 0 4px;border-radius:0 4px 4px 0}
+.tclient-hdr i{font-size:13px}
+.tclient-hdr .prop{font-weight:400;color:var(--text2);font-size:11px;margin-left:auto}
+
 /* Calendar view */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .cal-hdr{background:var(--bg2);padding:6px;font-size:11px;font-weight:600;text-transform:uppercase;text-align:center;color:var(--text2)}
@@ -1092,7 +1098,7 @@ function renderDashboardNextSteps(){
     return;
   }
   ns.innerHTML=nextSteps.map(t=>{
-    const p=(D.proposals||[]).find(x=>x.id===t.proposal);
+    const k=taskGroupKey(t);
     const dueD=t.due?new Date(t.due):null;
     let urgency='dl-ok',label='—';
     if(dueD){
@@ -1107,8 +1113,8 @@ function renderDashboardNextSteps(){
     return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border);cursor:pointer" onclick="openTaskModal(${t.id})" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
       <div style="width:52px;text-align:center;flex-shrink:0"><div class="${urgency}" style="font-size:12px;font-weight:600">${label}</div></div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title}</div>
-        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p?p.name:'—'}</div>
+        <div style="font-size:13px;font-weight:600;color:#534AB7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-building-community" style="font-size:11px"></i> ${k.clientName}</div>
+        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-target" style="font-size:10px"></i> ${t.title}</div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">${av(t.assignee,22)}</div>
     </div>`;
@@ -1299,7 +1305,7 @@ function scheduleTask(proposalId){
   // Populate task modal
   document.getElementById('tm-title').textContent='New task';
   document.getElementById('tm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
-  document.getElementById('tm-proposal').innerHTML='<option value="">— None —</option>'+(D.proposals||[]).map(pr=>`<option value="${pr.id}">${pr.name}</option>`).join('');
+  document.getElementById('tm-proposal').innerHTML=proposalDropdownHtml();
   // Pre-fill with proposal data
   document.getElementById('tm-name').value='';
   document.getElementById('tm-proposal').value=p.id;
@@ -1377,6 +1383,32 @@ function renderTasks(){
   else renderTasksKanban();
 }
 
+// Returns {client, proposal} for grouping. Falls back gracefully.
+function taskGroupKey(t){
+  if(!t.proposal) return {client:'📌 General',proposal:null,clientName:'General'};
+  const p=(D.proposals||[]).find(x=>x.id===t.proposal);
+  if(!p) return {client:'📌 General',proposal:null,clientName:'General'};
+  const cn=cname(p)||p.name;
+  return {client:cn,proposal:p,clientName:cn};
+}
+
+// Returns HTML for proposal <select>, grouped by client
+function proposalDropdownHtml(){
+  const props=(D.proposals||[]).filter(p=>p.status!=='Won'&&p.status!=='Lost');
+  const lost=(D.proposals||[]).filter(p=>p.status==='Won'||p.status==='Lost');
+  const byClient={};
+  [...props,...lost].forEach(p=>{
+    const cn=cname(p)||'(no client)';
+    if(!byClient[cn])byClient[cn]=[];
+    byClient[cn].push(p);
+  });
+  const keys=Object.keys(byClient).sort();
+  return '<option value="">— None —</option>'+keys.map(c=>{
+    const opts=byClient[c].sort((a,b)=>a.name.localeCompare(b.name)).map(p=>`<option value="${p.id}">${p.name} ${p.status==='Won'||p.status==='Lost'?'['+p.status+']':''}</option>`).join('');
+    return `<optgroup label="${c}">${opts}</optgroup>`;
+  }).join('');
+}
+
 function renderTasksList(){
   const list=filteredTasks();
   const wrap=document.getElementById('t-list-content');
@@ -1399,25 +1431,46 @@ function renderTasksList(){
   const groupColors={'Overdue':'#A32D2D','Today':'#854F0B','This week':'#185FA5','Later':'var(--text2)','No due date':'var(--text2)','Done':'#3B6D11'};
 
   wrap.innerHTML=Object.entries(groups).filter(([_,arr])=>arr.length).map(([name,arr])=>{
+    // Subgroup by client + proposal within each time bucket
+    const byClient={};
+    arr.forEach(t=>{
+      const k=taskGroupKey(t);
+      const key=k.clientName+'||'+(k.proposal?k.proposal.id:'none');
+      if(!byClient[key])byClient[key]={clientName:k.clientName,proposal:k.proposal,tasks:[]};
+      byClient[key].tasks.push(t);
+    });
+    // Sort client groups: real clients alphabetically, "General" last
+    const orderedKeys=Object.keys(byClient).sort((a,b)=>{
+      const ag=byClient[a].clientName==='General', bg=byClient[b].clientName==='General';
+      if(ag!==bg) return ag?1:-1;
+      return byClient[a].clientName.localeCompare(byClient[b].clientName);
+    });
+
     return`<div class="tlist-group">
       <div class="tlist-hdr"><i class="ti ${groupIcons[name]}" style="color:${groupColors[name]};font-size:13px"></i> ${name} <span class="cnt">${arr.length}</span></div>
-      ${arr.sort((a,b)=>(a.due||'').localeCompare(b.due||'')).map(t=>renderTaskRow(t)).join('')}
+      ${orderedKeys.map(k=>{
+        const g=byClient[k];
+        const propLine=g.proposal?`<span class="prop"><i class="ti ti-file-description" style="font-size:10px"></i> ${g.proposal.name}</span>`:'';
+        const icon=g.clientName==='General'?'ti-folder':'ti-building-community';
+        return`<div class="tclient-group">
+          <div class="tclient-hdr"><i class="ti ${icon}"></i> ${g.clientName} ${propLine}</div>
+          ${g.tasks.sort((a,b)=>(a.due||'').localeCompare(b.due||'')).map(t=>renderTaskRow(t)).join('')}
+        </div>`;
+      }).join('')}
     </div>`;
   }).join('');
 }
 
 function renderTaskRow(t){
-  const p=(D.proposals||[]).find(x=>x.id===t.proposal);
   const d=t.due?dl(t.due,''):null;
   const dueStr=t.due?`<span class="trow-meta ${d.cls}"><i class="ti ti-calendar-event"></i>${d.txt}</span>`:'';
-  const propStr=p?`<span class="trow-meta" title="${p.name}"><i class="ti ti-file-description"></i>${p.name.length>30?p.name.slice(0,30)+'…':p.name}</span>`:'';
   const nsBadge=t.isNextStep?`<span class="ns-badge"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
   const cls='trow'+(t.status==='done'?' done':'')+(t.isNextStep?' next-step':'');
   return`<div class="${cls}">
     <input type="checkbox" class="trow-chk" ${t.status==='done'?'checked':''} onchange="toggleTaskDone(${t.id})">
     ${nsBadge}
     <span class="trow-title" onclick="openTaskModal(${t.id})" title="${t.title}">${t.title}</span>
-    ${propStr}${dueStr}
+    ${dueStr}
     <span class="trow-meta"><span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span></span>
     ${av(t.assignee,22)}
     <button class="ib" onclick="snoozeTask(${t.id},7)" title="Snooze 7 days" style="font-size:14px"><i class="ti ti-clock-pause"></i></button>
@@ -1456,7 +1509,10 @@ function renderTasksCalendar(){
       if(t.status==='done') cls+=' done';
       else if(t.isNextStep) cls+=' next-step';
       else if(new Date(t.due)<today) cls+=' overdue';
-      return`<div class="${cls}" onclick="openTaskModal(${t.id})" title="${t.title}">${t.isNextStep?'▸ ':''}${t.title}</div>`;
+      const k=taskGroupKey(t);
+      // Short client name (first word or up to 12 chars)
+      const cs=k.clientName==='General'?'General':k.clientName.replace(/^Municipality of /,'').split(/[ -]/)[0].slice(0,14);
+      return`<div class="${cls}" onclick="openTaskModal(${t.id})" title="${k.clientName} — ${t.title}"><strong>${cs}</strong> · ${t.title}</div>`;
     }).join('');
     const more=tasks.length>4?`<div style="font-size:10px;color:var(--text2);font-weight:500">+${tasks.length-4} more</div>`:'';
     html+=`<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${d}</div>${tHtml}${more}</div>`;
@@ -1479,14 +1535,15 @@ function renderTasksKanban(){
     if(!items.length){el.innerHTML=`<div style="text-align:center;padding:1.5rem;font-size:12px;color:var(--text2)">Drop tasks here</div>`;return;}
     el.innerHTML=items.map(t=>{
       const p=(D.proposals||[]).find(x=>x.id===t.proposal),d=dl(t.due,'');
+      const k=taskGroupKey(t);
       const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:9px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'';
-      const clientLabel=p?cname(p):'';
       const nsTag=t.isNextStep?`<span class="ns-badge" style="margin-bottom:4px;display:inline-flex"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
+      const clientHdr=`<div style="font-size:12px;font-weight:600;color:#534AB7;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${k.clientName}"><i class="ti ti-building-community" style="font-size:11px"></i> ${k.clientName}</div>`;
       return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})">
         ${nsTag}
+        ${clientHdr}
+        ${p?`<div style="font-size:10px;color:var(--text2);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:14px" title="${p.name}"><i class="ti ti-file-description" style="font-size:10px"></i> ${p.name}</div>`:''}
         <div class="ktitle">${t.title}</div>
-        ${p?`<div style="font-size:11px;color:var(--info-text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500" title="${p.name}"><i class="ti ti-file-description" style="font-size:10px"></i> ${p.name}</div>`:''}
-        ${clientLabel?`<div style="font-size:11px;color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-building" style="font-size:10px"></i> ${clientLabel}</div>`:''}
         <div class="kmeta">${av(t.assignee)}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div>
       </div>`;
     }).join('');
@@ -1540,7 +1597,7 @@ function promptNextStep(proposal,prefix){
 function openTaskModal(id){
   editTid=id||null;
   document.getElementById('tm-assignee').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
-  document.getElementById('tm-proposal').innerHTML='<option value="">— None —</option>'+(D.proposals||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('tm-proposal').innerHTML=proposalDropdownHtml();
   if(id){
     const t=(D.tasks||[]).find(x=>x.id===id);
     document.getElementById('tm-title').textContent='Edit task';
