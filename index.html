@@ -70,6 +70,16 @@ tr:hover .ra{opacity:1}
 .b-tender{background:#E6F1FB;color:#185FA5}.b-budgetary{background:#FAEEDA;color:#854F0B}
 .dl-urgent{color:#A32D2D;font-weight:500}.dl-soon{color:#854F0B}.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
 .age-fresh{color:#3B6D11}.age-warn{color:#854F0B;font-weight:500}.age-danger{color:#A32D2D;font-weight:600}
+.p-item{padding:.6rem 1rem;border-bottom:.5px solid var(--border);transition:background .1s}
+.p-item:hover{background:var(--bg2)}
+.p-item-r1{display:flex;align-items:center;gap:6px;margin-bottom:5px;min-width:0}
+.p-item-name{font-weight:600;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.p-item-name:hover{color:var(--accent);text-decoration:underline}
+.p-item-client{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;flex-shrink:0}
+.p-item-val{font-weight:600;font-size:13px;white-space:nowrap;flex-shrink:0;margin-left:auto;padding-left:8px}
+.p-item-r2{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.p-meta{font-size:11px;color:var(--text2);white-space:nowrap;display:flex;align-items:center;gap:3px}
+.p-meta i{font-size:10px}
 /* Modal */
 .mb{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal{background:var(--bg);border-radius:var(--rl);border:.5px solid var(--border);width:520px;max-width:100%;max-height:90vh;overflow-y:auto}
@@ -271,10 +281,10 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
     <button class="btn btn-p" onclick="openProposalModal()"><i class="ti ti-plus"></i> New proposal</button>
   </div>
-  <div class="card"><div class="tw">
-    <table><thead><tr><th>Title</th><th>Type</th><th>Client</th><th>Products</th><th>Partner</th><th>Value</th><th>Deadline</th><th>Submitted On</th><th>Status</th><th>Priority</th><th>Lead</th><th></th></tr></thead>
-    <tbody id="p-list"></tbody></table>
-  </div></div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="p-list"></div>
+    <div id="p-summary" style="padding:.5rem 1rem;background:var(--bg2);border-top:1.5px solid var(--border2);font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center"></div>
+  </div>
 </div>
 
 
@@ -937,35 +947,45 @@ function fillLeadFilter(){const sel=document.getElementById('p-lead');const cur=
 function renderProposals(){
   fillLeadFilter();
   const q=document.getElementById('p-q').value.toLowerCase(),ft=document.getElementById('p-type').value,fs=document.getElementById('p-status').value,fp=document.getElementById('p-priority').value,fa=document.getElementById('p-lead').value;
-  const list=(D.proposals||[]).filter(p=>(!q||p.name.toLowerCase().includes(q)||cname(p).toLowerCase().includes(q))&&(!ft||( ft==='Budgetary'?(p.type||'Budgetary')==='Budgetary':p.type==='Public Tender'))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa));
-  const tb=document.getElementById('p-list');
+  const list=(D.proposals||[]).filter(p=>(!q||p.name.toLowerCase().includes(q)||cname(p).toLowerCase().includes(q))&&(!ft||(ft==='Budgetary'?(p.type||'Budgetary')==='Budgetary':p.type==='Public Tender'))&&(!fs||p.status===fs)&&(!fp||p.priority===fp)&&(!fa||p.assignee===fa));
+  const wrap=document.getElementById('p-list');
+  const sumEl=document.getElementById('p-summary');
   const grand=list.reduce((s,p)=>s+(p.value||0),0);
   const byS2={};list.forEach(p=>{byS2[p.status]=(byS2[p.status]||0)+(p.value||0);});
-  const sumParts=Object.entries(byS2).map(([s,v])=>`<span class="badge ${sc(s)}" style="margin-right:3px">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
-  if(!list.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty"><i class="ti ti-file-off"></i>No proposals found</div></td></tr>`;return;}
-  tb.innerHTML=list.map(p=>{
-    const d=dl(p.deadline,p.status),v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';
-    const tl=(p.type||'Budgetary')==='Public Tender'?'Tender':'Budgetary';
+  sumEl.innerHTML=`<span style="font-weight:500;color:var(--text);margin-right:4px">${list.length} proposals · €${Number(grand).toLocaleString('el-GR')}</span>`+Object.entries(byS2).map(([s,v])=>`<span class="badge ${sc(s)}">${s} €${Number(v).toLocaleString('el-GR')}</span>`).join('');
+  if(!list.length){wrap.innerHTML=`<div class="empty"><i class="ti ti-file-off"></i>No proposals found</div>`;return;}
+  wrap.innerHTML=list.map(p=>{
+    const d=dl(p.deadline,p.status);
     const ag=aging(p.submittedAt);
-    return`<tr>
-      <td style="font-weight:500;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.name}">${p.name}</td>
-      <td><span class="badge ${tc(p.type||'Budgetary')}">${tl}</span></td>
-      <td style="color:var(--text2);max-width:180px" title="${cname(p)}"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cname(p)}</div></td>
-      <td><div class="prod-tags">${ptags(p.products)}</div></td>
-      <td style="color:var(--text2);font-size:12px">${p.partner||'—'}</td>
-      <td style="font-weight:500">${v}</td>
-      <td class="${d.cls}">${d.txt}</td>
-      <td style="font-size:11px">${ag?`<div style="color:var(--text2)">${new Date(p.submittedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div><div class="${ag.cls}" style="font-size:11px;margin-top:1px"><i class="ti ti-clock" style="font-size:10px"></i> ${ag.txt}</div>`:'—'}</td>
-      <td><span class="badge ${sc(p.status)}">${p.status}</span></td>
-      <td><span class="badge ${pc(p.priority)}">${p.priority}</span></td>
-      <td>${av(p.assignee)}</td>
-      <td><div class="ra">
-        <button class="ib" onclick="openProposalModal(${p.id})"><i class="ti ti-edit"></i></button>
-        ${p.type==='Public Tender'?`<button class="ib" onclick="openBidSheet(${p.id})" style="color:var(--info-text)"><i class="ti ti-clipboard-list"></i></button>`:''}
-        <button class="ib" onclick="delProposal(${p.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
-      </div></td>
-    </tr>`;
-  }).join('')+`<tr style="background:var(--bg2);font-weight:500;border-top:2px solid var(--border2)"><td colspan="5" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)">Total (${list.length} proposals)</td><td style="font-size:15px">€${Number(grand).toLocaleString('el-GR')}</td><td colspan="6"><div style="display:flex;flex-wrap:wrap;gap:4px">${sumParts}</div></td></tr>`;
+    const v=p.value?'€'+Number(p.value).toLocaleString('el-GR'):'—';
+    const tl=(p.type||'Budgetary')==='Public Tender'?'Tender':'Budgetary';
+    const createdStr=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+    const partnerStr=p.partner?`<span class="p-meta"><i class="ti ti-building"></i>${p.partner}</span>`:'';
+    const agStr=ag?`<span class="${ag.cls}" style="font-size:11px;display:flex;align-items:center;gap:3px"><i class="ti ti-clock" style="font-size:10px"></i>${ag.txt}</span>`:'';
+    const dlStr=p.deadline?`<span class="p-meta ${d.cls}"><i class="ti ti-calendar-due"></i>${new Date(p.deadline).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</span>`:'';
+    const crStr=createdStr?`<span class="p-meta" title="Created"><i class="ti ti-calendar-plus"></i>${createdStr}</span>`:'';
+    return`<div class="p-item">
+      <div class="p-item-r1">
+        <span class="badge ${sc(p.status)}">${p.status}</span>
+        <span class="badge ${tc(p.type||'Budgetary')}" style="font-size:10px">${tl}</span>
+        <span class="badge ${pc(p.priority)}" style="font-size:10px">${p.priority}</span>
+        <span class="p-item-name" onclick="openProposalModal(${p.id})" title="${p.name}">${p.name}</span>
+        <span class="p-item-client" title="${cname(p)}"><i class="ti ti-building-community" style="font-size:10px;margin-right:2px"></i>${cname(p)}</span>
+        <span class="p-item-val">${v}</span>
+      </div>
+      <div class="p-item-r2">
+        <div class="prod-tags" style="flex-shrink:0">${ptags(p.products)}</div>
+        ${dlStr}${agStr}${crStr}${partnerStr}
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0">
+          ${av(p.assignee,22)}
+          <button class="ib" onclick="openProposalModal(${p.id})" title="Edit"><i class="ti ti-edit"></i></button>
+          ${p.type==='Public Tender'?`<button class="ib" onclick="openBidSheet(${p.id})" style="color:var(--info-text)" title="Bid sheet"><i class="ti ti-clipboard-list"></i></button>`:''}
+          <button class="ib" onclick="delProposal(${p.id})" style="color:var(--danger-text)" title="Delete"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
 }
 
 function updateStatuses(){
@@ -1038,25 +1058,34 @@ function saveProposal(){
   const newStatus=document.getElementById('pm-status').value;
   const prevProposal=editPid?(D.proposals||[]).find(p=>p.id===editPid):null;
   const prevStatus=prevProposal?prevProposal.status:null;
-  const wasNotLost=prevStatus&&prevStatus!=='Lost';
+  // wasNotLost: true if this is a fresh proposal OR was not already Lost
+  const wasNotLost=!prevStatus||prevStatus!=='Lost';
   const wasNotSubmitted=prevStatus!=='Submitted';
   const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:newStatus,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
   // Stamp submission date when first moved to Submitted
   if(newStatus==='Submitted'&&wasNotSubmitted){
     d.submittedAt=new Date().toISOString().slice(0,10);
   } else if(prevProposal&&prevProposal.submittedAt){
-    d.submittedAt=prevProposal.submittedAt; // preserve existing stamp
+    d.submittedAt=prevProposal.submittedAt;
   }
+  // Stamp creation date for new proposals
+  if(!editPid) d.createdAt=new Date().toISOString().slice(0,10);
+  else if(prevProposal&&prevProposal.createdAt) d.createdAt=prevProposal.createdAt;
+
   if(!D.proposals)D.proposals=[];
   let savedId=editPid;
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
   else{const np={id:D.nextPid++,...d};D.proposals.push(np);savedId=np.id;}
+
+  // Capture proposal snapshot NOW before any async/render that could mutate D
+  const lostSnapshot=newStatus==='Lost'&&wasNotLost?{...d,id:savedId}:null;
+
   saveData('proposals');closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
+
   // Auto-create follow-up task 15 days after submission
   if(newStatus==='Submitted'&&wasNotSubmitted&&savedId){
     const followDate=new Date(d.submittedAt);followDate.setDate(followDate.getDate()+15);
     const followDue=followDate.toISOString().slice(0,10);
-    const savedP=(D.proposals||[]).find(p=>p.id===savedId);
     const taskTitle=`Follow-up: ${name}`;
     if(!D.tasks)D.tasks=[];
     D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
@@ -1064,8 +1093,8 @@ function saveProposal(){
     toast('Follow-up task created for '+followDue,'calendar-plus');
   }
   // Offer forecast if just marked as Lost
-  if(newStatus==='Lost'&&wasNotLost&&savedId){
-    setTimeout(()=>showLostForecastPopup(savedId),400);
+  if(lostSnapshot){
+    setTimeout(()=>showLostForecastPopup(lostSnapshot),400);
   }
 }
 
@@ -1705,8 +1734,8 @@ function convertForecast(id){
 }
 
 // ── Lost → Forecast popup ─────────────────────────────────────────────────────
-function showLostForecastPopup(proposalId){
-  lostPid=proposalId;
+function showLostForecastPopup(proposal){
+  lostPid=proposal; // now stores the full proposal snapshot
   updateLfDate();
   document.getElementById('lf-winner').value='';
   document.getElementById('lf-notes').value='';
@@ -1720,7 +1749,8 @@ function updateLfDate(){
 }
 
 function saveLostForecast(){
-  const p=(D.proposals||[]).find(x=>x.id===lostPid);if(!p)return;
+  const p=lostPid; // proposal snapshot — no lookup needed, immune to race conditions
+  if(!p||!p.id){toast('Could not create forecast — proposal data missing','alert-circle');return;}
   if(!D.forecasts)D.forecasts=[];if(!D.nextFid)D.nextFid=1;
   const winner=document.getElementById('lf-winner').value.trim();
   const repeatDate=document.getElementById('lf-date').value;
@@ -1736,6 +1766,7 @@ function saveLostForecast(){
   document.getElementById('m-lost-fc').style.display='none';
   lostPid=null;
   saveData('forecasts');toast('Forecast created!','crystal-ball');
+  renderForecast();
 }
 
 
