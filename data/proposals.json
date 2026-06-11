@@ -1675,7 +1675,7 @@
     "type": "Budgetary",
     "clientId": "c73",
     "client": "Hellenic Anti-Money Laundering Authority (AKNEED)",
-    "value": 0,
+    "value": 10000,
     "deadline": "2026-06-05",
     "status": "Active",
     "priority": "Medium",
