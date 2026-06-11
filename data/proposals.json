@@ -278,14 +278,15 @@
     "value": 9000,
     "deadline": "2026-05-18",
     "status": "Submitted",
-    "priority": "Medium",
+    "priority": "Low",
     "assignee": "u4",
     "notes": "",
     "clientId": "c6",
     "products": [
       "NIS2"
     ],
-    "partner": ""
+    "partner": "",
+    "type": "Budgetary"
   },
   {
     "id": 16,
