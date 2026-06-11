@@ -70,6 +70,51 @@ tr:hover .ra{opacity:1}
 .b-tender{background:#E6F1FB;color:#185FA5}.b-budgetary{background:#FAEEDA;color:#854F0B}
 .dl-urgent{color:#A32D2D;font-weight:500}.dl-soon{color:#854F0B}.dl-ok{color:var(--text2)}.dl-waiting{color:#534AB7;font-weight:500}
 .age-fresh{color:#3B6D11}.age-warn{color:#854F0B;font-weight:500}.age-danger{color:#A32D2D;font-weight:600}
+
+/* Tasks: view tabs */
+.tview-tabs{display:flex;gap:4px;background:var(--bg2);padding:3px;border-radius:6px;border:.5px solid var(--border)}
+.tview-tab{padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:4px}
+.tview-tab.active{background:var(--bg1);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.tview-tab:hover{color:var(--text)}
+
+/* List view */
+.tlist-group{margin-bottom:1.25rem}
+.tlist-hdr{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);padding:0 0 6px;display:flex;align-items:center;gap:6px}
+.tlist-hdr .cnt{background:var(--bg3);padding:1px 7px;border-radius:999px;font-weight:500}
+.trow{display:flex;align-items:center;gap:10px;padding:.55rem .75rem;background:var(--bg1);border:.5px solid var(--border);border-radius:6px;margin-bottom:5px}
+.trow:hover{background:var(--bg2);border-color:var(--border2)}
+.trow.done{opacity:.55}
+.trow.done .trow-title{text-decoration:line-through}
+.trow.next-step{border-left:3px solid #185FA5}
+.trow-chk{width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.trow-title{font-size:13px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.trow-title:hover{color:var(--accent)}
+.trow-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0}
+.ns-badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:#E6F1FB;color:#185FA5;letter-spacing:.3px;display:inline-flex;align-items:center;gap:3px}
+
+/* Calendar view */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.cal-hdr{background:var(--bg2);padding:6px;font-size:11px;font-weight:600;text-transform:uppercase;text-align:center;color:var(--text2)}
+.cal-day{background:var(--bg1);min-height:88px;padding:5px;font-size:11px;position:relative;overflow:hidden}
+.cal-day.muted{background:var(--bg2);color:var(--text2)}
+.cal-day.today{background:#FFFBEA}
+.cal-day-num{font-weight:600;font-size:11px;margin-bottom:3px}
+.cal-day.today .cal-day-num{color:#854F0B}
+.cal-task{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;background:#E6F1FB;color:#185FA5;border-left:2px solid #185FA5}
+.cal-task.next-step{background:#FFF4E2;color:#854F0B;border-left-color:#854F0B}
+.cal-task.done{background:#EAF3DE;color:#3B6D11;opacity:.6;text-decoration:line-through}
+.cal-task.overdue{background:#FBE5E5;color:#A32D2D;border-left-color:#A32D2D}
+.cal-task:hover{filter:brightness(.95)}
+.cal-nav{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cal-title{font-size:14px;font-weight:600;min-width:160px}
+
+/* Next-step panel on proposal modal */
+.ns-panel{background:#FFF8E1;border:1px solid #F0E0A8;border-radius:6px;padding:10px 12px;margin-top:10px}
+.ns-panel-hdr{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#7A5C00;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.ns-current{display:flex;align-items:center;gap:8px;font-size:12px;background:var(--bg1);border:.5px solid var(--border);border-radius:4px;padding:6px 8px;margin-bottom:6px}
+.ns-current-txt{flex:1;font-weight:500}
+.ns-form{display:grid;grid-template-columns:1fr 110px 110px auto;gap:6px}
+.ns-form input,.ns-form select{font-size:12px;padding:5px 7px}
 .p-item{padding:.6rem 1rem;border-bottom:.5px solid var(--border);transition:background .1s}
 .p-item:hover{background:var(--bg2)}
 .p-item-r1{display:flex;align-items:center;gap:6px;margin-bottom:5px;min-width:0}
@@ -265,7 +310,13 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <div class="card-hdr"><span class="card-title">Upcoming Deadlines</span><span style="font-size:12px;color:var(--text2)" id="last-sync"></span></div>
       <div id="dash-dl"></div>
     </div>
-    <div class="chart-card" style="margin-bottom:0"><div class="chart-title">Value by Stage</div><div id="ch-bars" style="display:flex;flex-direction:column;gap:12px"></div></div>
+    <div class="card">
+      <div class="card-hdr"><span class="card-title"><i class="ti ti-target" style="font-size:14px;color:#854F0B"></i> Next Steps</span><span style="font-size:12px;color:var(--text2)" id="dash-ns-count">—</span></div>
+      <div id="dash-ns"></div>
+    </div>
+  </div>
+  <div class="charts-row" style="margin-top:1rem">
+    <div class="chart-card" style="margin-bottom:0;grid-column:1/-1"><div class="chart-title">Value by Stage</div><div id="ch-bars" style="display:flex;flex-direction:column;gap:12px"></div></div>
   </div>
 </div>
 
@@ -381,14 +432,54 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
 
 <!-- TASKS -->
 <div class="tab" id="tab-tasks">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-    <div style="font-size:13px;color:var(--text2)">Drag to update · Double-click to edit</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap">
+    <div class="tview-tabs">
+      <div class="tview-tab active" id="tv-list" onclick="switchTaskView('list')"><i class="ti ti-list"></i> List</div>
+      <div class="tview-tab" id="tv-cal" onclick="switchTaskView('cal')"><i class="ti ti-calendar"></i> Calendar</div>
+      <div class="tview-tab" id="tv-kb" onclick="switchTaskView('kb')"><i class="ti ti-layout-board"></i> Kanban</div>
+    </div>
+    <div class="frow" style="margin-bottom:0;gap:6px">
+      <select class="fs" id="tf-assignee" onchange="renderTasks()"><option value="">All people</option></select>
+      <select class="fs" id="tf-show" onchange="renderTasks()">
+        <option value="open">Active</option>
+        <option value="next">Next steps only</option>
+        <option value="overdue">Overdue</option>
+        <option value="all">All</option>
+      </select>
+    </div>
     <button class="btn btn-p" onclick="openTaskModal()"><i class="ti ti-plus"></i> New task</button>
   </div>
-  <div class="kboard">
-    <div><div class="kcol-hdr"><span>To do</span><span id="cnt-todo" style="background:var(--bg3);border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-todo" ondragover="ev(event)" ondrop="dropTask(event,'todo')"></div></div>
-    <div><div class="kcol-hdr"><span>In progress</span><span id="cnt-inprogress" style="background:#E6F1FB;color:#185FA5;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-inprogress" ondragover="ev(event)" ondrop="dropTask(event,'inprogress')"></div></div>
-    <div><div class="kcol-hdr"><span>Done</span><span id="cnt-done" style="background:#EAF3DE;color:#3B6D11;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-done" ondragover="ev(event)" ondrop="dropTask(event,'done')"></div></div>
+
+  <!-- List view -->
+  <div id="tv-pane-list">
+    <div id="t-list-content"></div>
+  </div>
+
+  <!-- Calendar view -->
+  <div id="tv-pane-cal" style="display:none">
+    <div class="cal-nav">
+      <button class="ib" onclick="calNav(-1)"><i class="ti ti-chevron-left"></i></button>
+      <div class="cal-title" id="cal-month-title">—</div>
+      <button class="ib" onclick="calNav(1)"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn" onclick="calNav(0)" style="font-size:11px;padding:3px 9px"><i class="ti ti-target"></i> Today</button>
+      <div style="margin-left:auto;display:flex;gap:10px;font-size:11px;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:#FFF4E2;border-left:2px solid #854F0B"></span>Next step</span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:#E6F1FB;border-left:2px solid #185FA5"></span>Task</span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:#FBE5E5;border-left:2px solid #A32D2D"></span>Overdue</span>
+        <span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:10px;border-radius:2px;background:#EAF3DE;border-left:2px solid #3B6D11"></span>Done</span>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <!-- Kanban view (legacy) -->
+  <div id="tv-pane-kb" style="display:none">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Drag to update · Double-click to edit</div>
+    <div class="kboard">
+      <div><div class="kcol-hdr"><span>To do</span><span id="cnt-todo" style="background:var(--bg3);border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-todo" ondragover="ev(event)" ondrop="dropTask(event,'todo')"></div></div>
+      <div><div class="kcol-hdr"><span>In progress</span><span id="cnt-inprogress" style="background:#E6F1FB;color:#185FA5;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-inprogress" ondragover="ev(event)" ondrop="dropTask(event,'inprogress')"></div></div>
+      <div><div class="kcol-hdr"><span>Done</span><span id="cnt-done" style="background:#EAF3DE;color:#3B6D11;border-radius:999px;padding:1px 8px;font-size:11px">0</span></div><div class="kcol" id="col-done" ondragover="ev(event)" ondrop="dropTask(event,'done')"></div></div>
+    </div>
   </div>
 </div>
 
@@ -454,6 +545,16 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
     <div class="field"><label>Products / Services</label><div class="prod-cb" id="pm-products"></div></div>
     <div class="field"><label>Notes</label><textarea id="pm-notes" rows="2" placeholder="Key requirements, contacts, references…"></textarea></div>
+    <div class="ns-panel" id="pm-ns-panel" style="display:none">
+      <div class="ns-panel-hdr"><i class="ti ti-target"></i> Next step</div>
+      <div id="pm-ns-current"></div>
+      <div class="ns-form">
+        <input id="pm-ns-action" placeholder="e.g. Contact client for feedback">
+        <input id="pm-ns-due" type="date">
+        <select id="pm-ns-owner"></select>
+        <button class="btn btn-p" onclick="saveNextStepFromModal()" style="font-size:12px;padding:5px 10px"><i class="ti ti-check"></i></button>
+      </div>
+    </div>
     <div id="pm-submitted-row" style="display:none;padding:6px 0;font-size:12px;color:var(--text2);border-top:.5px solid var(--border);margin-top:4px">
       <i class="ti ti-send" style="font-size:11px;margin-right:4px"></i>
       Submitted on <strong id="pm-submitted-date" style="color:var(--text1)"></strong>
@@ -478,7 +579,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div class="field"><label>Linked proposal</label><select id="tm-proposal"><option value="">— None —</option></select></div>
     <div class="two"><div class="field"><label>Assigned to</label><select id="tm-assignee"></select></div><div class="field"><label>Start date</label><input id="tm-start" type="date"></div></div>
     <div class="two"><div class="field"><label>Due date</label><input id="tm-due" type="date"></div><div class="field"><label>Priority</label><select id="tm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div></div>
-    <div class="two"><div class="field"><label>Status</label><select id="tm-status"><option value="todo">To do</option><option value="inprogress">In progress</option><option value="done">Done</option></select></div><div class="field"></div></div>
+    <div class="two"><div class="field"><label>Status</label><select id="tm-status"><option value="todo">To do</option><option value="inprogress">In progress</option><option value="done">Done</option></select></div><div class="field" style="display:flex;align-items:flex-end"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--text);margin:0;padding:6px 0"><input type="checkbox" id="tm-isnext" style="margin:0"> Mark as next step for this proposal</label></div></div>
     <div class="field"><label>Description</label><textarea id="tm-desc" rows="2"></textarea></div>
   </div>
   <div class="mftr"><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveTask()">Save task</button></div>
@@ -949,24 +1050,67 @@ function renderDashboard(){
 
   const sorted=[...P].filter(p=>p.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,8);
   const de=document.getElementById('dash-dl');
-  if(!sorted.length){de.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>';return;}
   // Forecast alert
   const fcSoon=(D.forecasts||[]).filter(f=>{if(!f.repeatDate)return false;const d=new Date(f.repeatDate),now2=new Date(),s=new Date();s.setDate(s.getDate()+60);return d>=now2&&d<=s;});
   const fcAlert=document.getElementById('dash-fc-alert');
   if(fcAlert){if(fcSoon.length>0){fcAlert.style.display='flex';document.getElementById('dash-fc-msg').textContent=fcSoon.length+' forecast tender'+(fcSoon.length>1?'s':'')+' expected within 60 days — €'+fcSoon.reduce((s,f)=>s+(f.value||0),0).toLocaleString('el-GR');}else{fcAlert.style.display='none';}}
 
-  de.innerHTML=sorted.map(p=>{
-    const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';
-    const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';
-    const ag=aging(p.submittedAt);
-    const agBadge=ag?`<span class="${ag.cls}" style="font-size:10px;margin-left:4px"><i class="ti ti-clock" style="font-size:9px"></i> ${ag.txt}</span>`:'';
-    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
-      <div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div>
+  if(!sorted.length){
+    de.innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>No deadlines</div>';
+  }else{
+    de.innerHTML=sorted.map(p=>{
+      const d=dl(p.deadline,p.status),isOver=new Date(p.deadline)<now&&p.status!=='Submitted';
+      const col=isOver?'#A32D2D':d.cls==='dl-urgent'?'#A32D2D':d.cls==='dl-soon'?'#854F0B':'#185FA5';
+      const ag=aging(p.submittedAt);
+      const agBadge=ag?`<span class="${ag.cls}" style="font-size:10px;margin-left:4px"><i class="ti ti-clock" style="font-size:9px"></i> ${ag.txt}</span>`:'';
+      return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+        <div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${d.txt}</div></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+          <div style="font-size:11px;color:var(--text2)">${cname(p)}${agBadge}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Next Steps panel
+  renderDashboardNextSteps();
+}
+
+function renderDashboardNextSteps(){
+  const ns=document.getElementById('dash-ns');
+  if(!ns)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const nextSteps=(D.tasks||[])
+    .filter(t=>t.isNextStep && t.status!=='done')
+    .sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'))
+    .slice(0,8);
+  document.getElementById('dash-ns-count').textContent=nextSteps.length?(nextSteps.length+' active'):'';
+  if(!nextSteps.length){
+    ns.innerHTML='<div class="empty"><i class="ti ti-target-off"></i>No next steps set</div>';
+    return;
+  }
+  ns.innerHTML=nextSteps.map(t=>{
+    const p=(D.proposals||[]).find(x=>x.id===t.proposal);
+    const dueD=t.due?new Date(t.due):null;
+    let urgency='dl-ok',label='—';
+    if(dueD){
+      dueD.setHours(0,0,0,0);
+      const days=Math.ceil((dueD-today)/86400000);
+      if(days<0){urgency='dl-urgent';label=`${-days}d overdue`;}
+      else if(days===0){urgency='dl-urgent';label='Today';}
+      else if(days<=3){urgency='dl-urgent';label=days+'d';}
+      else if(days<=7){urgency='dl-soon';label=days+'d';}
+      else label=dueD.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+    }
+    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border);cursor:pointer" onclick="openTaskModal(${t.id})" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+      <div style="width:52px;text-align:center;flex-shrink:0"><div class="${urgency}" style="font-size:12px;font-weight:600">${label}</div></div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
-        <div style="font-size:11px;color:var(--text2)">${cname(p)}${agBadge}</div>
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title}</div>
+        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p?p.name:'—'}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${sc(p.status)}" style="font-size:10px">${p.status}</span>${av(p.assignee,22)}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">${av(t.assignee,22)}</div>
     </div>`;
   }).join('');
 }
@@ -1066,6 +1210,7 @@ function openProposalModal(id){
     } else {
       document.getElementById('pm-submitted-row').style.display='none';
     }
+    refreshProposalNextStepPanel(p);
   }else{
     document.getElementById('pm-title').textContent='New proposal';
     ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes'].forEach(f=>document.getElementById(f).value='');
@@ -1076,6 +1221,7 @@ function openProposalModal(id){
     fillProdCheckboxes([]);
     document.getElementById('pm-schedule-btn').style.display='none';
     document.getElementById('pm-submitted-row').style.display='none';
+    document.getElementById('pm-ns-panel').style.display='none';
   }
   openModal('m-proposal');
 }
@@ -1108,6 +1254,8 @@ function saveProposal(){
 
   // Capture proposal snapshot NOW before any async/render that could mutate D
   const lostSnapshot=newStatus==='Lost'&&wasNotLost?{...d,id:savedId}:null;
+  const statusChanged=prevStatus && prevStatus!==newStatus;
+  const isNewProposal=!editPid;
 
   saveData('proposals');closeModals();renderProposals();renderDashboard();toast('Proposal saved','check');
 
@@ -1117,13 +1265,23 @@ function saveProposal(){
     const followDue=followDate.toISOString().slice(0,10);
     const taskTitle=`Follow-up: ${name}`;
     if(!D.tasks)D.tasks=[];
-    D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
+    D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',isNextStep:true,desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
     saveData('tasks');renderTasks();
     toast('Follow-up task created for '+followDue,'calendar-plus');
   }
   // Offer forecast if just marked as Lost
   if(lostSnapshot){
     setTimeout(()=>showLostForecastPopup(lostSnapshot),400);
+  }
+  // Suggest next step on status change (skip Submitted - it auto-creates above, and Lost - has its own flow)
+  if((statusChanged||isNewProposal) && savedId && newStatus!=='Submitted' && newStatus!=='Lost'){
+    const proposalForNs={...d,id:savedId};
+    setTimeout(()=>{
+      const existing=getNextStep(savedId);
+      if(!existing && NEXTSTEP_TEMPLATES[newStatus]){
+        promptNextStep(proposalForNs, isNewProposal ? 'Proposal created.' : `Status changed from ${prevStatus} to ${newStatus}.`);
+      }
+    }, 400);
   }
 }
 
@@ -1161,16 +1319,171 @@ function scheduleTask(proposalId){
 function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData('proposals');renderProposals();renderDashboard();}
 
 // ═══ TASKS ═══════════════════════════════════════════════════════════════════
+// ═══ TASKS & NEXT STEPS ══════════════════════════════════════════════════════
+// Per-status suggested next steps. {action, daysFromNow, priority}
+const NEXTSTEP_TEMPLATES = {
+  'Draft':                {action: 'Finalize and submit proposal',      days:  7, priority:'High'},
+  'Active':               {action: 'Work on draft and submit',           days:  7, priority:'High'},
+  'Submitted':            {action: 'Contact client for feedback',        days:  7, priority:'Medium'},
+  'Waiting Result':       {action: 'Follow up on decision timeline',     days: 14, priority:'Medium'},
+  'Bid in Preparation':   {action: 'Check with presales on progress',    days:  3, priority:'High'},
+  'Negotiation':          {action: 'Send revised terms / pricing',       days:  5, priority:'High'},
+  'Won':                  {action: 'Schedule kickoff meeting',           days:  3, priority:'High'},
+  'Lost':                 {action: 'Request loss-reason debrief',        days: 14, priority:'Low'}
+};
+
+let taskView = 'list';
+let calDate = new Date(); // current month being shown
+
+function switchTaskView(v){
+  taskView = v;
+  document.querySelectorAll('.tview-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tv-'+(v==='list'?'list':v==='cal'?'cal':'kb')).classList.add('active');
+  document.getElementById('tv-pane-list').style.display=v==='list'?'block':'none';
+  document.getElementById('tv-pane-cal').style.display=v==='cal'?'block':'none';
+  document.getElementById('tv-pane-kb').style.display=v==='kb'?'block':'none';
+  renderTasks();
+}
+
+function calNav(delta){
+  if(delta===0) calDate=new Date();
+  else calDate.setMonth(calDate.getMonth()+delta);
+  renderTasks();
+}
+
+function fillTaskFilters(){
+  const sel=document.getElementById('tf-assignee');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">All people</option>'+(D.team||[]).map(t=>`<option value="${t.id}"${cur===t.id?' selected':''}>${t.first} ${t.last}</option>`).join('');
+}
+
+function filteredTasks(){
+  const fa=document.getElementById('tf-assignee')?.value||'';
+  const fs=document.getElementById('tf-show')?.value||'open';
+  const today=new Date();today.setHours(0,0,0,0);
+  return (D.tasks||[]).filter(t=>{
+    if(fa && t.assignee!==fa) return false;
+    if(fs==='next') return t.isNextStep && t.status!=='done';
+    if(fs==='overdue') return t.status!=='done' && t.due && new Date(t.due)<today;
+    if(fs==='open') return t.status!=='done';
+    return true;
+  });
+}
+
 function renderTasks(){
+  fillTaskFilters();
+  if(taskView==='list') renderTasksList();
+  else if(taskView==='cal') renderTasksCalendar();
+  else renderTasksKanban();
+}
+
+function renderTasksList(){
+  const list=filteredTasks();
+  const wrap=document.getElementById('t-list-content');
+  if(!list.length){wrap.innerHTML=`<div class="empty"><i class="ti ti-clipboard-check"></i>No tasks match your filters</div>`;return;}
+
+  const today=new Date();today.setHours(0,0,0,0);
+  const weekEnd=new Date(today);weekEnd.setDate(today.getDate()+7);
+  const groups={'Overdue':[],'Today':[],'This week':[],'Later':[],'No due date':[],'Done':[]};
+  list.forEach(t=>{
+    if(t.status==='done'){groups['Done'].push(t);return;}
+    if(!t.due){groups['No due date'].push(t);return;}
+    const d=new Date(t.due);d.setHours(0,0,0,0);
+    if(d<today) groups['Overdue'].push(t);
+    else if(d.getTime()===today.getTime()) groups['Today'].push(t);
+    else if(d<weekEnd) groups['This week'].push(t);
+    else groups['Later'].push(t);
+  });
+
+  const groupIcons={'Overdue':'ti-alert-triangle','Today':'ti-flame','This week':'ti-calendar','Later':'ti-clock','No due date':'ti-help','Done':'ti-check'};
+  const groupColors={'Overdue':'#A32D2D','Today':'#854F0B','This week':'#185FA5','Later':'var(--text2)','No due date':'var(--text2)','Done':'#3B6D11'};
+
+  wrap.innerHTML=Object.entries(groups).filter(([_,arr])=>arr.length).map(([name,arr])=>{
+    return`<div class="tlist-group">
+      <div class="tlist-hdr"><i class="ti ${groupIcons[name]}" style="color:${groupColors[name]};font-size:13px"></i> ${name} <span class="cnt">${arr.length}</span></div>
+      ${arr.sort((a,b)=>(a.due||'').localeCompare(b.due||'')).map(t=>renderTaskRow(t)).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderTaskRow(t){
+  const p=(D.proposals||[]).find(x=>x.id===t.proposal);
+  const d=t.due?dl(t.due,''):null;
+  const dueStr=t.due?`<span class="trow-meta ${d.cls}"><i class="ti ti-calendar-event"></i>${d.txt}</span>`:'';
+  const propStr=p?`<span class="trow-meta" title="${p.name}"><i class="ti ti-file-description"></i>${p.name.length>30?p.name.slice(0,30)+'…':p.name}</span>`:'';
+  const nsBadge=t.isNextStep?`<span class="ns-badge"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
+  const cls='trow'+(t.status==='done'?' done':'')+(t.isNextStep?' next-step':'');
+  return`<div class="${cls}">
+    <input type="checkbox" class="trow-chk" ${t.status==='done'?'checked':''} onchange="toggleTaskDone(${t.id})">
+    ${nsBadge}
+    <span class="trow-title" onclick="openTaskModal(${t.id})" title="${t.title}">${t.title}</span>
+    ${propStr}${dueStr}
+    <span class="trow-meta"><span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span></span>
+    ${av(t.assignee,22)}
+    <button class="ib" onclick="snoozeTask(${t.id},7)" title="Snooze 7 days" style="font-size:14px"><i class="ti ti-clock-pause"></i></button>
+    <button class="ib" onclick="delTask(${t.id})" style="color:var(--danger-text);font-size:14px"><i class="ti ti-trash"></i></button>
+  </div>`;
+}
+
+function renderTasksCalendar(){
+  const list=filteredTasks();
+  const grid=document.getElementById('cal-grid');
+  const today=new Date();today.setHours(0,0,0,0);
+  const year=calDate.getFullYear(),month=calDate.getMonth();
+  document.getElementById('cal-month-title').textContent=calDate.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+  // Group tasks by date YYYY-MM-DD
+  const byDate={};list.forEach(t=>{if(t.due){(byDate[t.due]=byDate[t.due]||[]).push(t);}});
+
+  const firstDay=new Date(year,month,1);
+  let startDay=firstDay.getDay()-1;if(startDay<0)startDay=6; // Monday=0
+  const daysInMonth=new Date(year,month+1,0).getDate();
+
+  let html=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="cal-hdr">${d}</div>`).join('');
+
+  // Previous month padding
+  const prevDays=new Date(year,month,0).getDate();
+  for(let i=startDay-1;i>=0;i--){html+=`<div class="cal-day muted"><div class="cal-day-num">${prevDays-i}</div></div>`;}
+
+  // Current month
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(year,month,d);dt.setHours(0,0,0,0);
+    const key=dt.toISOString().slice(0,10);
+    const isToday=dt.getTime()===today.getTime();
+    const tasks=byDate[key]||[];
+    const tHtml=tasks.slice(0,4).map(t=>{
+      let cls='cal-task';
+      if(t.status==='done') cls+=' done';
+      else if(t.isNextStep) cls+=' next-step';
+      else if(new Date(t.due)<today) cls+=' overdue';
+      return`<div class="${cls}" onclick="openTaskModal(${t.id})" title="${t.title}">${t.isNextStep?'▸ ':''}${t.title}</div>`;
+    }).join('');
+    const more=tasks.length>4?`<div style="font-size:10px;color:var(--text2);font-weight:500">+${tasks.length-4} more</div>`:'';
+    html+=`<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${d}</div>${tHtml}${more}</div>`;
+  }
+
+  // Next month padding
+  const totalCells=startDay+daysInMonth;
+  const trail=(7-(totalCells%7))%7;
+  for(let i=1;i<=trail;i++){html+=`<div class="cal-day muted"><div class="cal-day-num">${i}</div></div>`;}
+
+  grid.innerHTML=html;
+}
+
+function renderTasksKanban(){
+  const list=filteredTasks();
   ['todo','inprogress','done'].forEach(col=>{
-    const el=document.getElementById('col-'+col),items=(D.tasks||[]).filter(t=>t.status===col);
+    const el=document.getElementById('col-'+col);if(!el)return;
+    const items=list.filter(t=>t.status===col);
     document.getElementById('cnt-'+col).textContent=items.length;
     if(!items.length){el.innerHTML=`<div style="text-align:center;padding:1.5rem;font-size:12px;color:var(--text2)">Drop tasks here</div>`;return;}
     el.innerHTML=items.map(t=>{
       const p=(D.proposals||[]).find(x=>x.id===t.proposal),d=dl(t.due,'');
       const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:9px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'';
       const clientLabel=p?cname(p):'';
+      const nsTag=t.isNextStep?`<span class="ns-badge" style="margin-bottom:4px;display:inline-flex"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
       return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})">
+        ${nsTag}
         <div class="ktitle">${t.title}</div>
         ${p?`<div style="font-size:11px;color:var(--info-text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500" title="${p.name}"><i class="ti ti-file-description" style="font-size:10px"></i> ${p.name}</div>`:''}
         ${clientLabel?`<div style="font-size:11px;color:var(--text2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-building" style="font-size:10px"></i> ${clientLabel}</div>`:''}
@@ -1178,6 +1491,50 @@ function renderTasks(){
       </div>`;
     }).join('');
   });
+}
+
+function toggleTaskDone(id){
+  const t=(D.tasks||[]).find(x=>x.id===id);if(!t)return;
+  const wasDone=t.status==='done';
+  t.status=wasDone?'todo':'done';
+  // If completing a next-step task, prompt for the next one
+  const wasNextStep=t.isNextStep && !wasDone;
+  if(wasNextStep)t.isNextStep=false;
+  saveData('tasks');renderTasks();renderDashboard();
+  if(wasNextStep && t.proposal){
+    const p=(D.proposals||[]).find(x=>x.id===t.proposal);
+    if(p) setTimeout(()=>promptNextStep(p,'Previous next-step completed. What\'s next?'),200);
+  }
+}
+
+function snoozeTask(id,days){
+  const t=(D.tasks||[]).find(x=>x.id===id);if(!t)return;
+  const base=t.due?new Date(t.due):new Date();
+  base.setDate(base.getDate()+days);
+  t.due=base.toISOString().slice(0,10);
+  saveData('tasks');renderTasks();
+  toast(`Snoozed ${days} days`,'clock-pause');
+}
+
+function getNextStep(proposalId){
+  return (D.tasks||[]).find(t=>t.proposal===proposalId && t.isNextStep && t.status!=='done');
+}
+
+// Suggest and save a next-step task for the given proposal
+function promptNextStep(proposal,prefix){
+  const tpl=NEXTSTEP_TEMPLATES[proposal.status]||NEXTSTEP_TEMPLATES['Active'];
+  const due=new Date();due.setDate(due.getDate()+tpl.days);
+  const msg=(prefix?prefix+'\n\n':'')+`Suggested next step for "${proposal.name}":\n\n"${tpl.action}"\nDue: ${due.toLocaleDateString('en-GB')}\n\nCreate this task?`;
+  if(confirm(msg)){
+    if(!D.tasks)D.tasks=[];
+    D.tasks.push({
+      id:D.nextTid++,title:tpl.action,proposal:proposal.id,assignee:proposal.assignee||'',
+      start:new Date().toISOString().slice(0,10),due:due.toISOString().slice(0,10),
+      priority:tpl.priority,status:'todo',isNextStep:true,desc:`Auto-suggested next step after status changed to "${proposal.status}".`
+    });
+    saveData('tasks');renderTasks();renderDashboard();
+    toast('Next step created','target');
+  }
 }
 
 function openTaskModal(id){
@@ -1194,11 +1551,13 @@ function openTaskModal(id){
     document.getElementById('tm-due').value=t.due||'';
     document.getElementById('tm-priority').value=t.priority||'Medium';
     document.getElementById('tm-status').value=t.status||'todo';
+    document.getElementById('tm-isnext').checked=!!t.isNextStep;
     document.getElementById('tm-desc').value=t.desc||'';
   }else{
     document.getElementById('tm-title').textContent='New task';
     ['tm-name','tm-desc','tm-start','tm-due'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('tm-priority').value='Medium';document.getElementById('tm-status').value='todo';
+    document.getElementById('tm-isnext').checked=false;
     if(D.team&&D.team.length)document.getElementById('tm-assignee').value=D.team[0].id;
   }
   openModal('m-task');
@@ -1206,16 +1565,102 @@ function openTaskModal(id){
 
 function saveTask(){
   const title=document.getElementById('tm-name').value.trim();if(!title){document.getElementById('tm-name').focus();return;}
-  const d={title,proposal:parseInt(document.getElementById('tm-proposal').value)||null,assignee:document.getElementById('tm-assignee').value,start:document.getElementById('tm-start').value,due:document.getElementById('tm-due').value,priority:document.getElementById('tm-priority').value,status:document.getElementById('tm-status').value,desc:document.getElementById('tm-desc').value.trim()};
+  const d={
+    title,
+    proposal:parseInt(document.getElementById('tm-proposal').value)||null,
+    assignee:document.getElementById('tm-assignee').value,
+    start:document.getElementById('tm-start').value,
+    due:document.getElementById('tm-due').value,
+    priority:document.getElementById('tm-priority').value,
+    status:document.getElementById('tm-status').value,
+    isNextStep:document.getElementById('tm-isnext').checked,
+    desc:document.getElementById('tm-desc').value.trim()
+  };
   if(!D.tasks)D.tasks=[];
+  // Enforce one-next-step-per-proposal invariant
+  if(d.isNextStep && d.proposal){
+    D.tasks.forEach(t=>{
+      if(t.id!==editTid && t.proposal===d.proposal && t.isNextStep && t.status!=='done'){
+        t.isNextStep=false;
+      }
+    });
+  }
   if(editTid){const i=D.tasks.findIndex(t=>t.id===editTid);D.tasks[i]={...D.tasks[i],...d};}
   else{D.tasks.push({id:D.nextTid++,...d});}
-  saveData('tasks');closeModals();renderTasks();toast('Task saved','check');
+  saveData('tasks');closeModals();renderTasks();renderDashboard();toast('Task saved','check');
 }
-function delTask(id){D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData('tasks');renderTasks();}
+
+function delTask(id){if(!confirm('Delete this task?'))return;D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData('tasks');renderTasks();renderDashboard();}
 function startDrag(e,id){dragTid=id;e.dataTransfer.effectAllowed='move';}
 function ev(e){e.preventDefault();}
 function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=(D.tasks||[]).find(x=>x.id===dragTid);if(t){t.status=col;saveData('tasks');renderTasks();}dragTid=null;}
+
+// Next-step panel inside proposal modal
+function refreshProposalNextStepPanel(p){
+  if(!p||!p.id){
+    document.getElementById('pm-ns-panel').style.display='none';
+    return;
+  }
+  document.getElementById('pm-ns-panel').style.display='block';
+  document.getElementById('pm-ns-owner').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  const existing=getNextStep(p.id);
+  const cur=document.getElementById('pm-ns-current');
+  if(existing){
+    const dueStr=existing.due?new Date(existing.due).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'no due date';
+    cur.innerHTML=`<div class="ns-current">
+      <i class="ti ti-target" style="color:#854F0B"></i>
+      <span class="ns-current-txt">${existing.title}</span>
+      <span style="font-size:11px;color:var(--text2)">${dueStr}</span>
+      ${av(existing.assignee,20)}
+      <button class="btn" style="font-size:11px;padding:3px 8px" onclick="completeProposalNextStep(${existing.id})">Done</button>
+    </div>`;
+    document.getElementById('pm-ns-action').placeholder='Replace next step…';
+    document.getElementById('pm-ns-action').value='';
+    document.getElementById('pm-ns-due').value='';
+  } else {
+    cur.innerHTML='<div style="font-size:12px;color:var(--text2);padding:4px 0">No next step set. Add one below.</div>';
+    // Pre-fill suggestion based on status
+    const tpl=NEXTSTEP_TEMPLATES[p.status];
+    if(tpl){
+      document.getElementById('pm-ns-action').value=tpl.action;
+      const due=new Date();due.setDate(due.getDate()+tpl.days);
+      document.getElementById('pm-ns-due').value=due.toISOString().slice(0,10);
+    }
+    if(p.assignee) document.getElementById('pm-ns-owner').value=p.assignee;
+  }
+}
+
+function saveNextStepFromModal(){
+  if(!editPid){toast('Save the proposal first, then set a next step','info-circle');return;}
+  const action=document.getElementById('pm-ns-action').value.trim();
+  if(!action){document.getElementById('pm-ns-action').focus();return;}
+  const due=document.getElementById('pm-ns-due').value;
+  const owner=document.getElementById('pm-ns-owner').value;
+  // Unflag any existing next step for this proposal
+  (D.tasks||[]).forEach(t=>{if(t.proposal===editPid && t.isNextStep && t.status!=='done') t.isNextStep=false;});
+  // Create the new next-step task
+  if(!D.tasks)D.tasks=[];
+  D.tasks.push({
+    id:D.nextTid++,title:action,proposal:editPid,assignee:owner,
+    start:new Date().toISOString().slice(0,10),due,priority:'Medium',
+    status:'todo',isNextStep:true,desc:'Next step set from proposal'
+  });
+  saveData('tasks');
+  const p=(D.proposals||[]).find(x=>x.id===editPid);
+  refreshProposalNextStepPanel(p);
+  renderDashboard();
+  toast('Next step saved','target');
+}
+
+function completeProposalNextStep(taskId){
+  const t=(D.tasks||[]).find(x=>x.id===taskId);if(!t)return;
+  t.status='done';t.isNextStep=false;
+  saveData('tasks');
+  const p=(D.proposals||[]).find(x=>x.id===editPid);
+  refreshProposalNextStepPanel(p);
+  renderDashboard();
+  toast('Marked done','check');
+}
 
 // ═══ TEMPLATES ═══════════════════════════════════════════════════════════════
 function renderTemplates(){
