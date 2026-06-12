@@ -311,5 +311,17 @@
     "status": "todo",
     "isNextStep": true,
     "desc": "Auto-suggested next step after status changed to \"Active\"."
+  },
+  {
+    "id": 31,
+    "title": "Follow-up: Training Seminars",
+    "proposal": 21,
+    "assignee": "u4",
+    "start": "2026-06-12",
+    "due": "2026-06-27",
+    "priority": "Low",
+    "status": "todo",
+    "isNextStep": true,
+    "desc": "Submitted on 2026-06-12. Follow up with Municipality of Domokos to get an update on the proposal status."
   }
 ]
