@@ -177,7 +177,7 @@
     "client": "General Hospital of Kastoria",
     "value": 6000,
     "deadline": "2026-06-10",
-    "status": "In review",
+    "status": "Lost",
     "priority": "Medium",
     "assignee": "u4",
     "notes": "περιμενουμε τεχνικες και διαγωνισμο",
@@ -185,7 +185,8 @@
     "products": [
       "NIS2"
     ],
-    "partner": ""
+    "partner": "",
+    "type": "Public Tender"
   },
   {
     "id": 10,
