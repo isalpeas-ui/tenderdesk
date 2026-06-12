@@ -51,5 +51,23 @@
     ],
     "notes": "",
     "linkedProposalId": 18
+  },
+  {
+    "id": 3,
+    "name": "NIS2 compliant services",
+    "clientId": "c3",
+    "client": "General Hospital of Kalamata",
+    "value": 20000,
+    "winner": "Computer Studios",
+    "prevDate": "2026-06-12",
+    "repeatDate": "2027-06-12",
+    "period": "12",
+    "intent": "Participate",
+    "assignee": "u4",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "linkedProposalId": 3
   }
 ]
