@@ -1854,5 +1854,24 @@
     "notes": "",
     "submittedAt": "2026-06-12",
     "createdAt": "2026-06-12"
+  },
+  {
+    "id": 102,
+    "name": "EDR Implementation/Fine tuning-EDR Monitoring_1500 agents",
+    "type": "Budgetary",
+    "clientId": "c249",
+    "client": "Municipality of Thessaloniki",
+    "value": 32000,
+    "deadline": "",
+    "status": "Draft",
+    "priority": "High",
+    "assignee": "u5",
+    "partner": "",
+    "products": [
+      "EDR",
+      "ClearSkies"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-12"
   }
 ]
