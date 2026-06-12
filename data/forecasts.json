@@ -69,5 +69,23 @@
     ],
     "notes": "",
     "linkedProposalId": 3
+  },
+  {
+    "id": 4,
+    "name": "Cybersecurity Services compliant to NIS2",
+    "clientId": "c4",
+    "client": "General Hospital-Health Center of Filiates",
+    "value": 22000,
+    "winner": "Computer Studios",
+    "prevDate": "2026-06-12",
+    "repeatDate": "2027-06-12",
+    "period": "12",
+    "intent": "Participate",
+    "assignee": "u4",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "linkedProposalId": 4
   }
 ]
