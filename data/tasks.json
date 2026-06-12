@@ -251,5 +251,17 @@
     "priority": "Low",
     "status": "todo",
     "desc": "Submitted on 2026-06-11. Follow up with Papanikolaou General Hospital to get an update on the proposal status."
+  },
+  {
+    "id": 25,
+    "title": "Follow-up: NIS 2 GAP Assessment & Proofpoint Awareness Training",
+    "proposal": 101,
+    "assignee": "u5",
+    "start": "2026-06-12",
+    "due": "2026-06-27",
+    "priority": "Medium",
+    "status": "todo",
+    "isNextStep": true,
+    "desc": "Submitted on 2026-06-12. Follow up with client to get an update on the proposal status."
   }
 ]
