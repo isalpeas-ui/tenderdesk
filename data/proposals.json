@@ -41,7 +41,7 @@
     "client": "General Hospital of Kalamata",
     "value": 20000,
     "deadline": "",
-    "status": "Active",
+    "status": "Lost",
     "priority": "Low",
     "assignee": "u4",
     "notes": "ενα απο ολα θελουν, περιμενουμε τεχνικες και διαγωνισμο",
@@ -49,7 +49,8 @@
     "products": [
       "NIS2"
     ],
-    "partner": ""
+    "partner": "",
+    "type": "Public Tender"
   },
   {
     "id": 4,
