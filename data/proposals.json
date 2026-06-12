@@ -1834,5 +1834,25 @@
     ],
     "notes": "",
     "createdAt": "2026-06-11"
+  },
+  {
+    "id": 101,
+    "name": "NIS 2 GAP Assessment & Proofpoint Awareness Training",
+    "type": "Budgetary",
+    "clientId": "",
+    "client": "",
+    "value": 8500,
+    "deadline": "",
+    "status": "Submitted",
+    "priority": "Medium",
+    "assignee": "u5",
+    "partner": "",
+    "products": [
+      "NIS2",
+      "Security Awareness Training"
+    ],
+    "notes": "",
+    "submittedAt": "2026-06-12",
+    "createdAt": "2026-06-12"
   }
 ]
