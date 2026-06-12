@@ -1900,5 +1900,23 @@
     ],
     "notes": "",
     "createdAt": "2026-06-12"
+  },
+  {
+    "id": 105,
+    "name": "Fortigate Renewal",
+    "type": "Public Tender",
+    "clientId": "c31",
+    "client": "Ministry of Infrastructure and Transport",
+    "value": 6200,
+    "deadline": "2025-11-30",
+    "status": "Won",
+    "priority": "High",
+    "assignee": "u4",
+    "partner": "",
+    "products": [
+      "Firewall"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-12"
   }
 ]
