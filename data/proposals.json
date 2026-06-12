@@ -1186,24 +1186,6 @@
     "partner": ""
   },
   {
-    "id": 62,
-    "name": "NIS2 Gap Assessment & EDR Monitoring",
-    "client": "Municipality of Amfikleia-Elateia",
-    "value": 0,
-    "deadline": "2026-09-28",
-    "type": "Budgetary",
-    "status": "Draft",
-    "priority": "Low",
-    "assignee": "u5",
-    "notes": "",
-    "clientId": "c53",
-    "products": [
-      "EDR",
-      "NIS2"
-    ],
-    "partner": ""
-  },
-  {
     "id": 63,
     "name": "NIS2 Gap Assessment",
     "client": "Municipality of Arta",
