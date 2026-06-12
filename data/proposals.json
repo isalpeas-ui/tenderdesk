@@ -1873,5 +1873,21 @@
     ],
     "notes": "",
     "createdAt": "2026-06-12"
+  },
+  {
+    "id": 103,
+    "name": "Ninja One-Asset Monitoring(1500 endpoints)",
+    "type": "Budgetary",
+    "clientId": "c249",
+    "client": "Municipality of Thessaloniki",
+    "value": 30000,
+    "deadline": "",
+    "status": "Draft",
+    "priority": "High",
+    "assignee": "u5",
+    "partner": "",
+    "products": [],
+    "notes": "",
+    "createdAt": "2026-06-12"
   }
 ]
