@@ -419,14 +419,17 @@
     "name": "NIS2 services",
     "client": "General Hospital of Lefkada",
     "value": 27590,
-    "deadline": "2026-05-31",
-    "status": "Lost",
-    "priority": "Medium",
+    "deadline": "2026-06-30",
+    "status": "Active",
+    "priority": "High",
     "assignee": "u4",
     "notes": "προϋπολογισμος, εχουμε μιλησει, θα ξαναμιλησουμε την αλλη εβδομαδα μηπως τους γραψουμε τις τεχνικες",
     "clientId": "c17",
     "products": [
-      "NIS2"
+      "NIS2",
+      "Pen Test",
+      "Security Awareness Training",
+      "SOC"
     ],
     "partner": "",
     "type": "Public Tender"
