@@ -287,5 +287,17 @@
     "status": "todo",
     "isNextStep": true,
     "desc": "Auto-suggested next step after status changed to \"Active\"."
+  },
+  {
+    "id": 29,
+    "title": "Schedule kickoff meeting",
+    "proposal": 16,
+    "assignee": "u4",
+    "start": "2026-06-12",
+    "due": "2026-06-15",
+    "priority": "High",
+    "status": "todo",
+    "isNextStep": true,
+    "desc": "Auto-suggested next step after status changed to \"Won\"."
   }
 ]
