@@ -456,7 +456,7 @@
     "client": "Municipality of Domokos",
     "value": 0,
     "deadline": "2026-05-31",
-    "status": "Draft",
+    "status": "Submitted",
     "priority": "Low",
     "assignee": "u4",
     "notes": "επιμορφωση προσωπικου",
@@ -464,7 +464,9 @@
     "products": [
       "Security Awareness Training"
     ],
-    "partner": ""
+    "partner": "",
+    "type": "Budgetary",
+    "submittedAt": "2026-06-12"
   },
   {
     "id": 23,
