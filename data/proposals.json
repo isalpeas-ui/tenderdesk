@@ -1677,23 +1677,6 @@
     "notes": ""
   },
   {
-    "id": 93,
-    "name": "StartComply GRC & TPRM Platform",
-    "type": "Budgetary",
-    "clientId": "c73",
-    "client": "Hellenic Anti-Money Laundering Authority (AKNEED)",
-    "value": 0,
-    "deadline": "2026-06-30",
-    "status": "Draft",
-    "priority": "Low",
-    "assignee": "u2",
-    "partner": "TicTac",
-    "products": [
-      "Security Awareness Training"
-    ],
-    "notes": "28/6/2026 Υπηρξε συζητηση για πιθανο demo της εφαρμογης"
-  },
-  {
     "id": 94,
     "name": "Cybersecurity Consulting Services",
     "type": "Budgetary",
