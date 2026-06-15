@@ -1901,5 +1901,23 @@
     ],
     "notes": "",
     "createdAt": "2026-06-12"
+  },
+  {
+    "id": 107,
+    "name": "NIS2 Gap Assessment",
+    "type": "Public Tender",
+    "clientId": "c73",
+    "client": "Hellenic Anti-Money Laundering Authority (AKNEED)",
+    "value": 29900,
+    "deadline": "",
+    "status": "Draft",
+    "priority": "Low",
+    "assignee": "u2",
+    "partner": "",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-15"
   }
 ]
