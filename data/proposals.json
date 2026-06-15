@@ -1887,5 +1887,25 @@
     ],
     "notes": "",
     "createdAt": "2026-06-15"
+  },
+  {
+    "id": 108,
+    "name": "ΥΑΣΠΕ-NIS2 Gap Assessment-Security Awareness On-Site",
+    "type": "Budgetary",
+    "clientId": "c228",
+    "client": "Municipality of Salamina",
+    "value": 10000,
+    "deadline": "",
+    "status": "Active",
+    "priority": "High",
+    "assignee": "u5",
+    "partner": "",
+    "products": [
+      "NIS2",
+      "Security Awareness Training",
+      "vCISO"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-15"
   }
 ]
