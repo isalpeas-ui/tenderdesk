@@ -1849,11 +1849,11 @@
   },
   {
     "id": 104,
-    "name": "SOC Services-NIS 2 GAP Assessment-ΥΑΣΠΕ Services",
+    "name": "SOC Services",
     "type": "Budgetary",
     "clientId": "c228",
     "client": "Municipality of Salamina",
-    "value": 30000,
+    "value": 29800,
     "deadline": "",
     "status": "Active",
     "priority": "High",
@@ -1861,7 +1861,7 @@
     "partner": "",
     "products": [
       "EDR",
-      "NIS2",
+      "MDR",
       "ClearSkies",
       "vCISO",
       "SOC"
