@@ -208,7 +208,7 @@
     "id": 11,
     "name": "Cybersecurity Services",
     "client": "Municipality of Lefkada",
-    "value": 104456.18,
+    "value": 0,
     "deadline": "2026-06-08",
     "status": "Submitted",
     "priority": "High",
@@ -393,24 +393,6 @@
     "clientId": "c15",
     "products": [
       "Pen Test"
-    ],
-    "partner": ""
-  },
-  {
-    "id": 18,
-    "name": "EDR & NIS2 SERVICES",
-    "client": "Municipality Of Palaio Faliro",
-    "value": 150000,
-    "deadline": "2026-06-25",
-    "status": "Lost",
-    "priority": "Medium",
-    "assignee": "u4",
-    "notes": "",
-    "type": "Public Tender",
-    "clientId": "c16",
-    "products": [
-      "EDR",
-      "NIS2"
     ],
     "partner": ""
   },
