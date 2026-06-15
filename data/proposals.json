@@ -1178,21 +1178,6 @@
     "partner": ""
   },
   {
-    "id": 60,
-    "name": "Professional Services for PAM project (password safe)",
-    "client": "NSS Limited",
-    "value": 5500,
-    "deadline": "2026-06-30",
-    "type": "Budgetary",
-    "status": "Draft",
-    "priority": "Medium",
-    "assignee": "u5",
-    "notes": "",
-    "clientId": "c52",
-    "products": [],
-    "partner": ""
-  },
-  {
     "id": 63,
     "name": "NIS2 Gap Assessment",
     "client": "Municipality of Arta",
