@@ -1901,23 +1901,5 @@
     ],
     "notes": "",
     "createdAt": "2026-06-12"
-  },
-  {
-    "id": 106,
-    "name": "NIS2 Gap Assessment",
-    "type": "Public Tender",
-    "clientId": "c383",
-    "client": "Municipal Port Fund of Paros – Antiparos",
-    "value": 7400,
-    "deadline": "",
-    "status": "Draft",
-    "priority": "Medium",
-    "assignee": "u2",
-    "partner": "",
-    "products": [
-      "NIS2"
-    ],
-    "notes": "",
-    "createdAt": "2026-06-15"
   }
 ]
