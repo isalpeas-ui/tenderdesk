@@ -1907,5 +1907,26 @@
     ],
     "notes": "",
     "createdAt": "2026-06-15"
+  },
+  {
+    "id": 108,
+    "name": "MDR, ClearSkies, Email Security, Vulnerability Assessment and Penetration Tests",
+    "type": "Public Tender",
+    "clientId": "c22",
+    "client": "National Rehabilitation Center EKA",
+    "value": 1000000,
+    "deadline": "",
+    "status": "Draft",
+    "priority": "Medium",
+    "assignee": "u2",
+    "partner": "",
+    "products": [
+      "MDR",
+      "Pen Test",
+      "ClearSkies",
+      "SOC"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-16"
   }
 ]
