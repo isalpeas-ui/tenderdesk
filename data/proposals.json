@@ -1544,7 +1544,7 @@
   },
   {
     "id": 86,
-    "name": "SOC services",
+    "name": "SOC services & NIS2",
     "client": "4th YPE of Macedonia and Thrake",
     "value": 30000,
     "deadline": "2026-09-01",
@@ -1555,6 +1555,7 @@
     "notes": "ειναι προγραμματισμενος διαγωνισμος να ανεβει 01/09/2026",
     "clientId": "c70",
     "products": [
+      "NIS2",
       "SOC"
     ],
     "partner": ""
