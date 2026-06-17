@@ -1893,8 +1893,8 @@
     "id": 108,
     "name": "ΥΑΣΠΕ-NIS2 Gap Assessment-Security Awareness On-Site",
     "type": "Budgetary",
-    "clientId": "c385",
-    "client": "Ministry of Maritime Affairs and Insular Policy",
+    "clientId": "c228",
+    "client": "Municipality of Salamina",
     "value": 10000,
     "deadline": "",
     "status": "Active",
@@ -1929,25 +1929,5 @@
     ],
     "notes": "",
     "createdAt": "2026-06-16"
-  },
-  {
-    "id": 109,
-    "name": "Clearskies with MDR services",
-    "type": "Public Tender",
-    "clientId": "c385",
-    "client": "Ministry of Maritime Affairs and Insular Policy",
-    "value": 0,
-    "deadline": "2026-06-30",
-    "status": "Active",
-    "priority": "High",
-    "assignee": "u4",
-    "partner": "",
-    "products": [
-      "MDR",
-      "ClearSkies",
-      "Email Security"
-    ],
-    "notes": "",
-    "createdAt": "2026-06-17"
   }
 ]
