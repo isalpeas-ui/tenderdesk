@@ -344,8 +344,8 @@
     "start": "2026-06-17",
     "due": "2026-06-24",
     "priority": "High",
-    "status": "todo",
-    "isNextStep": true,
+    "status": "done",
+    "isNextStep": false,
     "desc": "Auto-suggested next step after status changed to \"Active\"."
   }
 ]
