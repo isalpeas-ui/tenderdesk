@@ -1797,7 +1797,7 @@
   },
   {
     "id": 102,
-    "name": "EDR Implementation/Fine tuning-EDR Monitoring_1500 agents-3YR",
+    "name": "EDR Management-EDR Monitoring_1500 agents-3YR",
     "type": "Budgetary",
     "clientId": "c249",
     "client": "Municipality of Thessaloniki",
@@ -1809,7 +1809,8 @@
     "partner": "",
     "products": [
       "EDR",
-      "ClearSkies"
+      "ClearSkies",
+      "SOC"
     ],
     "notes": "",
     "createdAt": "2026-06-12"
