@@ -347,5 +347,17 @@
     "status": "done",
     "isNextStep": false,
     "desc": "Auto-suggested next step after status changed to \"Active\"."
+  },
+  {
+    "id": 35,
+    "title": "Work on draft and submit",
+    "proposal": 110,
+    "assignee": "u4",
+    "start": "2026-06-17",
+    "due": "2026-06-24",
+    "priority": "High",
+    "status": "todo",
+    "isNextStep": true,
+    "desc": "Auto-suggested next step after status changed to \"Active\"."
   }
 ]
