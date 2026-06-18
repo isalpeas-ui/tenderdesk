@@ -864,9 +864,9 @@
     "deadline": "",
     "type": "Budgetary",
     "status": "Submitted",
-    "priority": "Medium",
+    "priority": "Low",
     "assignee": "u5",
-    "notes": "",
+    "notes": "LOST, ΤΟ ΕΔΩΣΑΝ ΣΕ ΔΙΚΟ ΤΟΥΣ ΣΤΗΝ ΔΙΠΛΑΣΙΑ ΤΙΜΗ.",
     "clientId": "c34",
     "products": [
       "NIS2"
