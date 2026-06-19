@@ -402,10 +402,10 @@
     "client": "General Hospital of Lefkada",
     "value": 27590,
     "deadline": "2026-06-30",
-    "status": "Active",
+    "status": "Lost",
     "priority": "High",
     "assignee": "u4",
-    "notes": "προϋπολογισμος, εχουμε μιλησει, θα ξαναμιλησουμε την αλλη εβδομαδα μηπως τους γραψουμε τις τεχνικες",
+    "notes": "προϋπολογισμος, εχουμε μιλησει, θα ξαναμιλησουμε την αλλη εβδομαδα μηπως τους γραψουμε τις τεχνικες. ειναι δωσμενο computer studios.",
     "clientId": "c17",
     "products": [
       "NIS2",
