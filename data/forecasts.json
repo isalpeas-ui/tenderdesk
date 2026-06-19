@@ -105,5 +105,26 @@
     ],
     "notes": "",
     "linkedProposalId": 9
+  },
+  {
+    "id": 6,
+    "name": "NIS2 services",
+    "clientId": "c17",
+    "client": "General Hospital of Lefkada",
+    "value": 27590,
+    "winner": "Computer Studios",
+    "prevDate": "2026-06-19",
+    "repeatDate": "2027-06-19",
+    "period": "12",
+    "intent": "Participate",
+    "assignee": "u4",
+    "products": [
+      "NIS2",
+      "Pen Test",
+      "Security Awareness Training",
+      "SOC"
+    ],
+    "notes": "",
+    "linkedProposalId": 19
   }
 ]
