@@ -1994,9 +1994,9 @@
     "clientId": "c386",
     "client": "National Observatory of Athens",
     "value": 50000,
-    "deadline": "",
+    "deadline": "0001-01-01",
     "status": "Active",
-    "priority": "Low",
+    "priority": "High",
     "assignee": "u4",
     "partner": "",
     "products": [
