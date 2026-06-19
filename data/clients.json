@@ -4972,5 +4972,17 @@
     "afm": "",
     "address": "",
     "notes": ""
+  },
+  {
+    "id": "c386",
+    "name": "National Observatory of Athens",
+    "category": "Public Body",
+    "contact": "Κουμεντάκου Ουρανία",
+    "role": "ΠΡΟΙΣΤΑΜΕΝΗ ΤΜΗΜΑΤΟΣ ΔΙΕΚΠΕΡΑΙΩΣΗΣ & ΑΡΧΕΙΟΥ, ΓΡΑΜΜΑΤΕΙΑ ΔΙΟΙΚΗΤΙΚΟΥ ΣΥΜΒΟΥΛΙΟΥ",
+    "email": "ourania@noa.gr",
+    "phone": "2103490122",
+    "afm": "",
+    "address": "Λόφος Νυμφών, Τ.Θ. 20048 - Τ.Κ. 11810, Αθήνα",
+    "notes": ""
   }
 ]
