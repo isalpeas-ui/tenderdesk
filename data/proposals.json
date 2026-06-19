@@ -1950,5 +1950,23 @@
     ],
     "notes": "",
     "createdAt": "2026-06-17"
+  },
+  {
+    "id": 111,
+    "name": "NIS2 compliance services",
+    "type": "Budgetary",
+    "clientId": "c386",
+    "client": "National Observatory of Athens",
+    "value": 50000,
+    "deadline": "",
+    "status": "Active",
+    "priority": "Low",
+    "assignee": "u4",
+    "partner": "",
+    "products": [
+      "NIS2"
+    ],
+    "notes": "",
+    "createdAt": "2026-06-19"
   }
 ]
