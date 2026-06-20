@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--info-bg:#e6f1fb;--info-text:#185FA5;--info-border:#b5d4f4;--success-bg:#eaf3de;--success-text:#3B6D11;--warn-bg:#faeeda;--warn-text:#854F0B;--danger-bg:#fcebeb;--danger-text:#A32D2D;--r:8px;--rl:12px}
@@ -219,55 +220,15 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <i class="ti ti-shield-check" style="font-size:22px;color:#185FA5"></i>
       <span style="font-weight:600;font-size:16px">TenderDesk</span>
     </div>
-    <div class="sstep active" id="ss-choose">
-      <div class="setup-title">Welcome to TenderDesk</div>
-      <div class="setup-sub">Connect to your shared workspace to get started.</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-p" style="justify-content:flex-start;padding:1rem;font-size:14px;text-align:left" onclick="showStep('ss-create')">
-          <i class="ti ti-plus" style="font-size:18px;flex-shrink:0"></i>
-          <div><div style="font-weight:500">Create a new workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">First person — set up the shared database</div></div>
-        </button>
-        <button class="btn" style="justify-content:flex-start;padding:1rem;font-size:14px;text-align:left" onclick="showStep('ss-join')">
-          <i class="ti ti-link" style="font-size:18px;flex-shrink:0"></i>
-          <div><div style="font-weight:500">Join an existing workspace</div><div style="font-size:12px;opacity:.8;margin-top:1px">You have a Gist ID and token from your team</div></div>
-        </button>
-      </div>
-    </div>
-    <div class="sstep" id="ss-create">
-      <div class="setup-title">Create a GitHub Personal Access Token</div>
-      <ol class="steps">
-        <li>Go to <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></li>
-        <li>Click <strong>Generate new token (classic)</strong></li>
-        <li>Tick the <strong>repo</strong> scope → Generate</li>
-        <li>Copy the token (starts with <code>ghp_</code>)</li>
-      </ol>
-      <div class="field" style="margin-bottom:.75rem"><label>GitHub Token</label><input id="c-token" placeholder="ghp_..." type="password"></div>
-      <div class="field" style="margin-bottom:1rem"><label>Repository</label><input id="c-repo" placeholder="owner/repo-name" value="isalpeas-ui/tenderdesk"></div>
-      <div style="display:flex;gap:8px;justify-content:space-between">
-        <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
-        <button class="btn btn-p" onclick="doCreate()"><span id="c-lbl">Connect workspace</span> <span id="c-spin" style="display:none" class="spinner"></span></button>
-      </div>
-    </div>
-    <div class="sstep" id="ss-join">
-      <div class="setup-title">Join existing workspace</div>
-      <div class="field" style="margin-bottom:.75rem"><label>Repository</label><input id="j-repo" placeholder="owner/repo-name" value="isalpeas-ui/tenderdesk"></div>
-      <div class="field" style="margin-bottom:1rem"><label>GitHub Token</label><input id="j-token" placeholder="ghp_..." type="password"></div>
-      <div style="display:flex;gap:8px;justify-content:space-between">
-        <button class="btn" onclick="showStep('ss-choose')"><i class="ti ti-arrow-left"></i> Back</button>
-        <button class="btn btn-p" onclick="doJoin()"><span id="j-lbl">Connect</span> <span id="j-spin" style="display:none" class="spinner"></span></button>
-      </div>
-    </div>
-    <div class="sstep" id="ss-done">
-      <div style="text-align:center;padding:1rem 0">
-        <div style="width:52px;height:52px;border-radius:50%;background:var(--success-bg);color:var(--success-text);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem"><i class="ti ti-check"></i></div>
-        <div class="setup-title">Workspace ready!</div>
-        <div class="setup-sub" id="done-msg"></div>
-        <div class="info-box" id="done-creds" style="text-align:left;display:none">
-          <div style="font-weight:500;margin-bottom:.5rem;color:var(--text)">Share with your team:</div>
-          <div style="margin-bottom:4px"><strong>Repository:</strong> <code id="done-repo"></code></div>
-          <div><strong>Token:</strong> <code id="done-token"></code></div>
-        </div>
-        <button class="btn btn-p" style="margin-top:1rem" onclick="launchApp()"><i class="ti ti-rocket"></i> Open TenderDesk</button>
+    <div class="sstep active" id="ss-login">
+      <div class="setup-title">Sign in</div>
+      <div class="setup-sub">Use your Odyssey work email. First time? Create your password below.</div>
+      <div class="field" style="margin-bottom:.75rem"><label>Email</label><input id="au-email" type="email" placeholder="you@odysseycs.com" autocomplete="username"></div>
+      <div class="field" style="margin-bottom:.5rem"><label>Password</label><input id="au-pw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doSignIn()"></div>
+      <div id="au-msg" style="display:none;color:var(--danger-text);font-size:13px;margin:.5rem 0"></div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-p" id="au-signin" onclick="doSignIn()" style="flex:1;justify-content:center">Sign in</button>
+        <button class="btn" id="au-signup" onclick="doSignUp()">First time</button>
       </div>
     </div>
   </div>
@@ -281,9 +242,11 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="nb active" onclick="goTab('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
     <button class="nb" onclick="goTab('proposals',this)"><i class="ti ti-file-description"></i> Proposals</button>
     <button class="nb" onclick="goTab('tasks',this)"><i class="ti ti-check-square"></i> Tasks</button>
+    <button class="nb" onclick="goTab('meetings',this)"><i class="ti ti-calendar-event"></i> Meetings</button>
     <button class="nb" onclick="goTab('map',this)"><i class="ti ti-map-2"></i> Map</button>
     <button class="nb" onclick="goTab('forecast',this)"><i class="ti ti-crystal-ball"></i> Forecast</button>
     <button class="nb" onclick="goTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
+    <button class="nb" onclick="goTab('accounts',this)"><i class="ti ti-stack-2"></i> Accounts</button>
     <button class="nb" onclick="goTab('team',this)"><i class="ti ti-users"></i> Team</button>
   </nav>
   <div class="sync-wrap">
@@ -522,6 +485,26 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="ugrid" id="team-grid"></div>
 </div>
 
+<div class="tab" id="tab-meetings">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:13px;color:var(--text2)">Track team meetings — onsite & virtual</div>
+    <button class="btn btn-p" onclick="openMeetingModal()"><i class="ti ti-calendar-plus"></i> New meeting</button>
+  </div>
+  <div class="card"><div class="card-hdr"><span class="card-title">Upcoming</span></div><div class="tw"><table><thead><tr><th>Meeting</th><th>When</th><th>Client</th><th>Attendees</th><th>Status</th><th></th></tr></thead><tbody id="mtg-upcoming"></tbody></table></div></div>
+  <div class="card"><div class="card-hdr"><span class="card-title">Past</span></div><div class="tw"><table><thead><tr><th>Meeting</th><th>When</th><th>Client</th><th>Attendees</th><th>Status</th><th></th></tr></thead><tbody id="mtg-past"></tbody></table></div></div>
+</div>
+
+<div class="tab" id="tab-accounts">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:8px;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="as-client" onchange="renderAssets()" style="width:auto"><option value="">All clients</option></select>
+      <select id="as-source" onchange="renderAssets()" style="width:auto"><option value="">All sources</option><option value="odyssey">Odyssey (ours)</option><option value="incumbent">Incumbent</option><option value="third_party">Third-party</option></select>
+    </div>
+    <button class="btn btn-p" onclick="openAssetModal()"><i class="ti ti-plus"></i> Add asset</button>
+  </div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Client</th><th>Category</th><th>Vendor / Product</th><th>Source</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="as-list"></tbody></table></div></div>
+</div>
+
 </div><!-- /main -->
 </div><!-- /app -->
 
@@ -655,17 +638,67 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
 </div>
 </div>
 
+<!-- Meeting -->
+<div class="mb" id="m-meeting" style="display:none">
+<div class="modal" style="width:560px">
+  <div class="mhdr"><span style="font-weight:500" id="mm-title">New meeting</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Title</label><input id="mm-name" placeholder="e.g. NIS2 scoping call — Municipality of Athens"></div>
+    <div class="two">
+      <div class="field"><label>Type</label><select id="mm-type" onchange="mmTypeToggle()"><option value="virtual">Virtual</option><option value="onsite">Onsite</option></select></div>
+      <div class="field"><label>When</label><input id="mm-when" type="datetime-local"></div>
+    </div>
+    <div class="field"><label id="mm-loclabel">Meeting link</label><input id="mm-loc" placeholder="https://…"></div>
+    <div class="two">
+      <div class="field"><label>Client</label><select id="mm-client"><option value="">— Select client —</option></select></div>
+      <div class="field"><label>Related proposal</label><select id="mm-proposal"><option value="">— None —</option></select></div>
+    </div>
+    <div class="field"><label>Organizer</label><select id="mm-organizer"></select></div>
+    <div class="field"><label>Attendees</label><div id="mm-attendees" class="toggle" style="flex-wrap:wrap"></div></div>
+    <div class="field"><label>Agenda</label><textarea id="mm-agenda" rows="2"></textarea></div>
+    <div class="two">
+      <div class="field"><label>Status</label><select id="mm-status"><option value="scheduled">Scheduled</option><option value="done">Done</option><option value="cancelled">Cancelled</option></select></div>
+      <div class="field"><label>Outcome / notes</label><input id="mm-outcome" placeholder="After the meeting…"></div>
+    </div>
+  </div>
+  <div class="mftr"><span id="mm-del" style="margin-right:auto"></span><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveMeeting()">Save meeting</button></div>
+</div>
+</div>
+
+<!-- Asset -->
+<div class="mb" id="m-asset" style="display:none">
+<div class="modal">
+  <div class="mhdr"><span style="font-weight:500" id="am-title">Add asset</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
+  <div class="mbdy">
+    <div class="field"><label>Client</label><select id="am-client"><option value="">— Select client —</option></select></div>
+    <div class="two">
+      <div class="field"><label>Category</label><select id="am-category"><option>Endpoint</option><option>Firewall / Network</option><option>SIEM / SOC</option><option>Email Security</option><option>Identity / IAM</option><option>Backup / DR</option><option>Vulnerability Mgmt</option><option>Awareness</option><option>Other</option></select></div>
+      <div class="field"><label>Source</label><select id="am-source"><option value="incumbent">Incumbent (competitor)</option><option value="odyssey">Odyssey (ours)</option><option value="third_party">Third-party</option></select></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Vendor</label><input id="am-vendor" placeholder="e.g. Fortinet"></div>
+      <div class="field"><label>Product</label><input id="am-product" placeholder="e.g. FortiGate 100F"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>Renewal / expiry</label><input id="am-renewal" type="date"></div>
+      <div class="field"><label>Status</label><select id="am-status"><option value="active">Active</option><option value="expiring">Expiring</option><option value="decommissioned">Decommissioned</option></select></div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="am-notes" rows="2"></textarea></div>
+  </div>
+  <div class="mftr"><span id="am-del" style="margin-right:auto"></span><button class="btn" onclick="closeModals()">Cancel</button><button class="btn btn-p" onclick="saveAsset()">Save asset</button></div>
+</div>
+</div>
+
 <!-- Settings -->
 <div class="mb" id="m-settings" style="display:none">
 <div class="modal">
   <div class="mhdr"><span style="font-weight:500">Workspace settings</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
   <div class="mbdy">
     <div class="info-box">
-      <div style="font-weight:500;color:var(--text);margin-bottom:.5rem">Share with your team</div>
-      <div style="margin-bottom:4px"><strong>Repository:</strong> <code id="cfg-repo"></code></div>
-      <div><strong>Token:</strong> <code id="cfg-token"></code></div>
+      <div style="font-weight:500;color:var(--text);margin-bottom:.5rem">Signed in as</div>
+      <div><code id="cfg-user"></code></div>
     </div>
-    <button class="btn" style="color:var(--danger-text);border-color:var(--danger-text)" onclick="resetSetup()"><i class="ti ti-logout"></i> Disconnect</button>
+    <button class="btn" style="color:var(--danger-text);border-color:var(--danger-text)" onclick="resetSetup()"><i class="ti ti-logout"></i> Sign out</button>
   </div>
   <div class="mftr"><button class="btn" onclick="closeModals()">Close</button></div>
 </div>
@@ -818,179 +851,145 @@ const DATA_FILES = ['clients','proposals','tasks','team','forecasts','templates'
 // ── Collision-proof IDs ───────────────────────────────────────────────────────
 // Sequential counters in meta.json collide across concurrent users (their counter
 // freezes at page-load). Globally-unique IDs remove the shared counter entirely.
-function genId(prefix){
-  const r=(self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));
-  return prefix?prefix+'_'+r:r;
-}
-// Resolve a <select> value back to a real proposal id (handles both legacy
-// integer ids and new string ids — never parseInt a UUID).
-function resolvePid(v){
-  if(v===''||v==null)return null;
-  const p=(D.proposals||[]).find(x=>String(x.id)===String(v));
-  return p?p.id:null;
+// ═══ SUPABASE BACKEND ════════════════════════════════════════════════════════
+const SUPA_URL = 'https://hmmamhbbcdbfkwmqlohi.supabase.co';
+const SUPA_KEY = 'sb_publishable_ctgv4Vw-N8Qjn7caJRK59g_W_frkAzL';
+const supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let currentUser = null;
+
+// Unique id for new rows — valid UUID for Postgres uuid primary keys
+function genId(){ return (self.crypto&&crypto.randomUUID)?crypto.randomUUID():('x'+Date.now()+Math.random().toString(36).slice(2)); }
+function resolvePid(v){ if(v===''||v==null)return null; const p=(D.proposals||[]).find(x=>String(x.id)===String(v)); return p?p.id:null; }
+function showStep(id){const el=document.getElementById(id);document.querySelectorAll('.sstep').forEach(s=>s.classList.remove('active'));if(el)el.classList.add('active');}
+
+// ── value helpers: '' -> null for date / uuid columns ──
+const nd = v => (v && String(v).trim()) ? v : null;
+const num = v => (v===''||v==null) ? null : Number(v);
+
+// ── camelCase (app) <-> snake_case (db) mapping ──
+const fromDb = {
+  clients:   r => ({id:r.id,name:r.name,category:r.category,contact:r.contact,role:r.role,phone:r.phone,email:r.email,address:r.address,afm:r.afm,lat:r.lat,lng:r.lng,notes:r.notes}),
+  team:      r => ({id:r.id,first:r.first,last:r.last,role:r.role,email:r.email,color:r.color}),
+  proposals: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,deadline:r.deadline||'',status:r.status,priority:r.priority,assignee:r.assignee,type:r.type,partner:r.partner,products:r.products||[],notes:r.notes,bidSheet:r.bid_sheet,createdAt:r.created_date||'',submittedAt:r.submitted_at||''}),
+  tasks:     r => ({id:r.id,title:r.title,proposal:r.proposal_id,assignee:r.assignee,start:r.start_date||'',due:r.due_date||'',priority:r.priority,status:r.status,desc:r.description,isNextStep:!!r.is_next_step}),
+  forecasts: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,winner:r.winner,prevDate:r.prev_date||'',repeatDate:r.repeat_date||'',period:r.period,intent:r.intent,assignee:r.assignee,products:r.products||[],notes:r.notes,linkedProposalId:r.linked_proposal_id,convertedToProposalId:r.converted_to_proposal_id}),
+  templates: r => ({id:r.id,name:r.name,cat:r.category,desc:r.description,body:r.body}),
+  meetings: r => ({id:r.id,title:r.title,type:r.type,startsAt:r.starts_at,endsAt:r.ends_at,location:r.location,meetingUrl:r.meeting_url,clientId:r.client_id,proposalId:r.proposal_id,organizer:r.organizer,attendees:r.attendees||[],agenda:r.agenda,outcome:r.outcome,status:r.status}),
+  assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes}),
+};
+const toDb = {
+  clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null}),
+  team:      t => ({id:t.id,first:t.first,last:t.last||null,role:t.role||null,email:t.email||null,color:t.color||null}),
+  proposals: p => ({id:p.id,name:p.name,client_id:nd(p.clientId),value:num(p.value)||0,deadline:nd(p.deadline),status:p.status||'Draft',priority:p.priority||'Medium',assignee:nd(p.assignee),type:p.type||null,partner:p.partner||null,products:p.products||[],notes:p.notes||null,bid_sheet:p.bidSheet||null,created_date:nd(p.createdAt),submitted_at:nd(p.submittedAt)}),
+  tasks:     t => ({id:t.id,title:t.title,proposal_id:nd(t.proposal),assignee:nd(t.assignee),start_date:nd(t.start),due_date:nd(t.due),priority:t.priority||'Medium',status:t.status||'todo',description:t.desc||null,is_next_step:!!t.isNextStep}),
+  forecasts: f => ({id:f.id,name:f.name,client_id:nd(f.clientId),value:num(f.value)||0,winner:f.winner||null,prev_date:nd(f.prevDate),repeat_date:nd(f.repeatDate),period:f.period||null,intent:f.intent||null,assignee:nd(f.assignee),products:f.products||[],notes:f.notes||null,linked_proposal_id:nd(f.linkedProposalId),converted_to_proposal_id:nd(f.convertedToProposalId)}),
+  templates: t => ({id:t.id,name:t.name,category:t.cat||null,description:t.desc||null,body:t.body||null}),
+  meetings: m => ({id:m.id,title:m.title,type:m.type||'virtual',starts_at:nd(m.startsAt),ends_at:nd(m.endsAt),location:m.location||null,meeting_url:m.meetingUrl||null,client_id:nd(m.clientId),proposal_id:nd(m.proposalId),organizer:nd(m.organizer),attendees:m.attendees||[],agenda:m.agenda||null,outcome:m.outcome||null,status:m.status||'scheduled'}),
+  assets: a => ({id:a.id,client_id:nd(a.clientId),category:a.category||null,vendor:a.vendor||null,product:a.product||null,source:a.source||'incumbent',quantity:(a.quantity!=null&&a.quantity!=='')?Number(a.quantity):null,renewal_date:nd(a.renewalDate),status:a.status||'active',notes:a.notes||null}),
+};
+const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets'];
+
+function denormClientNames(){
+  const cmap=Object.fromEntries((D.clients||[]).map(c=>[c.id,c.name]));
+  (D.proposals||[]).forEach(p=>{p.client=cmap[p.clientId]||p.client||'';});
+  (D.forecasts||[]).forEach(f=>{f.client=cmap[f.clientId]||f.client||'';});
 }
 
-// ═══ SETUP ═══════════════════════════════════════════════════════════════════
-function showStep(id){document.querySelectorAll('.sstep').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function saveCFG(){localStorage.setItem('td_cfg3',JSON.stringify(CFG));}
-function loadCFG(){
+// ── load everything ──
+async function loadAll(){
+  const res=await Promise.all(ENTITIES.map(e=>supa.from(e).select('*')));
+  res.forEach(r=>{if(r.error)throw r.error;});
+  ENTITIES.forEach((e,i)=>{ D[e]=(res[i].data||[]).map(fromDb[e]); });
+  D.products=PRODS;
+  denormClientNames();
+}
+
+// ── persist: bulk-upsert the named entity array(s); serialised to avoid clashes ──
+let saveQueue=Promise.resolve();
+function saveData(entity='proposals'){
+  const list=entity==='all'?ENTITIES:(Array.isArray(entity)?entity:[entity]);
+  saveQueue=saveQueue.then(()=>doSave(list)).catch(e=>console.error(e));
+  return saveQueue;
+}
+async function doSave(list){
+  setSS('saving');
   try{
-    const s=localStorage.getItem('td_cfg3');
-    if(s){CFG=JSON.parse(s);return;}
-    // One-time migration from old Gist-based config — then remove it
-    const old=localStorage.getItem('td_cfg2');
-    if(old){
-      const o=JSON.parse(old);
-      CFG={repo:'isalpeas-ui/tenderdesk',token:o.token||''};
-      saveCFG(); // persist as td_cfg3
-      localStorage.removeItem('td_cfg2'); // and remove the legacy key
+    for(const e of list){
+      if(!toDb[e])continue;
+      const rows=(D[e]||[]).map(toDb[e]);
+      if(!rows.length)continue;
+      const {error}=await supa.from(e).upsert(rows);
+      if(error)throw error;
     }
-  }catch(e){}
+    setSS('ok');
+  }catch(err){setSS('error');toast('Save failed — '+(err.message||err),'alert-circle');}
 }
-function ghH(){return{'Authorization':'token '+CFG.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};}
-
-// ═══ REPO FILE API ═══════════════════════════════════════════════════════════
-function b64encode(str){
-  const bytes=new TextEncoder().encode(str);
-  let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));
-  return btoa(binary);
-}
-function b64decode(b64){
-  const binary=atob(b64.replace(/\n/g,''));
-  const bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
+async function remove(entity,id){
+  setSS('saving');
+  const {error}=await supa.from(entity).delete().eq('id',id);
+  if(error){setSS('error');toast('Delete failed — '+error.message,'alert-circle');return;}
+  setSS('ok');
 }
 
-async function readFile(name){
-  const r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{headers:ghH()});
-  if(!r.ok)throw new Error(`${name}: ${r.status}`);
-  const f=await r.json();
-  FILE_SHAS[name]=f.sha;
-  return JSON.parse(b64decode(f.content));
+// ── realtime: re-pull an entity when it changes remotely ──
+function reloadEntity(e){
+  supa.from(e).select('*').then(({data,error})=>{
+    if(error||!data)return;
+    D[e]=data.map(fromDb[e]);
+    if(e==='proposals'||e==='forecasts')denormClientNames();
+    renderAll(true);
+    const ls=document.getElementById('last-sync');if(ls)ls.textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  });
+}
+function subscribeRealtime(){
+  supa.channel('td-changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'proposals'},()=>reloadEntity('proposals'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},()=>reloadEntity('tasks'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'forecasts'},()=>reloadEntity('forecasts'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'meetings'},()=>reloadEntity('meetings'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'assets'},()=>reloadEntity('assets'))
+    .subscribe();
 }
 
-async function writeFile(name, data){
-  const content=b64encode(JSON.stringify(data,null,2));
-  const body={message:`TenderDesk: update ${name}`,content,sha:FILE_SHAS[name]};
-  let r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
-  // Handle stale SHA — refresh and retry once
-  if(r.status===409||r.status===422){
-    const fresh=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{headers:ghH()});
-    if(fresh.ok){
-      const ff=await fresh.json();
-      FILE_SHAS[name]=ff.sha;
-      body.sha=ff.sha;
-      r=await fetch(`https://api.github.com/repos/${CFG.repo}/contents/data/${name}.json`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
-    }
-  }
-  if(!r.ok){const e=await r.json().catch(()=>({message:r.statusText}));throw new Error(e.message||r.status);}
-  const resp=await r.json();
-  FILE_SHAS[name]=resp.content.sha;
-}
+// ── sync indicator ──
+function setSS(s){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-lbl');if(!dot)return;dot.className='sync-dot'+(s==='saving'?' saving':s==='error'?' error':'');if(lbl)lbl.textContent=s==='saving'?'Saving…':s==='error'?'Error':'Synced';}
+async function refreshData(){setSS('saving');try{await loadAll();setSS('ok');renderAll();const ls=document.getElementById('last-sync');if(ls)ls.textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}catch(e){setSS('error');toast('Load error — '+(e.message||e),'alert-circle');}}
+function silentRefresh(){/* replaced by realtime */}
 
-async function readAllFiles(){
-  const results=await Promise.all(DATA_FILES.map(n=>readFile(n)));
-  const [clients,proposals,tasks,team,forecasts,templates,meta]=results;
-  return{clients,proposals,tasks,team,forecasts,templates,products:PRODS,...meta};
+// ── auth ──
+function authMsg(m){const el=document.getElementById('au-msg');if(el){el.textContent=m||'';el.style.display=m?'block':'none';}}
+function authBusy(b){const btn=document.getElementById('au-signin'),b2=document.getElementById('au-signup');if(btn)btn.disabled=b;if(b2)b2.disabled=b;}
+async function doSignIn(){
+  const email=(document.getElementById('au-email').value||'').trim();
+  const pw=document.getElementById('au-pw').value||'';
+  if(!email||!pw){authMsg('Enter your email and password.');return;}
+  authMsg('');authBusy(true);
+  const {error}=await supa.auth.signInWithPassword({email,password:pw});
+  authBusy(false);
+  if(error)authMsg(error.message);
 }
-
-async function doCreate(){
-  const token=document.getElementById('c-token').value.trim();
-  const repo=document.getElementById('c-repo').value.trim()||'isalpeas-ui/tenderdesk';
-  if(!token){alert('Please enter your token');return;}
-  document.getElementById('c-lbl').textContent='Connecting…';document.getElementById('c-spin').style.display='inline-block';
-  try{
-    CFG={repo,token};saveCFG();
-    await readAllFiles(); // Verify connectivity
-    document.getElementById('done-msg').textContent='Connected to workspace successfully.';
-    document.getElementById('done-repo').textContent=repo;document.getElementById('done-token').textContent=token;
-    document.getElementById('done-creds').style.display='block';
-    showStep('ss-done');
-  }catch(e){alert('Failed to connect: '+e.message);}
-  document.getElementById('c-lbl').textContent='Connect workspace';document.getElementById('c-spin').style.display='none';
+async function doSignUp(){
+  const email=(document.getElementById('au-email').value||'').trim();
+  const pw=document.getElementById('au-pw').value||'';
+  if(!email||pw.length<6){authMsg('Enter your work email and a password (at least 6 characters).');return;}
+  authMsg('');authBusy(true);
+  const {data,error}=await supa.auth.signUp({email,password:pw});
+  authBusy(false);
+  if(error){authMsg(error.message);return;}
+  if(!data.session)authMsg('Account created. If email confirmation is on, confirm via the link we sent, then sign in.');
 }
+async function doSignOut(){await supa.auth.signOut();location.reload();}
 
-async function doJoin(){
-  const repo=document.getElementById('j-repo').value.trim()||'isalpeas-ui/tenderdesk';
-  const token=document.getElementById('j-token').value.trim();
-  if(!repo||!token){alert('Please fill in both fields');return;}
-  document.getElementById('j-lbl').textContent='Connecting…';document.getElementById('j-spin').style.display='inline-block';
-  try{
-    CFG={repo,token};await readAllFiles();saveCFG();
-    document.getElementById('done-msg').textContent='Connected to the shared workspace.';
-    document.getElementById('done-creds').style.display='none';showStep('ss-done');
-  }catch(e){alert('Could not connect: '+e.message);}
-  document.getElementById('j-lbl').textContent='Connect';document.getElementById('j-spin').style.display='none';
-}
-
+let appLaunched=false;
 async function launchApp(){
+  if(appLaunched)return; appLaunched=true;
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='block';
   await refreshData();
-  autoTimer=setInterval(silentRefresh,30000);
+  subscribeRealtime();
 }
-
-function showSettings(){document.getElementById('cfg-repo').textContent=CFG.repo;document.getElementById('cfg-token').textContent=CFG.token;openModal('m-settings');}
-function resetSetup(){
-  if(!confirm('Disconnect from this workspace?'))return;
-  localStorage.removeItem('td_cfg3');
-  localStorage.removeItem('td_cfg2'); // also clear legacy Gist config
-  location.reload();
-}
-
-// ═══ DATA SYNC ═══════════════════════════════════════════════════════════════
-function setSS(s){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-lbl');dot.className='sync-dot'+(s==='saving'?' saving':s==='error'?' error':'');lbl.textContent=s==='saving'?'Saving…':s==='error'?'Error':'Synced';}
-
-async function refreshData(){
-  setSS('saving');
-  try{
-    const data=await readAllFiles();
-    if(data&&data.proposals)D=data;
-    setSS('ok');renderAll();
-    document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  }catch(e){setSS('error');toast('Sync error','alert-circle');}
-}
-
-async function silentRefresh(){
-  // Don't clobber local state while a save is in flight or a modal is being edited —
-  // that was a source of lost updates.
-  if(pendingSaves>0)return;
-  if(document.querySelector('.mb[style*="flex"], .bsb[style*="flex"]'))return;
-  try{
-    // Full refresh of all entities + meta (partial refresh left clients/team/meta stale).
-    const data=await readAllFiles();
-    if(data&&data.proposals)D=data;
-    renderAll(true);
-    document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  }catch(e){}
-}
-
-// Serial write queue — prevents concurrent meta writes (which cause 409/422 SHA conflicts)
-let saveQueue = Promise.resolve();
-let pendingSaves = 0; // guards silentRefresh from overwriting an in-flight save
-
-function saveData(entity='proposals'){
-  pendingSaves++;
-  saveQueue = saveQueue.then(()=>doSave(entity)).catch(()=>{}).finally(()=>{pendingSaves--;});
-  return saveQueue;
-}
-
-async function doSave(entity){
-  setSS('saving');
-  const meta={nextPid:D.nextPid,nextTid:D.nextTid,nextTplId:D.nextTplId,nextUid:D.nextUid,nextCid:D.nextCid,nextFid:D.nextFid||1,updatedAt:new Date().toISOString()};
-  const targets=entity==='all'
-    ?['clients','proposals','tasks','team','forecasts','templates','meta']
-    :Array.isArray(entity)?[...new Set([...entity,'meta'])]:[entity,'meta'];
-  try{
-    // Write sequentially within a single saveData call to avoid SHA collisions on shared files
-    for(const e of targets){
-      await writeFile(e, e==='meta'?meta:(D[e]||[]));
-    }
-    setSS('ok');
-  }catch(e){setSS('error');toast('Save failed — '+e.message,'alert-circle');throw e;}
-}
-
+function showSettings(){const u=document.getElementById('cfg-user');if(u)u.textContent=currentUser?currentUser.email:'—';openModal('m-settings');}
+function resetSetup(){if(confirm('Sign out of TenderDesk?'))doSignOut();}
 function renderAll(){
   if(curTab==='dashboard')renderDashboard();
   else if(curTab==='proposals')renderProposals();
@@ -1000,6 +999,8 @@ function renderAll(){
   else if(curTab==='forecast')renderForecast();
   else if(curTab==='clients')renderClients();
   else if(curTab==='team')renderTeam();
+  else if(curTab==='meetings')renderMeetings();
+  else if(curTab==='accounts')renderAssets();
 }
 
 // ═══ NAVIGATION ══════════════════════════════════════════════════════════════
@@ -1341,7 +1342,7 @@ function scheduleTask(proposalId){
   setTimeout(()=>document.getElementById('tm-name').focus(),100);
 }
 
-function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);saveData('proposals');renderProposals();renderDashboard();}
+function delProposal(id){if(!confirm('Delete this proposal?'))return;D.proposals=D.proposals.filter(p=>p.id!==id);remove('proposals',id);renderProposals();renderDashboard();}
 
 // ═══ TASKS ═══════════════════════════════════════════════════════════════════
 // ═══ TASKS & NEXT STEPS ══════════════════════════════════════════════════════
@@ -1666,7 +1667,7 @@ function saveTask(){
   saveData('tasks');closeModals();renderTasks();renderDashboard();toast('Task saved','check');
 }
 
-function delTask(id){if(!confirm('Delete this task?'))return;D.tasks=(D.tasks||[]).filter(t=>t.id!==id);saveData('tasks');renderTasks();renderDashboard();}
+function delTask(id){if(!confirm('Delete this task?'))return;D.tasks=(D.tasks||[]).filter(t=>t.id!==id);remove('tasks',id);renderTasks();renderDashboard();}
 function startDrag(e,id){dragTid=id;e.dataTransfer.effectAllowed='move';}
 function ev(e){e.preventDefault();}
 function dropTask(e,col){e.preventDefault();if(!dragTid)return;const t=(D.tasks||[]).find(x=>x.id===dragTid);if(t){t.status=col;saveData('tasks');renderTasks();}dragTid=null;}
@@ -1753,7 +1754,7 @@ function saveTemplate(){
   saveData('templates');closeModals();renderTemplates();toast('Template saved','check');
 }
 function copyTpl(id){const t=(D.templates||[]).find(x=>x.id===id);if(!t)return;navigator.clipboard.writeText(t.body).then(()=>toast('Copied!','copy')).catch(()=>prompt('Copy:',t.body));}
-function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);saveData('templates');renderTemplates();}
+function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);remove('templates',id);renderTemplates();}
 
 // ═══ CLIENTS ═════════════════════════════════════════════════════════════════
 function renderClients(){
@@ -1813,7 +1814,7 @@ function saveClient(){
   else{D.clients.push({id:genId('c'),...d});}
   saveData('clients');closeModals();renderClients();fillClientDrop();toast('Client saved','check');
 }
-function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);saveData('clients');renderClients();}
+function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);remove('clients',id);renderClients();}
 
 // ═══ TEAM ═════════════════════════════════════════════════════════════════════
 function renderTeam(){
@@ -1850,7 +1851,7 @@ function saveUser(){
   else{D.team.push({id:genId('u'),...d});}
   saveData('team');closeModals();renderTeam();toast('Member saved','check');
 }
-function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);saveData('team');renderTeam();}
+function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);remove('team',id);renderTeam();}
 
 // ═══ BID SHEET ═══════════════════════════════════════════════════════════════
 function openBidSheet(id){
@@ -2270,7 +2271,7 @@ function saveForecast(){
   saveData('forecasts');closeModals();renderForecast();toast('Forecast saved','check');
 }
 
-function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts=(D.forecasts||[]).filter(f=>f.id!==id);saveData('forecasts');renderForecast();}
+function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts=(D.forecasts||[]).filter(f=>f.id!==id);remove('forecasts',id);renderForecast();}
 
 function convertForecast(id){
   const f=(D.forecasts||[]).find(x=>x.id===id);if(!f)return;
@@ -2324,14 +2325,143 @@ function saveLostForecast(){
 
 
 
-// ═══ BOOT ═════════════════════════════════════════════════════════════════════
-loadCFG();
-if(CFG.repo&&CFG.token){
-  document.getElementById('app').style.display='block';
-  refreshData().then(()=>{autoTimer=setInterval(silentRefresh,30000);});
-}else{
-  document.getElementById('setup-screen').style.display='flex';
+// ═══ MEETINGS ════════════════════════════════════════════════════════════════
+let editMid=null;
+function fmtWhen(iso){ if(!iso)return '—'; const s=String(iso); const dp=s.slice(0,10), tp=s.slice(11,16); const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const p=dp.split('-'); if(p.length<3)return s; return `${p[2]} ${MON[(+p[1]||1)-1]} ${tp}`; }
+function mtgClient(m){ const c=(D.clients||[]).find(x=>x.id===m.clientId); return c?c.name:'—'; }
+function mStatusBadge(s){ const map={scheduled:'b-active',done:'b-won',cancelled:'b-lost'}; return `<span class="badge ${map[s]||'b-draft'}">${s||'scheduled'}</span>`; }
+function renderMeetings(){
+  const up=document.getElementById('mtg-upcoming'), pa=document.getElementById('mtg-past'); if(!up)return;
+  const now=Date.now();
+  const list=(D.meetings||[]).slice().sort((a,b)=>new Date(a.startsAt||0)-new Date(b.startsAt||0));
+  const upcoming=list.filter(m=>m.status!=='done'&&m.status!=='cancelled'&&(!m.startsAt||new Date(m.startsAt).getTime()>=now));
+  const past=list.filter(m=>!upcoming.includes(m)).reverse();
+  const row=m=>{
+    const att=(m.attendees||[]).map(id=>av(id)).join('');
+    const tIcon=m.type==='onsite'?'ti-map-pin':'ti-video';
+    return `<tr ondblclick="openMeetingModal('${m.id}')">
+      <td><div style="font-weight:500"><i class="ti ${tIcon}" style="font-size:13px;color:var(--text2)"></i> ${m.title||'—'}</div></td>
+      <td>${fmtWhen(m.startsAt)}</td>
+      <td>${mtgClient(m)}</td>
+      <td><div style="display:flex">${att||'<span style="color:var(--text2)">—</span>'}</div></td>
+      <td>${mStatusBadge(m.status)}</td>
+      <td><div class="ra"><button class="ib" onclick="openMeetingModal('${m.id}')"><i class="ti ti-edit"></i></button><button class="ib" onclick="delMeeting('${m.id}')"><i class="ti ti-trash"></i></button></div></td>
+    </tr>`;
+  };
+  up.innerHTML=upcoming.length?upcoming.map(row).join(''):'<tr><td colspan="6"><div class="empty"><i class="ti ti-calendar-off"></i>No upcoming meetings</div></td></tr>';
+  pa.innerHTML=past.length?past.map(row).join(''):'<tr><td colspan="6"><div class="empty"><i class="ti ti-calendar"></i>No past meetings</div></td></tr>';
 }
+function mmTypeToggle(){ const t=document.getElementById('mm-type').value; document.getElementById('mm-loclabel').textContent=t==='onsite'?'Location / address':'Meeting link'; document.getElementById('mm-loc').placeholder=t==='onsite'?'e.g. City Hall, 2nd floor':'https://…'; }
+function openMeetingModal(id){
+  editMid=id||null;
+  document.getElementById('mm-client').innerHTML='<option value="">— Select client —</option>'+(D.clients||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('mm-proposal').innerHTML='<option value="">— None —</option>'+(D.proposals||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('mm-organizer').innerHTML=(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
+  document.getElementById('mm-attendees').innerHTML=(D.team||[]).map(t=>`<label><input type="checkbox" value="${t.id}"> ${t.first} ${t.last}</label>`).join('');
+  const m=id?(D.meetings||[]).find(x=>x.id===id):null;
+  document.getElementById('mm-title').textContent=m?'Edit meeting':'New meeting';
+  document.getElementById('mm-name').value=m?m.title||'':'';
+  document.getElementById('mm-type').value=m?m.type||'virtual':'virtual';
+  document.getElementById('mm-when').value=m&&m.startsAt?String(m.startsAt).slice(0,16):'';
+  document.getElementById('mm-loc').value=m?(m.location||m.meetingUrl||''):'';
+  document.getElementById('mm-client').value=m?m.clientId||'':'';
+  document.getElementById('mm-proposal').value=m?m.proposalId||'':'';
+  document.getElementById('mm-organizer').value=m?(m.organizer||((D.team[0]||{}).id||'')):((D.team[0]||{}).id||'');
+  document.getElementById('mm-agenda').value=m?m.agenda||'':'';
+  document.getElementById('mm-status').value=m?m.status||'scheduled':'scheduled';
+  document.getElementById('mm-outcome').value=m?m.outcome||'':'';
+  if(m)(m.attendees||[]).forEach(aid=>{const cb=document.querySelector('#mm-attendees input[value="'+aid+'"]'); if(cb)cb.checked=true;});
+  document.getElementById('mm-del').innerHTML=id?`<button class="btn" style="color:var(--danger-text)" onclick="delMeeting('${id}')">Delete</button>`:'';
+  mmTypeToggle();
+  openModal('m-meeting');
+}
+function saveMeeting(){
+  const title=document.getElementById('mm-name').value.trim(); if(!title){document.getElementById('mm-name').focus();return;}
+  const type=document.getElementById('mm-type').value;
+  const loc=document.getElementById('mm-loc').value.trim();
+  const attendees=[...document.querySelectorAll('#mm-attendees input:checked')].map(x=>x.value);
+  const d={
+    title, type,
+    startsAt:document.getElementById('mm-when').value||'',
+    location:type==='onsite'?loc:'',
+    meetingUrl:type==='virtual'?loc:'',
+    clientId:document.getElementById('mm-client').value||null,
+    proposalId:resolvePid(document.getElementById('mm-proposal').value),
+    organizer:document.getElementById('mm-organizer').value||null,
+    attendees,
+    agenda:document.getElementById('mm-agenda').value.trim(),
+    status:document.getElementById('mm-status').value,
+    outcome:document.getElementById('mm-outcome').value.trim()
+  };
+  if(!D.meetings)D.meetings=[];
+  if(editMid){const i=D.meetings.findIndex(m=>m.id===editMid);D.meetings[i]={...D.meetings[i],...d};}
+  else D.meetings.push({id:genId(),...d});
+  editMid=null;
+  saveData('meetings');closeModals();renderMeetings();toast('Meeting saved','check');
+}
+function delMeeting(id){ if(!confirm('Delete this meeting?'))return; D.meetings=(D.meetings||[]).filter(m=>m.id!==id); remove('meetings',id); closeModals(); renderMeetings(); }
+
+// ═══ ACCOUNTS / ASSETS ═══════════════════════════════════════════════════════
+let editAid=null;
+const SRCLABEL={odyssey:'Odyssey',incumbent:'Incumbent',third_party:'Third-party'};
+function srcBadge(s){ const map={odyssey:'b-won',incumbent:'b-lost',third_party:'b-draft'}; return `<span class="badge ${map[s]||'b-draft'}">${SRCLABEL[s]||s||'—'}</span>`; }
+function renderAssets(){
+  const tb=document.getElementById('as-list'); if(!tb)return;
+  const cf=document.getElementById('as-client'); const cur=cf.value;
+  cf.innerHTML='<option value="">All clients</option>'+(D.clients||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join(''); cf.value=cur;
+  const fc=cf.value, fs=document.getElementById('as-source').value;
+  let rows=(D.assets||[]).filter(a=>(!fc||a.clientId===fc)&&(!fs||a.source===fs));
+  rows.sort((a,b)=>(a.renewalDate||'9999').localeCompare(b.renewalDate||'9999'));
+  const cmap=Object.fromEntries((D.clients||[]).map(c=>[c.id,c.name]));
+  const renew=d=>{ if(!d)return '<span style="color:var(--text2)">—</span>'; const days=Math.ceil((new Date(d)-new Date())/86400000); const cls=days<0?'dl-urgent':days<=90?'dl-soon':'dl-ok'; const lbl=days<0?'Expired':days<=90?days+'d':new Date(d).toLocaleDateString('en-GB',{month:'short',year:'numeric'}); return `<span class="${cls}">${lbl}</span>`; };
+  tb.innerHTML=rows.length?rows.map(a=>`<tr ondblclick="openAssetModal('${a.id}')">
+    <td>${cmap[a.clientId]||'—'}</td>
+    <td>${a.category||'—'}</td>
+    <td><div style="font-weight:500">${a.vendor||'—'}</div><div style="font-size:11px;color:var(--text2)">${a.product||''}</div></td>
+    <td>${srcBadge(a.source)}</td>
+    <td>${renew(a.renewalDate)}</td>
+    <td>${a.status||'active'}</td>
+    <td><div class="ra"><button class="ib" onclick="openAssetModal('${a.id}')"><i class="ti ti-edit"></i></button><button class="ib" onclick="delAsset('${a.id}')"><i class="ti ti-trash"></i></button></div></td>
+  </tr>`).join(''):'<tr><td colspan="7"><div class="empty"><i class="ti ti-stack-2"></i>No assets yet — add a client\'s installed technologies to start account planning</div></td></tr>';
+}
+function openAssetModal(id){
+  editAid=id||null;
+  document.getElementById('am-client').innerHTML='<option value="">— Select client —</option>'+(D.clients||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  const a=id?(D.assets||[]).find(x=>x.id===id):null;
+  const pre=document.getElementById('as-client')?document.getElementById('as-client').value:'';
+  document.getElementById('am-title').textContent=a?'Edit asset':'Add asset';
+  document.getElementById('am-client').value=a?a.clientId||'':(pre||'');
+  document.getElementById('am-category').value=a?a.category||'Endpoint':'Endpoint';
+  document.getElementById('am-source').value=a?a.source||'incumbent':'incumbent';
+  document.getElementById('am-vendor').value=a?a.vendor||'':'';
+  document.getElementById('am-product').value=a?a.product||'':'';
+  document.getElementById('am-renewal').value=a?a.renewalDate||'':'';
+  document.getElementById('am-status').value=a?a.status||'active':'active';
+  document.getElementById('am-notes').value=a?a.notes||'':'';
+  document.getElementById('am-del').innerHTML=id?`<button class="btn" style="color:var(--danger-text)" onclick="delAsset('${id}')">Delete</button>`:'';
+  openModal('m-asset');
+}
+function saveAsset(){
+  const clientId=document.getElementById('am-client').value; if(!clientId){toast('Pick a client first','alert-circle');return;}
+  const d={ clientId, category:document.getElementById('am-category').value, source:document.getElementById('am-source').value, vendor:document.getElementById('am-vendor').value.trim(), product:document.getElementById('am-product').value.trim(), renewalDate:document.getElementById('am-renewal').value||'', status:document.getElementById('am-status').value, notes:document.getElementById('am-notes').value.trim() };
+  if(!D.assets)D.assets=[];
+  if(editAid){const i=D.assets.findIndex(a=>a.id===editAid);D.assets[i]={...D.assets[i],...d};}
+  else D.assets.push({id:genId(),...d});
+  editAid=null;
+  saveData('assets');closeModals();renderAssets();toast('Asset saved','check');
+}
+function delAsset(id){ if(!confirm('Delete this asset?'))return; D.assets=(D.assets||[]).filter(a=>a.id!==id); remove('assets',id); closeModals(); renderAssets(); }
+
+// ═══ BOOT ═════════════════════════════════════════════════════════════════════
+(async function boot(){
+  supa.auth.onAuthStateChange((event,sess)=>{
+    currentUser=sess?sess.user:null;
+    if(sess&&document.getElementById('app').style.display!=='block')launchApp();
+  });
+  const {data:{session}}=await supa.auth.getSession();
+  if(session){currentUser=session.user;launchApp();}
+  else{document.getElementById('setup-screen').style.display='flex';showStep('ss-login');}
+})();
 </script>
 </body>
 </html>
