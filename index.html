@@ -815,6 +815,21 @@ let chartS=null, chartT=null, autoTimer=null;
 let FILE_SHAS = {};
 const DATA_FILES = ['clients','proposals','tasks','team','forecasts','templates','meta'];
 
+// ── Collision-proof IDs ───────────────────────────────────────────────────────
+// Sequential counters in meta.json collide across concurrent users (their counter
+// freezes at page-load). Globally-unique IDs remove the shared counter entirely.
+function genId(prefix){
+  const r=(self.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));
+  return prefix?prefix+'_'+r:r;
+}
+// Resolve a <select> value back to a real proposal id (handles both legacy
+// integer ids and new string ids — never parseInt a UUID).
+function resolvePid(v){
+  if(v===''||v==null)return null;
+  const p=(D.proposals||[]).find(x=>String(x.id)===String(v));
+  return p?p.id:null;
+}
+
 // ═══ SETUP ═══════════════════════════════════════════════════════════════════
 function showStep(id){document.querySelectorAll('.sstep').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function saveCFG(){localStorage.setItem('td_cfg3',JSON.stringify(CFG));}
@@ -938,12 +953,14 @@ async function refreshData(){
 }
 
 async function silentRefresh(){
+  // Don't clobber local state while a save is in flight or a modal is being edited —
+  // that was a source of lost updates.
+  if(pendingSaves>0)return;
+  if(document.querySelector('.mb[style*="flex"], .bsb[style*="flex"]'))return;
   try{
-    // Lightweight: only re-read frequently changing files
-    const [proposals,tasks,forecasts]=await Promise.all([
-      readFile('proposals'),readFile('tasks'),readFile('forecasts')
-    ]);
-    D.proposals=proposals;D.tasks=tasks;D.forecasts=forecasts;
+    // Full refresh of all entities + meta (partial refresh left clients/team/meta stale).
+    const data=await readAllFiles();
+    if(data&&data.proposals)D=data;
     renderAll(true);
     document.getElementById('last-sync').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   }catch(e){}
@@ -951,9 +968,11 @@ async function silentRefresh(){
 
 // Serial write queue — prevents concurrent meta writes (which cause 409/422 SHA conflicts)
 let saveQueue = Promise.resolve();
+let pendingSaves = 0; // guards silentRefresh from overwriting an in-flight save
 
 function saveData(entity='proposals'){
-  saveQueue = saveQueue.then(()=>doSave(entity)).catch(()=>{});
+  pendingSaves++;
+  saveQueue = saveQueue.then(()=>doSave(entity)).catch(()=>{}).finally(()=>{pendingSaves--;});
   return saveQueue;
 }
 
@@ -1256,7 +1275,7 @@ function saveProposal(){
   if(!D.proposals)D.proposals=[];
   let savedId=editPid;
   if(editPid){const i=D.proposals.findIndex(p=>p.id===editPid);D.proposals[i]={...D.proposals[i],...d};}
-  else{const np={id:D.nextPid++,...d};D.proposals.push(np);savedId=np.id;}
+  else{const np={id:genId('p'),...d};D.proposals.push(np);savedId=np.id;}
 
   // Capture proposal snapshot NOW before any async/render that could mutate D
   const lostSnapshot=newStatus==='Lost'&&wasNotLost?{...d,id:savedId}:null;
@@ -1271,7 +1290,7 @@ function saveProposal(){
     const followDue=followDate.toISOString().slice(0,10);
     const taskTitle=`Follow-up: ${name}`;
     if(!D.tasks)D.tasks=[];
-    D.tasks.push({id:D.nextTid++,title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',isNextStep:true,desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
+    D.tasks.push({id:genId('t'),title:taskTitle,proposal:savedId,assignee:d.assignee||'',start:d.submittedAt,due:followDue,priority:d.priority||'Medium',status:'todo',isNextStep:true,desc:`Submitted on ${d.submittedAt}. Follow up with ${clientObj?clientObj.name:'client'} to get an update on the proposal status.`});
     saveData('tasks');renderTasks();
     toast('Follow-up task created for '+followDue,'calendar-plus');
   }
@@ -1585,7 +1604,7 @@ function promptNextStep(proposal,prefix){
   if(confirm(msg)){
     if(!D.tasks)D.tasks=[];
     D.tasks.push({
-      id:D.nextTid++,title:tpl.action,proposal:proposal.id,assignee:proposal.assignee||'',
+      id:genId('t'),title:tpl.action,proposal:proposal.id,assignee:proposal.assignee||'',
       start:new Date().toISOString().slice(0,10),due:due.toISOString().slice(0,10),
       priority:tpl.priority,status:'todo',isNextStep:true,desc:`Auto-suggested next step after status changed to "${proposal.status}".`
     });
@@ -1624,7 +1643,7 @@ function saveTask(){
   const title=document.getElementById('tm-name').value.trim();if(!title){document.getElementById('tm-name').focus();return;}
   const d={
     title,
-    proposal:parseInt(document.getElementById('tm-proposal').value)||null,
+    proposal:resolvePid(document.getElementById('tm-proposal').value),
     assignee:document.getElementById('tm-assignee').value,
     start:document.getElementById('tm-start').value,
     due:document.getElementById('tm-due').value,
@@ -1643,7 +1662,7 @@ function saveTask(){
     });
   }
   if(editTid){const i=D.tasks.findIndex(t=>t.id===editTid);D.tasks[i]={...D.tasks[i],...d};}
-  else{D.tasks.push({id:D.nextTid++,...d});}
+  else{D.tasks.push({id:genId('t'),...d});}
   saveData('tasks');closeModals();renderTasks();renderDashboard();toast('Task saved','check');
 }
 
@@ -1698,7 +1717,7 @@ function saveNextStepFromModal(){
   // Create the new next-step task
   if(!D.tasks)D.tasks=[];
   D.tasks.push({
-    id:D.nextTid++,title:action,proposal:editPid,assignee:owner,
+    id:genId('t'),title:action,proposal:editPid,assignee:owner,
     start:new Date().toISOString().slice(0,10),due,priority:'Medium',
     status:'todo',isNextStep:true,desc:'Next step set from proposal'
   });
@@ -1730,7 +1749,7 @@ function renderTemplates(){
 function saveTemplate(){
   const name=document.getElementById('tpl-name').value.trim();if(!name){document.getElementById('tpl-name').focus();return;}
   if(!D.templates)D.templates=[];
-  D.templates.push({id:D.nextTplId++,name,cat:document.getElementById('tpl-cat').value,desc:document.getElementById('tpl-desc').value.trim(),body:document.getElementById('tpl-body').value});
+  D.templates.push({id:genId('tpl'),name,cat:document.getElementById('tpl-cat').value,desc:document.getElementById('tpl-desc').value.trim(),body:document.getElementById('tpl-body').value});
   saveData('templates');closeModals();renderTemplates();toast('Template saved','check');
 }
 function copyTpl(id){const t=(D.templates||[]).find(x=>x.id===id);if(!t)return;navigator.clipboard.writeText(t.body).then(()=>toast('Copied!','copy')).catch(()=>prompt('Copy:',t.body));}
@@ -1791,7 +1810,7 @@ function saveClient(){
   const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim()};
   if(!D.clients)D.clients=[];
   if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);if(i>=0)D.clients[i]={...D.clients[i],...d};}
-  else{if(!D.nextCid)D.nextCid=100;D.clients.push({id:'c'+D.nextCid,...d});D.nextCid++;}
+  else{D.clients.push({id:genId('c'),...d});}
   saveData('clients');closeModals();renderClients();fillClientDrop();toast('Client saved','check');
 }
 function delClient(id){if((D.proposals||[]).some(p=>p.clientId===id)&&!confirm('This client has linked proposals. Remove anyway?'))return;D.clients=(D.clients||[]).filter(c=>c.id!==id);saveData('clients');renderClients();}
@@ -1828,7 +1847,7 @@ function saveUser(){
   const d={first,last:document.getElementById('um-last').value.trim(),role:document.getElementById('um-role').value.trim(),email:document.getElementById('um-email').value.trim(),color:selColor};
   if(!D.team)D.team=[];
   if(editUid){const i=D.team.findIndex(u=>u.id===editUid);D.team[i]={...D.team[i],...d};}
-  else{D.team.push({id:'u'+D.nextUid++,...d});}
+  else{D.team.push({id:genId('u'),...d});}
   saveData('team');closeModals();renderTeam();toast('Member saved','check');
 }
 function delUser(id){if((D.proposals||[]).some(p=>p.assignee===id)&&!confirm('Remove member with linked proposals?'))return;D.team=(D.team||[]).filter(u=>u.id!==id);saveData('team');renderTeam();}
@@ -2247,7 +2266,7 @@ function saveForecast(){
   if(!D.forecasts)D.forecasts=[];
   if(!D.nextFid)D.nextFid=1;
   if(editFid){const i=D.forecasts.findIndex(f=>f.id===editFid);D.forecasts[i]={...D.forecasts[i],...d};}
-  else{D.forecasts.push({id:D.nextFid++,...d});}
+  else{D.forecasts.push({id:genId('f'),...d});}
   saveData('forecasts');closeModals();renderForecast();toast('Forecast saved','check');
 }
 
@@ -2255,13 +2274,16 @@ function delForecast(id){if(!confirm('Delete this forecast?'))return;D.forecasts
 
 function convertForecast(id){
   const f=(D.forecasts||[]).find(x=>x.id===id);if(!f)return;
+  if(f.convertedToProposalId){toast('This forecast was already converted','info-circle');return;}
   if(!confirm(`Convert "${f.name}" into an active proposal?`))return;
-  if(!D.proposals)D.proposals=[];if(!D.nextPid)D.nextPid=1;
-  const p={id:D.nextPid++,name:f.name,clientId:f.clientId,client:f.client,value:f.value,type:'Public Tender',status:'Draft',priority:'Medium',assignee:f.assignee,products:f.products||[],partner:'',notes:`Converted from forecast. Previous winner: ${f.winner||'—'}. ${f.notes||''}`.trim(),deadline:f.repeatDate||''};
+  if(!D.proposals)D.proposals=[];
+  const p={id:genId('p'),name:f.name,clientId:f.clientId,client:f.client,value:f.value,type:'Public Tender',status:'Draft',priority:'Medium',assignee:f.assignee,products:f.products||[],partner:'',notes:`Converted from forecast. Previous winner: ${f.winner||'—'}. ${f.notes||''}`.trim(),deadline:f.repeatDate||''};
   D.proposals.push(p);
   // Mark forecast as converted
   const fi=D.forecasts.findIndex(x=>x.id===id);if(fi>=0)D.forecasts[fi].convertedToProposalId=p.id;
-  saveData('proposals');goTab('proposals',document.querySelector('.nb:nth-child(2)'));toast('Converted to proposal!','check');
+  // Persist BOTH entities — previously only proposals was saved, so the flag was lost
+  // and the same forecast could be converted again into a duplicate proposal.
+  saveData(['proposals','forecasts']);goTab('proposals',document.querySelector('.nb:nth-child(2)'));toast('Converted to proposal!','check');
 }
 
 // ── Lost → Forecast popup ─────────────────────────────────────────────────────
@@ -2288,7 +2310,7 @@ function saveLostForecast(){
   const intent=document.getElementById('lf-intent').value;
   const notes=document.getElementById('lf-notes').value.trim();
   D.forecasts.push({
-    id:D.nextFid++,name:p.name,clientId:p.clientId,client:p.client,
+    id:genId('f'),name:p.name,clientId:p.clientId,client:p.client,
     value:p.value,winner,prevDate:new Date().toISOString().split('T')[0],
     repeatDate,period:document.getElementById('lf-period').value,
     intent,assignee:p.assignee,products:p.products||[],
