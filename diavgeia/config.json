@@ -1,0 +1,55 @@
+{
+  "_README": "Control panel for the Diavgeia harvester. Edit 'targets' to your opened clients + watchlist. 'org' may be a Diavgeia organizationUid (numeric, most reliable) OR a Greek organization name, which the harvester resolves to a uid automatically (cached; anything it can't resolve is listed in diavgeia/unresolved.json). Keywords are matched case/accent-insensitively against the decision subject.",
+
+  "api_base": "https://diavgeia.gov.gr/luminapi/opendata",
+
+  "alerts_lookback_days": 2,
+  "harvest_lookback_days": 1095,
+  "page_size": 100,
+  "max_pages_per_query": 20,
+  "request_delay_seconds": 0.3,
+
+  "targets": [
+    { "name": "ΔΗΜΟΣ ΜΕΤΑΜΟΡΦΩΣΗΣ", "org": "6191", "tier": "client" },
+    { "name": "ΕΘΝΙΚΗ ΑΡΧΗ ΚΥΒΕΡΝΟΑΣΦΑΛΕΙΑΣ (ΕΑΚ)", "org": "99220730", "tier": "prospect" }
+  ],
+
+  "_targets_note": "Replace/extend the above with the municipalities you've opened and any org you want to watch. tier is just a label (client | prospect | watch) carried through to the output.",
+
+  "discover_org_categories": [],
+  "_discover_note": "Optional. For national keyword sweeps (--mode discover), restrict to org categories (e.g. municipalities) by putting ORG_CATEGORY uids here. Empty = all orgs. Get category uids from /dictionaries/ORG_CATEGORY.",
+
+  "keywords": [
+    "κυβερνοασφάλεια", "κυβερνοασφάλειας",
+    "ασφάλεια πληροφοριών", "ασφάλειας πληροφοριών",
+    "ασφάλεια πληροφοριακών συστημάτων", "ασφάλειας πληροφοριακών συστημάτων",
+    "τείχος προστασίας", "firewall", "ngfw",
+    "antivirus", "anti-virus", "κακόβουλο λογισμικό",
+    "edr", "xdr", "siem", "soc",
+    "κέντρο επιχειρήσεων ασφάλειας",
+    "penetration testing", "έλεγχος διείσδυσης",
+    "αξιολόγηση ευπαθειών", "διαχείριση ευπαθειών",
+    "iso 27001", "nis2", "nis 2",
+    "σύστημα διαχείρισης ασφάλειας πληροφοριών", "σδαπ",
+    "disaster recovery", "ανάκαμψη από καταστροφή",
+    "waf", "ddos",
+    "gdpr", "υπεύθυνος προστασίας δεδομένων", "data protection officer", "dpo",
+    "προστασία προσωπικών δεδομένων"
+  ],
+
+  "keywords_broad": [
+    "backup", "αντίγραφα ασφαλείας",
+    "vpn", "δικτυακός εξοπλισμός", "router", "switch",
+    "κρυπτογράφηση", "ψηφιακό πιστοποιητικό", "ssl",
+    "πληροφοριακό σύστημα", "μηχανογράφηση", "υπηρεσίες τπε",
+    "data center", "κέντρο δεδομένων"
+  ],
+
+  "cpv_prefixes": [
+    "48730000", "48732000", "48761000",
+    "72212730", "72500000", "72510000", "72514000",
+    "32420000", "79417000"
+  ],
+  "_cpv_note": "Optional gate. A decision passes if its subject matches a keyword OR (if cpv gate enabled) carries a listed CPV prefix. Verify these against the current CPV table before relying on them.",
+  "cpv_gate_enabled": false
+}
