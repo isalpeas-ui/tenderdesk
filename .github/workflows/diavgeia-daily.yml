@@ -1,0 +1,77 @@
+name: Diavgeia daily harvest
+
+# Daily tender alerts + nationwide discovery; weekly award harvest.
+# Runs on a GitHub-hosted runner (open internet), commits results back to the
+# repo with the built-in GITHUB_TOKEN, and opens an issue when new tenders match.
+
+on:
+  schedule:
+    # GitHub cron is UTC. 04:00 UTC ≈ 07:00 Athens (summer) / 06:00 (winter).
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+    inputs:
+      run_harvest:
+        description: "Also run the full award harvest (slow, 3-year lookback)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # commit updated diavgeia/*.json
+  issues: write     # open the alert issue
+
+concurrency:
+  group: diavgeia-harvest
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Tender alerts (target orgs)
+        run: python scripts/diavgeia_harvest.py --mode alerts
+
+      - name: Nationwide discovery (new orgs buying cyber)
+        run: python scripts/diavgeia_harvest.py --mode discover
+
+      - name: Weekly award harvest
+        # Runs automatically on Mondays, or whenever manually requested.
+        run: |
+          if [ "$(date -u +%u)" = "1" ] || [ "${{ github.event.inputs.run_harvest }}" = "true" ]; then
+            python scripts/diavgeia_harvest.py --mode harvest
+          else
+            echo "Skipping award harvest today (runs Mondays / on demand)."
+          fi
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "diavgeia-bot"
+          git config user.email "actions@github.com"
+          git add diavgeia/*.json diavgeia/_new_today.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Diavgeia harvest: $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Open issue for new tenders
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -s diavgeia/_new_today.md ]; then
+            gh issue create \
+              --title "🛡️ New Diavgeia tenders — $(date -u +%Y-%m-%d)" \
+              --body-file diavgeia/_new_today.md \
+              --label "diavgeia" || echo "Issue creation skipped (label may not exist)."
+          else
+            echo "No new tenders today — no issue opened."
+          fi
