@@ -2424,7 +2424,7 @@ function renderAssets(){
     <td>${(Array.isArray(a.category)?a.category:(a.category?[a.category]:[])).map(t=>`<span class="badge b-Other" style="margin:1px">${t}</span>`).join(' ')||'—'}</td>
     <td><div style="font-weight:500">${a.vendor||'—'}</div><div style="font-size:11px;color:var(--text2)">${a.product||''}</div></td>
     <td style="font-weight:500">${a.amount?'€'+Number(a.amount).toLocaleString('el-GR'):'<span style=\"color:var(--text2)\">—</span>'}</td>
-    <td>${srcBadge(a.source)}</td>
+    <td>${a.source==='incumbent'?`<span class="badge b-lost" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:bottom" title="${a.vendor||''}">${a.vendor||'Incumbent'}</span>`:srcBadge(a.source)}</td>
     <td>${renew(a.renewalDate)}</td>
     <td>${a.status||'active'}</td>
     <td><div class="ra"><button class="ib" onclick="openAssetModal('${a.id}')"><i class="ti ti-edit"></i></button><button class="ib" onclick="delAsset('${a.id}')"><i class="ti ti-trash"></i></button></div></td>
