@@ -1,0 +1,50 @@
+name: Diavgeia nationwide cyber awards (one-shot)
+
+# On-demand: sweeps ALL of Diavgeia (no organization filter) for awarded
+# cyber-security tenders via full-text term search, extracts vendor / amount /
+# duration / CPV, and commits diavgeia/awards_national.json. Org->client matching
+# is done afterwards. No Supabase needed for this step.
+
+on:
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: "Lookback window in days (1095 = 3 years)"
+        default: "1095"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: diavgeia-awards-national
+  cancel-in-progress: false
+
+jobs:
+  awards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Nationwide cyber award sweep
+        env:
+          AWARDS_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
+        run: python scripts/diavgeia_harvest.py --mode awards_national
+
+      - name: Commit results
+        run: |
+          git config user.name  "diavgeia-bot"
+          git config user.email "actions@github.com"
+          git add diavgeia/awards_national.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No new awards to commit."
+          else
+            git commit -m "Nationwide cyber awards harvest: $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          fi
