@@ -1130,7 +1130,7 @@ function renderDashboardNextSteps(){
       else if(days<=7){urgency='dl-soon';label=days+'d';}
       else label=dueD.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
     }
-    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border);cursor:pointer" onclick="openTaskModal(${t.id})" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border);cursor:pointer" onclick="openTaskModal('${t.id}')" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
       <div style="width:52px;text-align:center;flex-shrink:0"><div class="${urgency}" style="font-size:12px;font-weight:600">${label}</div></div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:600;color:#534AB7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><i class="ti ti-building-community" style="font-size:11px"></i> ${k.clientName}</div>
@@ -1169,7 +1169,7 @@ function renderProposals(){
         <span class="badge ${sc(p.status)}">${p.status}</span>
         <span class="badge ${tc(p.type||'Budgetary')}" style="font-size:10px">${tl}</span>
         <span class="badge ${pc(p.priority)}" style="font-size:10px">${p.priority}</span>
-        <span class="p-item-name" onclick="openProposalModal(${p.id})" title="${p.name}">${p.name}</span>
+        <span class="p-item-name" onclick="openProposalModal('${p.id}')" title="${p.name}">${p.name}</span>
         <span class="p-item-client" title="${cname(p)}"><i class="ti ti-building-community" style="font-size:10px;margin-right:2px"></i>${cname(p)}</span>
         <span class="p-item-val">${v}</span>
       </div>
@@ -1178,9 +1178,9 @@ function renderProposals(){
         ${dlStr}${agStr}${crStr}${partnerStr}
         <div style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0">
           ${av(p.assignee,22)}
-          <button class="ib" onclick="openProposalModal(${p.id})" title="Edit"><i class="ti ti-edit"></i></button>
-          ${p.type==='Public Tender'?`<button class="ib" onclick="openBidSheet(${p.id})" style="color:var(--info-text)" title="Bid sheet"><i class="ti ti-clipboard-list"></i></button>`:''}
-          <button class="ib" onclick="delProposal(${p.id})" style="color:var(--danger-text)" title="Delete"><i class="ti ti-trash"></i></button>
+          <button class="ib" onclick="openProposalModal('${p.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+          ${p.type==='Public Tender'?`<button class="ib" onclick="openBidSheet('${p.id}')" style="color:var(--info-text)" title="Bid sheet"><i class="ti ti-clipboard-list"></i></button>`:''}
+          <button class="ib" onclick="delProposal('${p.id}')" style="color:var(--danger-text)" title="Delete"><i class="ti ti-trash"></i></button>
         </div>
       </div>
     </div>`;
@@ -1487,14 +1487,14 @@ function renderTaskRow(t){
   const nsBadge=t.isNextStep?`<span class="ns-badge"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
   const cls='trow'+(t.status==='done'?' done':'')+(t.isNextStep?' next-step':'');
   return`<div class="${cls}">
-    <input type="checkbox" class="trow-chk" ${t.status==='done'?'checked':''} onchange="toggleTaskDone(${t.id})">
+    <input type="checkbox" class="trow-chk" ${t.status==='done'?'checked':''} onchange="toggleTaskDone('${t.id}')">
     ${nsBadge}
-    <span class="trow-title" onclick="openTaskModal(${t.id})" title="${t.title}">${t.title}</span>
+    <span class="trow-title" onclick="openTaskModal('${t.id}')" title="${t.title}">${t.title}</span>
     ${dueStr}
     <span class="trow-meta"><span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span></span>
     ${av(t.assignee,22)}
     <button class="ib" onclick="snoozeTask(${t.id},7)" title="Snooze 7 days" style="font-size:14px"><i class="ti ti-clock-pause"></i></button>
-    <button class="ib" onclick="delTask(${t.id})" style="color:var(--danger-text);font-size:14px"><i class="ti ti-trash"></i></button>
+    <button class="ib" onclick="delTask('${t.id}')" style="color:var(--danger-text);font-size:14px"><i class="ti ti-trash"></i></button>
   </div>`;
 }
 
@@ -1532,7 +1532,7 @@ function renderTasksCalendar(){
       const k=taskGroupKey(t);
       // Short client name (first word or up to 12 chars)
       const cs=k.clientName==='General'?'General':k.clientName.replace(/^Municipality of /,'').split(/[ -]/)[0].slice(0,14);
-      return`<div class="${cls}" onclick="openTaskModal(${t.id})" title="${k.clientName} — ${t.title}"><strong>${cs}</strong> · ${t.title}</div>`;
+      return`<div class="${cls}" onclick="openTaskModal('${t.id}')" title="${k.clientName} — ${t.title}"><strong>${cs}</strong> · ${t.title}</div>`;
     }).join('');
     const more=tasks.length>4?`<div style="font-size:10px;color:var(--text2);font-weight:500">+${tasks.length-4} more</div>`:'';
     html+=`<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${d}</div>${tHtml}${more}</div>`;
@@ -1559,12 +1559,12 @@ function renderTasksKanban(){
       const ds=t.start?`<span style="font-size:10px;color:var(--text2)"><i class="ti ti-player-play" style="font-size:9px"></i> ${new Date(t.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'';
       const nsTag=t.isNextStep?`<span class="ns-badge" style="margin-bottom:4px;display:inline-flex"><i class="ti ti-target" style="font-size:10px"></i> NEXT</span>`:'';
       const clientHdr=`<div style="font-size:12px;font-weight:600;color:#534AB7;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${k.clientName}"><i class="ti ti-building-community" style="font-size:11px"></i> ${k.clientName}</div>`;
-      return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal(${t.id})">
+      return`<div class="kcard" draggable="true" ondragstart="startDrag(event,${t.id})" ondblclick="openTaskModal('${t.id}')">
         ${nsTag}
         ${clientHdr}
         ${p?`<div style="font-size:10px;color:var(--text2);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:14px" title="${p.name}"><i class="ti ti-file-description" style="font-size:10px"></i> ${p.name}</div>`:''}
         <div class="ktitle">${t.title}</div>
-        <div class="kmeta">${av(t.assignee)}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask(${t.id})" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div>
+        <div class="kmeta">${av(t.assignee)}${ds}${t.due?`<span class="${d.cls}"><i class="ti ti-calendar" style="font-size:10px"></i> ${d.txt}</span>`:''}<span class="badge ${pc(t.priority)}" style="font-size:10px;padding:1px 5px">${t.priority}</span><button class="ib" onclick="delTask('${t.id}')" style="margin-left:auto;font-size:12px"><i class="ti ti-x"></i></button></div>
       </div>`;
     }).join('');
   });
@@ -1689,7 +1689,7 @@ function refreshProposalNextStepPanel(p){
       <span class="ns-current-txt">${existing.title}</span>
       <span style="font-size:11px;color:var(--text2)">${dueStr}</span>
       ${av(existing.assignee,20)}
-      <button class="btn" style="font-size:11px;padding:3px 8px" onclick="completeProposalNextStep(${existing.id})">Done</button>
+      <button class="btn" style="font-size:11px;padding:3px 8px" onclick="completeProposalNextStep('${existing.id}')">Done</button>
     </div>`;
     document.getElementById('pm-ns-action').placeholder='Replace next step…';
     document.getElementById('pm-ns-action').value='';
@@ -1745,7 +1745,7 @@ function renderTemplates(){
   const TCOLS={Proposal:'#185FA5',Tender:'#3B6D11',Technical:'#854F0B',Financial:'#993556',Legal:'#534AB7',Other:'#5F5E5A'};
   const g=document.getElementById('tpl-grid');
   if(!(D.templates||[]).length){g.innerHTML='<div class="empty"><i class="ti ti-template"></i>No templates yet</div>';return;}
-  g.innerHTML=D.templates.map(t=>{const c=TCOLS[t.cat]||'#5F5E5A',bg=LIGHT[c]||'#F1EFE8';return`<div class="tpl-card"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:var(--r);background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${TICS[t.cat]||'ti-file'}" style="color:${c};font-size:18px"></i></div><div><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:11px;color:var(--text2)">${t.cat}</div></div></div><div style="font-size:12px;color:var(--text2);line-height:1.5;flex:1">${t.desc||''}</div><div style="display:flex;gap:6px"><button class="btn" style="font-size:12px;padding:5px 10px" onclick="copyTpl(${t.id})"><i class="ti ti-copy"></i> Copy</button><button class="ib" onclick="delTpl(${t.id})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');
+  g.innerHTML=D.templates.map(t=>{const c=TCOLS[t.cat]||'#5F5E5A',bg=LIGHT[c]||'#F1EFE8';return`<div class="tpl-card"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:var(--r);background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${TICS[t.cat]||'ti-file'}" style="color:${c};font-size:18px"></i></div><div><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:11px;color:var(--text2)">${t.cat}</div></div></div><div style="font-size:12px;color:var(--text2);line-height:1.5;flex:1">${t.desc||''}</div><div style="display:flex;gap:6px"><button class="btn" style="font-size:12px;padding:5px 10px" onclick="copyTpl('${t.id}')"><i class="ti ti-copy"></i> Copy</button><button class="ib" onclick="delTpl('${t.id}')"><i class="ti ti-trash"></i></button></div></div>`;}).join('');
 }
 function saveTemplate(){
   const name=document.getElementById('tpl-name').value.trim();if(!name){document.getElementById('tpl-name').focus();return;}
@@ -2210,9 +2210,9 @@ function renderForecast(){
       <td><span class="badge ${IC[f.intent]||'b-draft'}">${f.intent}</span></td>
       <td>${av(f.assignee)}</td>
       <td><div class="ra">
-        <button class="ib" onclick="openForecastModal(${f.id})" title="Edit"><i class="ti ti-edit"></i></button>
-        <button class="ib" onclick="convertForecast(${f.id})" title="Convert to proposal" style="color:var(--info-text)"><i class="ti ti-arrow-right"></i></button>
-        <button class="ib" onclick="delForecast(${f.id})" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
+        <button class="ib" onclick="openForecastModal('${f.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+        <button class="ib" onclick="convertForecast('${f.id}')" title="Convert to proposal" style="color:var(--info-text)"><i class="ti ti-arrow-right"></i></button>
+        <button class="ib" onclick="delForecast('${f.id}')" style="color:var(--danger-text)"><i class="ti ti-trash"></i></button>
       </div></td>
     </tr>`;
   }).join('');
