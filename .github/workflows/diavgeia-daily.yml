@@ -1,8 +1,9 @@
 name: Diavgeia daily harvest
 
-# Daily tender alerts + nationwide discovery; weekly award harvest.
-# Runs on a GitHub-hosted runner (open internet), commits results back to the
-# repo with the built-in GITHUB_TOKEN, and opens an issue when new tenders match.
+# Daily tender alerts + nationwide discovery; award harvest (incremental on
+# Mondays, deep backfill on demand). Runs on a GitHub-hosted runner (open
+# internet), upserts results into Supabase (assets + tenders), commits the JSON
+# debug trail, and opens an issue when new target-org tenders match.
 
 on:
   schedule:
@@ -11,13 +12,13 @@ on:
   workflow_dispatch:
     inputs:
       run_harvest:
-        description: "Also run the full award harvest (slow, 3-year lookback)"
+        description: "Deep award backfill now (3-year lookback over all clients)"
         type: boolean
         default: false
 
 permissions:
-  contents: write   # commit updated diavgeia/*.json
-  issues: write     # open the alert issue
+  contents: write
+  issues: write
 
 concurrency:
   group: diavgeia-harvest
@@ -26,6 +27,9 @@ concurrency:
 jobs:
   harvest:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -42,11 +46,14 @@ jobs:
       - name: Nationwide discovery (new orgs buying cyber)
         run: python scripts/diavgeia_harvest.py --mode discover
 
-      - name: Weekly award harvest
-        # Runs automatically on Mondays, or whenever manually requested.
+      - name: Award harvest (assets)
         run: |
-          if [ "$(date -u +%u)" = "1" ] || [ "${{ github.event.inputs.run_harvest }}" = "true" ]; then
+          if [ "${{ github.event.inputs.run_harvest }}" = "true" ]; then
+            echo "Manual deep backfill (config lookback)."
             python scripts/diavgeia_harvest.py --mode harvest
+          elif [ "$(date -u +%u)" = "1" ]; then
+            echo "Monday incremental harvest (21-day lookback)."
+            HARVEST_LOOKBACK_DAYS=21 python scripts/diavgeia_harvest.py --mode harvest
           else
             echo "Skipping award harvest today (runs Mondays / on demand)."
           fi
@@ -69,7 +76,7 @@ jobs:
         run: |
           if [ -s diavgeia/_new_today.md ]; then
             gh issue create \
-              --title "🛡️ New Diavgeia tenders — $(date -u +%Y-%m-%d)" \
+              --title "New Diavgeia tenders — $(date -u +%Y-%m-%d)" \
               --body-file diavgeia/_new_today.md \
               --label "diavgeia" || echo "Issue creation skipped (label may not exist)."
           else
