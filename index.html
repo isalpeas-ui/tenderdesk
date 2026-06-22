@@ -466,7 +466,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <div class="frow" style="margin-bottom:0">
       <div class="sbar"><i class="ti ti-search"></i><input type="text" id="cl-q" placeholder="Search clients…" oninput="renderClients()"></div>
-      <select class="fs" id="cl-cat" onchange="renderClients()"><option value="">All categories</option><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select>
+      <select class="fs" id="cl-cat" onchange="renderClients()"><option value="">All categories</option><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select><select class="fs" id="cl-status" onchange="renderClients()"><option value="">All status</option><option value="prospect">Prospects</option><option value="client">Clients</option></select>
     </div>
     <button class="btn btn-p" onclick="openClientModal()"><i class="ti ti-plus"></i> Add client</button>
   </div>
@@ -502,7 +502,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
     <button class="btn btn-p" onclick="openAssetModal()"><i class="ti ti-plus"></i> Add asset</button>
   </div>
-  <div class="card"><div class="tw"><table><thead><tr><th>Client</th><th>Category</th><th>Vendor / Product</th><th>Source</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="as-list"></tbody></table></div></div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Client</th><th>Category</th><th>Competitor / Product</th><th>Source</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="as-list"></tbody></table></div></div>
 </div>
 
 </div><!-- /main -->
@@ -594,6 +594,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="mhdr"><span style="font-weight:500" id="cm-title">Add client</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
   <div class="mbdy">
     <div class="two"><div class="field"><label>Client name</label><input id="cm-name" placeholder="e.g. Municipality of Athens"></div><div class="field"><label>Category</label><select id="cm-cat"><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select></div></div>
+    <div class="field"><label>Status</label><select id="cm-status"><option value="prospect">Prospect</option><option value="client">Client (won)</option></select></div>
     <div class="two"><div class="field"><label>Primary contact</label><input id="cm-contact" placeholder="Full name"></div><div class="field"><label>Title / Role</label><input id="cm-role" placeholder="e.g. IT Director"></div></div>
     <div class="two"><div class="field"><label>Email</label><input id="cm-email" type="email"></div><div class="field"><label>Phone</label><input id="cm-phone" placeholder="+30 210 …"></div></div>
     <div class="two"><div class="field"><label>ΑΦΜ</label><input id="cm-afm"></div><div class="field"><label>Address</label><input id="cm-address"></div></div>
@@ -676,7 +677,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <div class="field"><label>Source</label><select id="am-source"><option value="incumbent">Incumbent (competitor)</option><option value="odyssey">Odyssey (ours)</option><option value="third_party">Third-party</option></select></div>
     </div>
     <div class="two">
-      <div class="field"><label>Vendor</label><input id="am-vendor" placeholder="e.g. Fortinet"></div>
+      <div class="field"><label>Competitor</label><input id="am-vendor" placeholder="e.g. Fortinet (the winner)"></div>
       <div class="field"><label>Product</label><input id="am-product" placeholder="e.g. FortiGate 100F"></div>
     </div>
     <div class="two">
@@ -868,7 +869,7 @@ const num = v => (v===''||v==null) ? null : Number(v);
 
 // ── camelCase (app) <-> snake_case (db) mapping ──
 const fromDb = {
-  clients:   r => ({id:r.id,name:r.name,category:r.category,contact:r.contact,role:r.role,phone:r.phone,email:r.email,address:r.address,afm:r.afm,lat:r.lat,lng:r.lng,notes:r.notes}),
+  clients:   r => ({id:r.id,name:r.name,category:r.category,contact:r.contact,role:r.role,phone:r.phone,email:r.email,address:r.address,afm:r.afm,lat:r.lat,lng:r.lng,notes:r.notes,status:r.status||'prospect',name_el:r.name_el}),
   team:      r => ({id:r.id,first:r.first,last:r.last,role:r.role,email:r.email,color:r.color}),
   proposals: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,deadline:r.deadline||'',status:r.status,priority:r.priority,assignee:r.assignee,type:r.type,partner:r.partner,products:r.products||[],notes:r.notes,bidSheet:r.bid_sheet,createdAt:r.created_date||'',submittedAt:r.submitted_at||''}),
   tasks:     r => ({id:r.id,title:r.title,proposal:r.proposal_id,assignee:r.assignee,start:r.start_date||'',due:r.due_date||'',priority:r.priority,status:r.status,desc:r.description,isNextStep:!!r.is_next_step}),
@@ -878,7 +879,7 @@ const fromDb = {
   assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes}),
 };
 const toDb = {
-  clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null}),
+  clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null,status:c.status||'prospect'}),
   team:      t => ({id:t.id,first:t.first,last:t.last||null,role:t.role||null,email:t.email||null,color:t.color||null}),
   proposals: p => ({id:p.id,name:p.name,client_id:nd(p.clientId),value:num(p.value)||0,deadline:nd(p.deadline),status:p.status||'Draft',priority:p.priority||'Medium',assignee:nd(p.assignee),type:p.type||null,partner:p.partner||null,products:p.products||[],notes:p.notes||null,bid_sheet:p.bidSheet||null,created_date:nd(p.createdAt),submitted_at:nd(p.submittedAt)}),
   tasks:     t => ({id:t.id,title:t.title,proposal_id:nd(t.proposal),assignee:nd(t.assignee),start_date:nd(t.start),due_date:nd(t.due),priority:t.priority||'Medium',status:t.status||'todo',description:t.desc||null,is_next_step:!!t.isNextStep}),
@@ -1760,7 +1761,8 @@ function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).
 function renderClients(){
   const q=(document.getElementById('cl-q')||{value:''}).value.toLowerCase();
   const cat=(document.getElementById('cl-cat')||{value:''}).value;
-  const clients=(D.clients||[]).filter(c=>(!q||c.name.toLowerCase().includes(q)||(c.contact||'').toLowerCase().includes(q))&&(!cat||c.category===cat));
+  const st=(document.getElementById('cl-status')||{value:''}).value;
+  const clients=(D.clients||[]).filter(c=>(!q||c.name.toLowerCase().includes(q)||(c.contact||'').toLowerCase().includes(q))&&(!cat||c.category===cat)&&(!st||(c.status||'prospect')===st));
   const tb=document.getElementById('cl-list');if(!tb)return;
   if(!clients.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><i class="ti ti-building-off"></i>No clients found</div></td></tr>';return;}
   const CCS={'Municipality':'b-Municipality','Hospital':'b-Hospital','University':'b-University','Ministry':'b-Ministry','Region':'b-Region','Defence':'b-Defence','Public Body':'b-Public','Other':'b-Other'};
@@ -1768,7 +1770,7 @@ function renderClients(){
     const props=(D.proposals||[]).filter(p=>p.clientId===c.id||p.client===c.name);
     const val=props.reduce((s,p)=>s+(p.value||0),0);
     return`<tr>
-      <td style="font-weight:500">${c.name}</td>
+      <td style="font-weight:500">${c.name} ${(c.status==='client')?'<span class="badge b-won">Client</span>':'<span class="badge b-draft">Prospect</span>'}</td>
       <td><span class="badge ${CCS[c.category]||'b-Other'}">${c.category}</span></td>
       <td>${c.contact||'—'}<br><span style="font-size:11px;color:var(--text2)">${c.role||''}</span></td>
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
@@ -1798,17 +1800,19 @@ function openClientModal(id){
     document.getElementById('cm-afm').value=c.afm||'';
     document.getElementById('cm-address').value=c.address||'';
     document.getElementById('cm-notes').value=c.notes||'';
+    document.getElementById('cm-status').value=c.status||'prospect';
   }else{
     document.getElementById('cm-title').textContent='Add client';
     ['cm-name','cm-contact','cm-role','cm-email','cm-phone','cm-afm','cm-address','cm-notes'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('cm-cat').value='Municipality';
+    document.getElementById('cm-status').value='prospect';
   }
   openModal('m-client');
 }
 
 function saveClient(){
   const name=document.getElementById('cm-name').value.trim();if(!name){document.getElementById('cm-name').focus();return;}
-  const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim()};
+  const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim(),status:document.getElementById('cm-status').value};
   if(!D.clients)D.clients=[];
   if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);if(i>=0)D.clients[i]={...D.clients[i],...d};}
   else{D.clients.push({id:genId('c'),...d});}
@@ -2461,6 +2465,66 @@ function delAsset(id){ if(!confirm('Delete this asset?'))return; D.assets=(D.ass
   const {data:{session}}=await supa.auth.getSession();
   if(session){currentUser=session.user;launchApp();}
   else{document.getElementById('setup-screen').style.display='flex';showStep('ss-login');}
+})();
+</script>
+<style>
+.cbx{position:relative}
+.cbx-list{position:absolute;left:0;right:0;top:100%;margin-top:3px;z-index:10001;max-height:240px;overflow:auto;background:var(--bg2,#fff);border:1px solid var(--border,#e2e6ee);border-radius:var(--r,8px);box-shadow:0 8px 28px rgba(0,0,0,.20);display:none}
+.cbx-list.show{display:block}
+.cbx-it{padding:8px 11px;cursor:pointer;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text,#1a2233)}
+.cbx-it:hover,.cbx-it.sel{background:var(--bg3,#eef2f9)}
+.cbx-it.muted{color:var(--text2,#8a93a6);cursor:default}
+</style>
+<script>
+/* Searchable client picker: wraps a native <select> without changing its id,
+   value semantics, or option-building. Degrades to the native select on any error. */
+(function(){
+  function comboify(sel){
+    try{
+      if(!sel||sel.dataset.cbx)return; sel.dataset.cbx='1';
+      var box=document.createElement('div'); box.className='cbx';
+      var inp=document.createElement('input'); inp.type='text'; inp.className='cbx-inp'; inp.autocomplete='off';
+      var list=document.createElement('div'); list.className='cbx-list';
+      box.appendChild(inp); box.appendChild(list);
+      sel.parentNode.insertBefore(box, sel); box.appendChild(sel); sel.style.display='none';
+      function text(){ var o=sel.options[sel.selectedIndex]; return o?(o.textContent||''):''; }
+      function sync(){
+        if(sel.value!==''){ inp.value=text(); }
+        else { inp.value=''; inp.placeholder=(sel.options[0]?sel.options[0].textContent:'Search…'); }
+      }
+      // make programmatic `sel.value = x` also refresh the visible input
+      try{
+        var p=Object.getPrototypeOf(sel), desc=null;
+        while(p && !desc){ desc=Object.getOwnPropertyDescriptor(p,'value'); if(!desc)p=Object.getPrototypeOf(p); }
+        if(desc && desc.get && desc.set){
+          Object.defineProperty(sel,'value',{configurable:true,
+            get:function(){return desc.get.call(sel);},
+            set:function(v){ desc.set.call(sel,v); sync(); }});
+        }
+      }catch(e){}
+      function open(q){
+        q=(q||'').toLowerCase().trim(); list.innerHTML=''; var shown=0;
+        Array.prototype.forEach.call(sel.options,function(o){
+          var label=o.textContent||'';
+          if(q && o.value && label.toLowerCase().indexOf(q)<0) return;
+          var it=document.createElement('div'); it.className='cbx-it'+(o.value===sel.value?' sel':''); it.textContent=label||'—';
+          it.addEventListener('mousedown',function(e){ e.preventDefault(); sel.value=o.value; sync(); list.classList.remove('show'); sel.dispatchEvent(new Event('change',{bubbles:true})); });
+          list.appendChild(it); shown++;
+        });
+        if(!shown){ var d=document.createElement('div'); d.className='cbx-it muted'; d.textContent='No match'; list.appendChild(d); }
+        list.classList.add('show');
+      }
+      inp.addEventListener('focus',function(){ try{inp.select();}catch(e){} open(''); });
+      inp.addEventListener('input',function(){ open(inp.value); });
+      inp.addEventListener('keydown',function(e){ if(e.key==='Escape'){ list.classList.remove('show'); inp.blur(); } });
+      inp.addEventListener('blur',function(){ setTimeout(function(){ list.classList.remove('show'); },160); });
+      try{ new MutationObserver(function(){ sync(); }).observe(sel,{childList:true}); }catch(e){}
+      sync();
+    }catch(err){ if(typeof console!=='undefined')console.error('comboify failed',err); if(sel){try{sel.style.display='';}catch(e){}} }
+  }
+  function init(){ ['as-client','pm-client','mm-client','am-client','fm-client'].forEach(function(id){ var s=document.getElementById(id); if(s)comboify(s); }); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  window.__comboify=comboify;
 })();
 </script>
 </body>
