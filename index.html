@@ -502,7 +502,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     </div>
     <button class="btn btn-p" onclick="openAssetModal()"><i class="ti ti-plus"></i> Add asset</button>
   </div>
-  <div class="card"><div class="tw"><table><thead><tr><th>Client</th><th>Category</th><th>Competitor / Product</th><th>Source</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="as-list"></tbody></table></div></div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Client</th><th>Technology</th><th>Competitor / Tender</th><th>Value</th><th>Source</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="as-list"></tbody></table></div></div>
 </div>
 
 </div><!-- /main -->
@@ -672,13 +672,14 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="mhdr"><span style="font-weight:500" id="am-title">Add asset</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
   <div class="mbdy">
     <div class="field"><label>Client</label><select id="am-client"><option value="">— Select client —</option></select></div>
+    <div class="field"><label>Technology — select all that apply</label><div id="am-cats" class="chips"></div></div>
     <div class="two">
-      <div class="field"><label>Category</label><select id="am-category"><option>Endpoint</option><option>Firewall / Network</option><option>SIEM / SOC</option><option>Email Security</option><option>Identity / IAM</option><option>Backup / DR</option><option>Vulnerability Mgmt</option><option>Awareness</option><option>Other</option></select></div>
       <div class="field"><label>Source</label><select id="am-source"><option value="incumbent">Incumbent (competitor)</option><option value="odyssey">Odyssey (ours)</option><option value="third_party">Third-party</option></select></div>
+      <div class="field"><label>Value (€)</label><input id="am-amount" type="number" placeholder="e.g. 25000"></div>
     </div>
     <div class="two">
       <div class="field"><label>Competitor</label><input id="am-vendor" placeholder="e.g. Fortinet (the winner)"></div>
-      <div class="field"><label>Product</label><input id="am-product" placeholder="e.g. FortiGate 100F"></div>
+      <div class="field"><label>Tender / subject</label><input id="am-product" placeholder="tender title"></div>
     </div>
     <div class="two">
       <div class="field"><label>Renewal / expiry</label><input id="am-renewal" type="date"></div>
@@ -876,7 +877,7 @@ const fromDb = {
   forecasts: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,winner:r.winner,prevDate:r.prev_date||'',repeatDate:r.repeat_date||'',period:r.period,intent:r.intent,assignee:r.assignee,products:r.products||[],notes:r.notes,linkedProposalId:r.linked_proposal_id,convertedToProposalId:r.converted_to_proposal_id}),
   templates: r => ({id:r.id,name:r.name,cat:r.category,desc:r.description,body:r.body}),
   meetings: r => ({id:r.id,title:r.title,type:r.type,startsAt:r.starts_at,endsAt:r.ends_at,location:r.location,meetingUrl:r.meeting_url,clientId:r.client_id,proposalId:r.proposal_id,organizer:r.organizer,attendees:r.attendees||[],agenda:r.agenda,outcome:r.outcome,status:r.status}),
-  assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes}),
+  assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes,amount:r.amount,currency:r.currency}),
 };
 const toDb = {
   clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null,status:c.status||'prospect'}),
@@ -886,7 +887,7 @@ const toDb = {
   forecasts: f => ({id:f.id,name:f.name,client_id:nd(f.clientId),value:num(f.value)||0,winner:f.winner||null,prev_date:nd(f.prevDate),repeat_date:nd(f.repeatDate),period:f.period||null,intent:f.intent||null,assignee:nd(f.assignee),products:f.products||[],notes:f.notes||null,linked_proposal_id:nd(f.linkedProposalId),converted_to_proposal_id:nd(f.convertedToProposalId)}),
   templates: t => ({id:t.id,name:t.name,category:t.cat||null,description:t.desc||null,body:t.body||null}),
   meetings: m => ({id:m.id,title:m.title,type:m.type||'virtual',starts_at:nd(m.startsAt),ends_at:nd(m.endsAt),location:m.location||null,meeting_url:m.meetingUrl||null,client_id:nd(m.clientId),proposal_id:nd(m.proposalId),organizer:nd(m.organizer),attendees:m.attendees||[],agenda:m.agenda||null,outcome:m.outcome||null,status:m.status||'scheduled'}),
-  assets: a => ({id:a.id,client_id:nd(a.clientId),category:a.category||null,vendor:a.vendor||null,product:a.product||null,source:a.source||'incumbent',quantity:(a.quantity!=null&&a.quantity!=='')?Number(a.quantity):null,renewal_date:nd(a.renewalDate),status:a.status||'active',notes:a.notes||null}),
+  assets: a => ({id:a.id,client_id:nd(a.clientId),category:(Array.isArray(a.category)?(a.category.length?a.category:null):(a.category?[a.category]:null)),vendor:a.vendor||null,product:a.product||null,source:a.source||'incumbent',quantity:(a.quantity!=null&&a.quantity!=='')?Number(a.quantity):null,renewal_date:nd(a.renewalDate),status:a.status||'active',notes:a.notes||null,amount:(a.amount!=null&&a.amount!=='')?Number(a.amount):null,currency:a.currency||'EUR'}),
 };
 const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets'];
 
@@ -2420,13 +2421,14 @@ function renderAssets(){
   const renew=d=>{ if(!d)return '<span style="color:var(--text2)">—</span>'; const days=Math.ceil((new Date(d)-new Date())/86400000); const cls=days<0?'dl-urgent':days<=90?'dl-soon':'dl-ok'; const lbl=days<0?'Expired':days<=90?days+'d':new Date(d).toLocaleDateString('en-GB',{month:'short',year:'numeric'}); return `<span class="${cls}">${lbl}</span>`; };
   tb.innerHTML=rows.length?rows.map(a=>`<tr ondblclick="openAssetModal('${a.id}')">
     <td>${cmap[a.clientId]||'—'}</td>
-    <td>${a.category||'—'}</td>
+    <td>${(Array.isArray(a.category)?a.category:(a.category?[a.category]:[])).map(t=>`<span class="badge b-Other" style="margin:1px">${t}</span>`).join(' ')||'—'}</td>
     <td><div style="font-weight:500">${a.vendor||'—'}</div><div style="font-size:11px;color:var(--text2)">${a.product||''}</div></td>
+    <td style="font-weight:500">${a.amount?'€'+Number(a.amount).toLocaleString('el-GR'):'<span style=\"color:var(--text2)\">—</span>'}</td>
     <td>${srcBadge(a.source)}</td>
     <td>${renew(a.renewalDate)}</td>
     <td>${a.status||'active'}</td>
     <td><div class="ra"><button class="ib" onclick="openAssetModal('${a.id}')"><i class="ti ti-edit"></i></button><button class="ib" onclick="delAsset('${a.id}')"><i class="ti ti-trash"></i></button></div></td>
-  </tr>`).join(''):'<tr><td colspan="7"><div class="empty"><i class="ti ti-stack-2"></i>No assets yet — add a client\'s installed technologies to start account planning</div></td></tr>';
+  </tr>`).join(''):'<tr><td colspan="8"><div class="empty"><i class="ti ti-stack-2"></i>No assets yet — add a client\'s installed technologies to start account planning</div></td></tr>';
 }
 function openAssetModal(id){
   editAid=id||null;
@@ -2435,10 +2437,11 @@ function openAssetModal(id){
   const pre=document.getElementById('as-client')?document.getElementById('as-client').value:'';
   document.getElementById('am-title').textContent=a?'Edit asset':'Add asset';
   document.getElementById('am-client').value=a?a.clientId||'':(pre||'');
-  document.getElementById('am-category').value=a?a.category||'Endpoint':'Endpoint';
+  renderCatChips(a?(Array.isArray(a.category)?a.category:(a.category?[a.category]:[])):[]);
   document.getElementById('am-source').value=a?a.source||'incumbent':'incumbent';
   document.getElementById('am-vendor').value=a?a.vendor||'':'';
   document.getElementById('am-product').value=a?a.product||'':'';
+  document.getElementById('am-amount').value=a&&a.amount!=null?a.amount:'';
   document.getElementById('am-renewal').value=a?a.renewalDate||'':'';
   document.getElementById('am-status').value=a?a.status||'active':'active';
   document.getElementById('am-notes').value=a?a.notes||'':'';
@@ -2447,7 +2450,7 @@ function openAssetModal(id){
 }
 function saveAsset(){
   const clientId=document.getElementById('am-client').value; if(!clientId){toast('Pick a client first','alert-circle');return;}
-  const d={ clientId, category:document.getElementById('am-category').value, source:document.getElementById('am-source').value, vendor:document.getElementById('am-vendor').value.trim(), product:document.getElementById('am-product').value.trim(), renewalDate:document.getElementById('am-renewal').value||'', status:document.getElementById('am-status').value, notes:document.getElementById('am-notes').value.trim() };
+  const d={ clientId, category:getCatChips(), source:document.getElementById('am-source').value, vendor:document.getElementById('am-vendor').value.trim(), product:document.getElementById('am-product').value.trim(), amount:document.getElementById('am-amount').value, renewalDate:document.getElementById('am-renewal').value||'', status:document.getElementById('am-status').value, notes:document.getElementById('am-notes').value.trim() };
   if(!D.assets)D.assets=[];
   if(editAid){const i=D.assets.findIndex(a=>a.id===editAid);D.assets[i]={...D.assets[i],...d};}
   else D.assets.push({id:genId(),...d});
@@ -2526,6 +2529,17 @@ function delAsset(id){ if(!confirm('Delete this asset?'))return; D.assets=(D.ass
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
   window.__comboify=comboify;
 })();
+</script>
+<style>
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 10px;border:1px solid var(--border,#d8deea);border-radius:999px;font-size:12px;cursor:pointer;user-select:none;color:var(--text2,#667);background:var(--bg2,#fff)}
+.chip.on{background:var(--info-bg,#e7f0ff);border-color:var(--info-text,#2563eb);color:var(--info-text,#2563eb);font-weight:500}
+</style>
+<script>
+var TECHVOCAB=['Firewall / Network','SIEM','SOC','Endpoint / EDR','Email Security','Identity / IAM','Backup / DR','Vulnerability Mgmt','Compliance / NIS2','VPN','Encryption','WAF','DDoS','Awareness','Cybersecurity'];
+function renderCatChips(active){ active=active||[]; var w=document.getElementById('am-cats'); if(!w)return;
+  w.innerHTML=TECHVOCAB.map(function(t){return '<span class="chip'+(active.indexOf(t)>=0?' on':'')+'" data-t="'+t+'" onclick="this.classList.toggle(\'on\')">'+t+'</span>';}).join(''); }
+function getCatChips(){ return Array.prototype.slice.call(document.querySelectorAll('#am-cats .chip.on')).map(function(c){return c.getAttribute('data-t');}); }
 </script>
 </body>
 </html>
