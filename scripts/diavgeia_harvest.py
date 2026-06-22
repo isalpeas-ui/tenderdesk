@@ -39,7 +39,8 @@ def strip_accents(s):
     if not s:
         return ""
     s = unicodedata.normalize("NFD", s)
-    return "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+    return s.replace("\u03c2", "\u03c3")  # final sigma ς -> σ for stable matching
 
 
 def load_config():
@@ -141,6 +142,14 @@ def _load_org_index(base):
     return _ORG_INDEX
 
 
+def org_label_for(base, uid):
+    """Best-effort Diavgeia label for an organization uid (for later matching)."""
+    orgs, _ = _load_org_index(base)
+    if not hasattr(org_label_for, "_u2l"):
+        org_label_for._u2l = {o.get("uid"): o.get("label") for o in orgs}
+    return org_label_for._u2l.get(str(uid)) or org_label_for._u2l.get(uid)
+
+
 def resolve_org(base, org):
     if org is None:
         return None
@@ -188,8 +197,10 @@ def resolve_type_uids(base):
 # search
 # --------------------------------------------------------------------------- #
 def search_page(base, org=None, type_uid=None, from_date=None, to_date=None,
-                page=0, size=100):
+                page=0, size=100, term=None):
     params = {"status": "published", "sort": "recent", "page": page, "size": size}
+    if term:
+        params["term"] = term
     if org:
         params["org"] = org
     if type_uid:
@@ -201,14 +212,16 @@ def search_page(base, org=None, type_uid=None, from_date=None, to_date=None,
     return api_get(base, "/search", params)
 
 
-def iter_decisions(base, cfg, org=None, type_uid=None, from_date=None, to_date=None):
+def iter_decisions(base, cfg, org=None, type_uid=None, from_date=None, to_date=None,
+                   term=None, max_pages=None):
     size = cfg.get("page_size", 100)
-    max_pages = cfg.get("max_pages_per_query", 20)
+    if max_pages is None:
+        max_pages = cfg.get("max_pages_per_query", 20)
     delay = cfg.get("request_delay_seconds", 0.3)
     for page in range(max_pages):
         data = search_page(base, org=org, type_uid=type_uid,
                            from_date=from_date, to_date=to_date,
-                           page=page, size=size)
+                           page=page, size=size, term=term)
         decisions = data.get("decisions") or data.get("docs") or []
         if not decisions:
             break
@@ -691,6 +704,49 @@ def mode_discover(base, cfg):
     return new
 
 
+def mode_awards_national(base, cfg):
+    """Nationwide sweep: every cyber-security AWARDED tender across Greece, with
+    no organization filter. Uses Diavgeia full-text `term` search per keyword,
+    keeps only award/contract decision types, extracts vendor/amount/duration/cpv,
+    and writes diavgeia/awards_national.json. Org->client matching is done later."""
+    kws = cfg["keywords"] + cfg.get("keywords_broad", [])
+    award_types = set(resolve_type_uids(base)["award"])
+    lookback = int(os.environ.get("AWARDS_LOOKBACK_DAYS") or cfg.get("harvest_lookback_days", 1095))
+    frm = (date.today() - timedelta(days=lookback)).isoformat()
+    max_pages = int(os.environ.get("AWARDS_MAX_PAGES") or 60)
+    out_path = os.path.join(OUT_DIR, "awards_national.json")
+    existing = load_json(out_path, [])
+    by_ada = {r["ada"]: r for r in existing}
+    delay = cfg.get("request_delay_seconds", 0.3)
+    added = 0
+
+    for kw in kws:
+        for d in iter_decisions(base, cfg, term=kw, from_date=frm, max_pages=max_pages):
+            ada = ada_of(d)
+            if not ada or ada in by_ada:
+                continue
+            dtype = d.get("decisionTypeId") or d.get("decisionType") or ""
+            if award_types and dtype not in award_types:
+                continue  # awards / contracts only
+            hits = matches_keywords(subject_of(d), kws)
+            if not hits:
+                continue
+            full = api_get(base, f"/decisions/{ada}/")
+            time.sleep(delay)
+            rec = normalize(d, {"tier": "national"}, full=full.get("decision", full))
+            rec["matched"] = hits
+            rec["org_label"] = org_label_for(base, rec.get("org"))
+            by_ada[ada] = rec
+            added += 1
+        save_json(out_path, list(by_ada.values()))  # persist after each keyword
+        print(f"[awards_national] keyword '{kw}': running total {len(by_ada)}")
+
+    save_json(out_path, list(by_ada.values()))
+    flush_unresolved()
+    print(f"[awards_national] {added} new; {len(by_ada)} total cyber awards nationwide.")
+    return list(by_ada.values())
+
+
 def mode_resolve(base, name):
     data = api_get(base, "/organizations", {"status": "all"})
     orgs = data.get("organizations") or []
@@ -745,7 +801,8 @@ def write_notify_markdown(new_records):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=True,
-                    choices=["alerts", "harvest", "discover", "resolve", "selftest"])
+                    choices=["alerts", "harvest", "discover", "awards_national",
+                             "resolve", "selftest"])
     ap.add_argument("--name", help="org name fragment (for --mode resolve)")
     args = ap.parse_args()
 
@@ -758,6 +815,8 @@ def main():
         mode_harvest(base, cfg)
     elif args.mode == "discover":
         mode_discover(base, cfg)
+    elif args.mode == "awards_national":
+        mode_awards_national(base, cfg)
     elif args.mode == "resolve":
         if not args.name:
             sys.exit("--name is required for resolve")
