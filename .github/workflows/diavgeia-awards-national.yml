@@ -1,16 +1,20 @@
-name: Diavgeia nationwide cyber awards (one-shot)
+name: Diavgeia nationwide cyber intel
 
-# On-demand: sweeps ALL of Diavgeia (no organization filter) for awarded
-# cyber-security tenders via full-text term search, extracts vendor / amount /
-# duration / CPV, and commits diavgeia/awards_national.json. Org->client matching
-# is done afterwards. No Supabase needed for this step.
+# Weekly (and on-demand) sweep of ALL of Diavgeia:
+#  1. awarded cyber tenders  -> diavgeia/awards_national.json   (competitor intel)
+#  2. open cyber tender notices -> diavgeia/tenders_national.json (live opportunities)
+# On schedule it looks back 30 days (incremental); manual dispatch can go deeper.
+# If SUPABASE_URL + SUPABASE_SERVICE_KEY secrets are set, the run finishes by
+# loading awards into Supabase and generating alerts via rpc/f_load_awards_national.
 
 on:
+  schedule:
+    - cron: "0 5 * * 1"   # Mondays 05:00 UTC
   workflow_dispatch:
     inputs:
       lookback_days:
-        description: "Lookback window in days (1095 = 3 years)"
-        default: "1095"
+        description: "Awards lookback window in days (1095 = 3 years)"
+        default: "30"
 
 permissions:
   contents: write
@@ -20,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  awards:
+  intel:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,21 +34,43 @@ jobs:
           python-version: "3.12"
 
       - name: Install deps
-        run: pip install requests
+        run: pip install requests pdfminer.six
 
-      - name: Nationwide cyber award sweep
+      - name: Nationwide cyber award sweep (server-side type filter + PDF enrichment)
         env:
-          AWARDS_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
+          AWARDS_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days || '30' }}
+          AWARDS_PARSE_PDF: "1"
         run: python scripts/diavgeia_harvest.py --mode awards_national
+
+      - name: Open cyber tender notices sweep
+        env:
+          TENDERS_LOOKBACK_DAYS: "120"
+        run: python scripts/diavgeia_harvest.py --mode tenders_national
 
       - name: Commit results
         run: |
           git config user.name  "diavgeia-bot"
           git config user.email "actions@github.com"
-          git add diavgeia/awards_national.json 2>/dev/null || true
+          git add diavgeia/awards_national.json diavgeia/tenders_national.json 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo "No new awards to commit."
+            echo "No new records to commit."
           else
-            git commit -m "Nationwide cyber awards harvest: $(date -u +%Y-%m-%dT%H:%MZ)"
+            git commit -m "Diavgeia cyber intel harvest: $(date -u +%Y-%m-%dT%H:%MZ)"
             git push
           fi
+
+      - name: Load awards into Supabase + generate alerts (optional)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_KEY" ]; then
+            echo "Supabase secrets not set - skipping DB load (set SUPABASE_URL + SUPABASE_SERVICE_KEY to enable)."
+            exit 0
+          fi
+          curl -sf -X POST "$SUPABASE_URL/rest/v1/rpc/f_load_awards_national" \
+            -H "apikey: $SUPABASE_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_KEY" \
+            -H "Content-Type: application/json" -d '{}'
+          echo ""
+          echo "Supabase load complete."
