@@ -409,6 +409,52 @@ def extract_extra_fields(full_decision):
     }
 
 
+AMOUNT_RE = re.compile(r"(\d{1,3}(?:\.\d{3})+(?:,\d{2})?|\d{3,7}(?:,\d{2})?)\s*(?:\u20ac|\u0395\u03a5\u03a1\u03a9|\u03b5\u03c5\u03c1\u03ce|EUR)")
+
+def parse_amount_from_text(text):
+    """Largest plausible EUR amount mentioned in free text (Greek 1.234.567,89 format)."""
+    best = None
+    for m in AMOUNT_RE.finditer(text or ""):
+        raw = m.group(1).replace(".", "").replace(",", ".")
+        try:
+            v = float(raw)
+        except ValueError:
+            continue
+        if 100 <= v <= 5_000_000 and (best is None or v > best):
+            best = v
+    return best
+
+
+def parse_text_extras(text):
+    """(duration_months, amount) best-effort from decision body text."""
+    months, _src = parse_duration_months(text or "")
+    return months, parse_amount_from_text(text)
+
+
+def pdf_enrich(base, rec):
+    """Fetch the decision PDF and fill missing duration/amount from its body.
+    Requires pdfminer.six; enabled via AWARDS_PARSE_PDF=1. Never raises."""
+    try:
+        from pdfminer.high_level import extract_text
+        import io
+        url = f"{base}/decisions/{rec['ada']}/document"
+        r = requests.get(url, headers={"Accept": "application/pdf"},
+                         timeout=90, allow_redirects=True)
+        if r.status_code != 200 or not r.content[:5] == b"%PDF-":
+            return rec
+        text = extract_text(io.BytesIO(r.content), maxpages=6) or ""
+        months, amount = parse_text_extras(text)
+        if months and not rec.get("duration_months"):
+            rec["duration_months"] = months
+            rec["duration_source"] = "pdf"
+        if amount and not rec.get("amount"):
+            rec["amount"] = amount
+            rec["amount_source"] = "pdf"
+    except Exception as e:  # noqa: BLE001 - enrichment is strictly best-effort
+        print(f"[pdf] {rec.get('ada')}: {e}")
+    return rec
+
+
 def normalize(d, target=None, full=None):
     ada = ada_of(d)
     rec = {
@@ -720,30 +766,83 @@ def mode_awards_national(base, cfg):
     delay = cfg.get("request_delay_seconds", 0.3)
     added = 0
 
+    parse_pdf = os.environ.get("AWARDS_PARSE_PDF") == "1"
+    # Server-side award-type filter: querying per (keyword x award type) means
+    # pagination never wastes budget on non-award decisions, so the same
+    # max_pages reaches years deeper into history.
     for kw in kws:
-        for d in iter_decisions(base, cfg, term=kw, from_date=frm, max_pages=max_pages):
-            ada = ada_of(d)
-            if not ada or ada in by_ada:
-                continue
-            dtype = d.get("decisionTypeId") or d.get("decisionType") or ""
-            if award_types and dtype not in award_types:
-                continue  # awards / contracts only
-            hits = matches_keywords(subject_of(d), kws)
-            if not hits:
-                continue
-            full = api_get(base, f"/decisions/{ada}/")
-            time.sleep(delay)
-            rec = normalize(d, {"tier": "national"}, full=full.get("decision", full))
-            rec["matched"] = hits
-            rec["org_label"] = org_label_for(base, rec.get("org"))
-            by_ada[ada] = rec
-            added += 1
+        for tuid in (sorted(award_types) or [None]):
+            for d in iter_decisions(base, cfg, term=kw, type_uid=tuid,
+                                    from_date=frm, max_pages=max_pages):
+                ada = ada_of(d)
+                if not ada or ada in by_ada:
+                    continue
+                dtype = d.get("decisionTypeId") or d.get("decisionType") or ""
+                if award_types and dtype not in award_types:
+                    continue  # belt & braces; server already filtered
+                hits = matches_keywords(subject_of(d), kws)
+                if not hits:
+                    continue
+                full = api_get(base, f"/decisions/{ada}/")
+                time.sleep(delay)
+                rec = normalize(d, {"tier": "national"}, full=full.get("decision", full))
+                rec["matched"] = hits
+                rec["org_label"] = org_label_for(base, rec.get("org"))
+                if parse_pdf and (not rec.get("duration_months") or not rec.get("amount")):
+                    pdf_enrich(base, rec)
+                by_ada[ada] = rec
+                added += 1
         save_json(out_path, list(by_ada.values()))  # persist after each keyword
         print(f"[awards_national] keyword '{kw}': running total {len(by_ada)}")
 
     save_json(out_path, list(by_ada.values()))
     flush_unresolved()
     print(f"[awards_national] {added} new; {len(by_ada)} total cyber awards nationwide.")
+    return list(by_ada.values())
+
+
+def mode_tenders_national(base, cfg):
+    """Nationwide sweep for OPEN/ANNOUNCED cyber tenders (notice decision types,
+    e.g. tender announcements) -> diavgeia/tenders_national.json. These are
+    forward-looking opportunities, unlike awards which are backward-looking."""
+    kws = cfg["keywords"] + cfg.get("keywords_broad", [])
+    notice_types = set(resolve_type_uids(base)["notice"])
+    lookback = int(os.environ.get("TENDERS_LOOKBACK_DAYS") or 120)
+    frm = (date.today() - timedelta(days=lookback)).isoformat()
+    max_pages = int(os.environ.get("TENDERS_MAX_PAGES") or 40)
+    out_path = os.path.join(OUT_DIR, "tenders_national.json")
+    existing = load_json(out_path, [])
+    by_ada = {r["ada"]: r for r in existing}
+    delay = cfg.get("request_delay_seconds", 0.3)
+    added = 0
+
+    for kw in kws:
+        for tuid in (sorted(notice_types) or [None]):
+            for d in iter_decisions(base, cfg, term=kw, type_uid=tuid,
+                                    from_date=frm, max_pages=max_pages):
+                ada = ada_of(d)
+                if not ada or ada in by_ada:
+                    continue
+                dtype = d.get("decisionTypeId") or d.get("decisionType") or ""
+                if notice_types and dtype not in notice_types:
+                    continue
+                hits = matches_keywords(subject_of(d), kws)
+                if not hits:
+                    continue
+                full = api_get(base, f"/decisions/{ada}/")
+                time.sleep(delay)
+                rec = normalize(d, {"tier": "national"}, full=full.get("decision", full))
+                rec["matched"] = hits
+                rec["org_label"] = org_label_for(base, rec.get("org"))
+                rec["kind"] = "tender_notice"
+                by_ada[ada] = rec
+                added += 1
+        save_json(out_path, list(by_ada.values()))
+        print(f"[tenders_national] keyword '{kw}': running total {len(by_ada)}")
+
+    save_json(out_path, list(by_ada.values()))
+    flush_unresolved()
+    print(f"[tenders_national] {added} new; {len(by_ada)} open-tender notices nationwide.")
     return list(by_ada.values())
 
 
@@ -802,7 +901,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=True,
                     choices=["alerts", "harvest", "discover", "awards_national",
-                             "resolve", "selftest"])
+                             "tenders_national", "resolve", "selftest"])
     ap.add_argument("--name", help="org name fragment (for --mode resolve)")
     args = ap.parse_args()
 
@@ -817,6 +916,8 @@ def main():
         mode_discover(base, cfg)
     elif args.mode == "awards_national":
         mode_awards_national(base, cfg)
+    elif args.mode == "tenders_national":
+        mode_tenders_national(base, cfg)
     elif args.mode == "resolve":
         if not args.name:
             sys.exit("--name is required for resolve")
