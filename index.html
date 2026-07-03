@@ -246,6 +246,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="nb" onclick="goTab('map',this)"><i class="ti ti-map-2"></i> Map</button>
     <button class="nb" onclick="goTab('forecast',this)"><i class="ti ti-crystal-ball"></i> Forecast</button>
     <button class="nb" onclick="goTab('clients',this)"><i class="ti ti-building"></i> Clients</button>
+    <button class="nb" onclick="goTab('tenders',this)"><i class="ti ti-gavel"></i> Tenders</button>
     <button class="nb" onclick="goTab('accounts',this)"><i class="ti ti-stack-2"></i> Accounts</button>
     <button class="nb" onclick="goTab('team',this)"><i class="ti ti-users"></i> Team</button>
   </nav>
@@ -486,6 +487,24 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="card"><div class="tw">
     <table><thead><tr><th>Client</th><th>Category</th><th>Contact</th><th>Email</th><th>Phone</th><th>Next action</th><th>Proposals</th><th>Value</th><th></th></tr></thead>
     <tbody id="cl-list"></tbody></table>
+  </div></div>
+</div>
+
+<!-- TENDERS -->
+<div class="tab" id="tab-tenders">
+  <div id="td-summary" class="charts-row" style="margin-bottom:1rem"></div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div class="frow" style="margin-bottom:0">
+      <div class="sbar"><i class="ti ti-search"></i><input type="text" id="td-q" placeholder="Search org or subject…" oninput="renderTenders()"></div>
+      <select class="fs" id="td-status" onchange="renderTenders()"><option value="open">Open deadline</option><option value="closed">Closed</option><option value="all">All</option></select>
+      <select class="fs" id="td-src" onchange="renderTenders()"><option value="">All sources</option><option value="kimdis">ΚΗΜΔΗΣ</option><option value="diavgeia">Diavgeia</option></select>
+      <select class="fs" id="td-match" onchange="renderTenders()"><option value="">All</option><option value="matched">Matched client</option><option value="unmatched">Unmatched</option></select>
+      <select class="fs" id="td-sort" onchange="renderTenders()"><option value="deadline">Sort: deadline</option><option value="issue">Sort: issued</option><option value="amount">Sort: amount</option></select>
+    </div>
+  </div>
+  <div class="card"><div class="tw">
+    <table><thead><tr><th>Deadline</th><th>Authority</th><th>Subject</th><th>Amount</th><th>Client</th><th>Match</th><th></th></tr></thead>
+    <tbody id="td-list"></tbody></table>
   </div></div>
 </div>
 
@@ -1023,6 +1042,7 @@ function renderAll(){
   else if(curTab==='team')renderTeam();
   else if(curTab==='meetings')renderMeetings();
   else if(curTab==='accounts')renderAssets();
+  else if(curTab==='tenders')renderTenders();
 }
 
 // ═══ NAVIGATION ══════════════════════════════════════════════════════════════
@@ -1163,6 +1183,60 @@ function renderRenewalRadar(){
       </div>
       <div style="flex-shrink:0;font-size:12px;font-weight:600;color:var(--info-text)">${a.amount?'€'+Number(a.amount).toLocaleString('el-GR'):''}</div>
     </div>`;
+  }).join('');
+}
+function renderTenders(){
+  const tb=document.getElementById('td-list');if(!tb)return;
+  const q=(document.getElementById('td-q')||{value:''}).value.toLowerCase();
+  const stf=(document.getElementById('td-status')||{value:'open'}).value;
+  const src=(document.getElementById('td-src')||{value:''}).value;
+  const mf=(document.getElementById('td-match')||{value:''}).value;
+  const sort=(document.getElementById('td-sort')||{value:'deadline'}).value;
+  const today=new Date();today.setHours(0,0,0,0);
+  const iso=today.toISOString().slice(0,10);
+  let rows=(D.tenders||[]).slice();
+  rows=rows.filter(t=>{
+    if(stf==='open'&&!(t.deadline?t.deadline>=iso:false))return false;
+    if(stf==='closed'&&!(t.deadline&&t.deadline<iso))return false;
+    if(src&&(t.source||'')!==src)return false;
+    if(mf==='matched'&&!t.clientId)return false;
+    if(mf==='unmatched'&&t.clientId)return false;
+    if(q&&!((t.org||'').toLowerCase().includes(q)||(t.subject||'').toLowerCase().includes(q)))return false;
+    return true;
+  });
+  rows.sort((a,b)=>{
+    if(sort==='amount')return (b.amount||0)-(a.amount||0);
+    if(sort==='issue')return (b.issueDate||'').localeCompare(a.issueDate||'');
+    return ((a.deadline||'9999')+(a.issueDate||'')).localeCompare((b.deadline||'9999')+(b.issueDate||''));
+  });
+  // summary strip (reflects current filter)
+  const sm=document.getElementById('td-summary');
+  if(sm){
+    const openCnt=rows.filter(t=>t.deadline&&t.deadline>=iso).length;
+    const soon=rows.filter(t=>{if(!t.deadline||t.deadline<iso)return false;const d=(new Date(t.deadline)-today)/86400000;return d<=7;}).length;
+    const val=rows.reduce((s,t)=>s+(t.amount||0),0);
+    sm.innerHTML=`
+      <div class="card" style="flex:1"><div class="card-hdr"><span class="card-title">Showing</span></div><div style="padding:.5rem 1.25rem 1rem"><div style="font-size:24px;font-weight:700">${rows.length}</div><div style="font-size:12px;color:var(--text2)">${openCnt} open · ${soon} closing &le;7d</div></div></div>
+      <div class="card" style="flex:1"><div class="card-hdr"><span class="card-title">Pipeline value</span></div><div style="padding:.5rem 1.25rem 1rem"><div style="font-size:24px;font-weight:700;color:var(--info-text)">€${Number(val).toLocaleString('el-GR')}</div><div style="font-size:12px;color:var(--text2)">sum of shown tenders</div></div></div>`;
+  }
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="ti ti-gavel-off"></i>No tenders match these filters</div></td></tr>';return;}
+  tb.innerHTML=rows.map(t=>{
+    const d=t.deadline?new Date(t.deadline):null;
+    const days=d?Math.round((d-today)/86400000):null;
+    const past=d&&d<today;
+    const col=days==null?'var(--text2)':past?'var(--text2)':days<=7?'#A32D2D':days<=21?'#854F0B':'#3B6D11';
+    const cl=(D.clients||[]).find(c=>c.id===t.clientId);
+    const srcLbl=(t.source==='kimdis')?'ΚΗΜΔΗΣ':(t.source==='diavgeia'?'Diavgeia':(t.source||'—'));
+    const chips=[].concat((t.matched||[])).slice(0,2).map(k=>`<span class="badge b-draft" style="font-size:10px">${k}</span>`).join(' ');
+    return`<tr>
+      <td style="white-space:nowrap">${d?`<span style="font-weight:700;color:${col}">${past?'—':days+'d'}</span> <span style="font-size:11px;color:var(--text2)">${d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>`:'<span style="font-size:11px;color:var(--text2)">no date</span>'}</td>
+      <td style="max-width:220px"><div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.org||'—'}</div><div style="font-size:11px;color:var(--text2)"><span class="badge b-draft" style="font-size:10px">${srcLbl}</span> ${t.procedureType||''}</div></td>
+      <td style="max-width:320px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.subject||'—'}</div>${chips?`<div style="margin-top:2px">${chips}</div>`:''}</td>
+      <td style="font-weight:600;color:var(--info-text);white-space:nowrap">${t.amount?'€'+Number(t.amount).toLocaleString('el-GR'):'—'}</td>
+      <td style="font-size:12px">${cl?cl.name:'<span style="color:var(--text2)">—</span>'}</td>
+      <td style="text-align:center">${t.clientId?'<i class="ti ti-check" style="color:#3B6D11"></i>':'<i class="ti ti-minus" style="color:var(--text2)"></i>'}</td>
+      <td><div class="ra">${t.url?`<a class="ib" href="${t.url}" target="_blank" title="Open notice document"><i class="ti ti-external-link"></i></a>`:''}</div></td>
+    </tr>`;
   }).join('');
 }
 function renderOpenTenders(){
