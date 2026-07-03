@@ -263,6 +263,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
 
 <!-- DASHBOARD -->
 <div class="tab active" id="tab-dashboard">
+  <div id="dash-alerts" style="display:none;flex-direction:column;gap:6px;margin-bottom:1rem"></div>
   <div class="kpis">
     <div class="kpi" style="border-top:3px solid #185FA5"><div class="kpi-label">Total Pipeline</div><div class="kpi-val" id="k-total" style="color:#185FA5">—</div><div class="kpi-sub" id="k-total-s">—</div></div>
     <div class="kpi" style="border-top:3px solid #854F0B"><div class="kpi-label">Active</div><div class="kpi-val" id="k-active" style="color:#854F0B">—</div><div class="kpi-sub" id="k-active-s">—</div></div>
@@ -283,6 +284,10 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <div class="card-hdr"><span class="card-title"><i class="ti ti-target" style="font-size:14px;color:#854F0B"></i> Next Steps</span><span style="font-size:12px;color:var(--text2)" id="dash-ns-count">—</span></div>
       <div id="dash-ns"></div>
     </div>
+  </div>
+  <div class="card" style="margin-top:1rem">
+    <div class="card-hdr"><span class="card-title"><i class="ti ti-radar-2" style="font-size:14px;color:#185FA5"></i> Renewal Radar — competitor contracts expiring within 180 days</span><span style="font-size:12px;color:var(--text2)" id="rr-count"></span></div>
+    <div id="dash-rr"></div>
   </div>
   <div class="charts-row" style="margin-top:1rem">
     <div class="chart-card" style="margin-bottom:0;grid-column:1/-1"><div class="chart-title">Value by Stage</div><div id="ch-bars" style="display:flex;flex-direction:column;gap:12px"></div></div>
@@ -319,6 +324,10 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <button class="btn btn-p" onclick="openForecastModal()"><i class="ti ti-plus"></i> Add forecast</button>
   </div>
 
+  <div class="card" style="padding:1rem;margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem"><div style="font-size:13px;font-weight:500">Weighted Pipeline — proposals × win probability</div><div style="font-size:12px;color:var(--text2)" id="wf-total"></div></div>
+    <div id="wf-bars" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
   <!-- Monthly chart -->
   <div class="card" style="padding:1rem;margin-bottom:1rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
@@ -466,12 +475,12 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <div class="frow" style="margin-bottom:0">
       <div class="sbar"><i class="ti ti-search"></i><input type="text" id="cl-q" placeholder="Search clients…" oninput="renderClients()"></div>
-      <select class="fs" id="cl-cat" onchange="renderClients()"><option value="">All categories</option><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select><select class="fs" id="cl-status" onchange="renderClients()"><option value="">All status</option><option value="prospect">Prospects</option><option value="client">Clients</option></select>
+      <select class="fs" id="cl-cat" onchange="renderClients()"><option value="">All categories</option><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select><select class="fs" id="cl-status" onchange="renderClients()"><option value="">All status</option><option value="prospect">Prospects</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="proposal_sent">Proposal sent</option><option value="client">Clients</option><option value="lost">Lost</option><option value="__needs">&#9873; Needs action</option></select><select class="fs" id="cl-owner" onchange="renderClients()"><option value="">All owners</option></select>
     </div>
     <button class="btn btn-p" onclick="openClientModal()"><i class="ti ti-plus"></i> Add client</button>
   </div>
   <div class="card"><div class="tw">
-    <table><thead><tr><th>Client</th><th>Category</th><th>Contact</th><th>Email</th><th>Phone</th><th>Proposals</th><th>Value</th><th></th></tr></thead>
+    <table><thead><tr><th>Client</th><th>Category</th><th>Contact</th><th>Email</th><th>Phone</th><th>Next action</th><th>Proposals</th><th>Value</th><th></th></tr></thead>
     <tbody id="cl-list"></tbody></table>
   </div></div>
 </div>
@@ -524,6 +533,7 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
       <div class="field"><label>Value (€)</label><input id="pm-value" type="number" placeholder="0"></div>
       <div class="field"><label>Deadline</label><input id="pm-deadline" type="date"></div>
     </div>
+    <div class="field"><label>Win probability % <span style="color:var(--text2);font-weight:400">(blank = auto by status)</span></label><input id="pm-prob" type="number" min="0" max="100" placeholder="auto"></div>
     <div class="two">
       <div class="field"><label>Status</label><select id="pm-status"></select></div>
       <div class="field"><label>Priority</label><select id="pm-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
@@ -594,7 +604,8 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
   <div class="mhdr"><span style="font-weight:500" id="cm-title">Add client</span><button class="ib" onclick="closeModals()"><i class="ti ti-x"></i></button></div>
   <div class="mbdy">
     <div class="two"><div class="field"><label>Client name</label><input id="cm-name" placeholder="e.g. Municipality of Athens"></div><div class="field"><label>Category</label><select id="cm-cat"><option>Municipality</option><option>Hospital</option><option>University</option><option>Ministry</option><option>Region</option><option>Defence</option><option>Public Body</option><option>Other</option></select></div></div>
-    <div class="field"><label>Status</label><select id="cm-status"><option value="prospect">Prospect</option><option value="client">Client (won)</option></select></div>
+    <div class="two"><div class="field"><label>Status</label><select id="cm-status"><option value="prospect">Prospect</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="proposal_sent">Proposal sent</option><option value="client">Client (won)</option><option value="lost">Lost</option></select></div><div class="field"><label>Owner</label><select id="cm-owner"><option value="">— Unassigned —</option></select></div></div>
+    <div class="two"><div class="field"><label>Next action</label><input id="cm-next" placeholder="e.g. Call the IT director"></div><div class="field"><label>Next action date</label><input id="cm-next-date" type="date"></div></div>
     <div class="two"><div class="field"><label>Primary contact</label><input id="cm-contact" placeholder="Full name"></div><div class="field"><label>Title / Role</label><input id="cm-role" placeholder="e.g. IT Director"></div></div>
     <div class="two"><div class="field"><label>Email</label><input id="cm-email" type="email"></div><div class="field"><label>Phone</label><input id="cm-phone" placeholder="+30 210 …"></div></div>
     <div class="two"><div class="field"><label>ΑΦΜ</label><input id="cm-afm"></div><div class="field"><label>Address</label><input id="cm-address"></div></div>
@@ -870,26 +881,28 @@ const num = v => (v===''||v==null) ? null : Number(v);
 
 // ── camelCase (app) <-> snake_case (db) mapping ──
 const fromDb = {
-  clients:   r => ({id:r.id,name:r.name,category:r.category,contact:r.contact,role:r.role,phone:r.phone,email:r.email,address:r.address,afm:r.afm,lat:r.lat,lng:r.lng,notes:r.notes,status:r.status||'prospect',name_el:r.name_el}),
+  clients:   r => ({id:r.id,name:r.name,category:r.category,contact:r.contact,role:r.role,phone:r.phone,email:r.email,address:r.address,afm:r.afm,lat:r.lat,lng:r.lng,notes:r.notes,status:r.status||'prospect',name_el:r.name_el,owner:r.owner,nextAction:r.next_action,nextActionDate:r.next_action_date}),
   team:      r => ({id:r.id,first:r.first,last:r.last,role:r.role,email:r.email,color:r.color}),
-  proposals: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,deadline:r.deadline||'',status:r.status,priority:r.priority,assignee:r.assignee,type:r.type,partner:r.partner,products:r.products||[],notes:r.notes,bidSheet:r.bid_sheet,createdAt:r.created_date||'',submittedAt:r.submitted_at||''}),
+  proposals: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,deadline:r.deadline||'',status:r.status,priority:r.priority,assignee:r.assignee,type:r.type,partner:r.partner,products:r.products||[],notes:r.notes,bidSheet:r.bid_sheet,createdAt:r.created_date||'',submittedAt:r.submitted_at||'',probability:(r.probability!=null?Number(r.probability):null)}),
   tasks:     r => ({id:r.id,title:r.title,proposal:r.proposal_id,assignee:r.assignee,start:r.start_date||'',due:r.due_date||'',priority:r.priority,status:r.status,desc:r.description,isNextStep:!!r.is_next_step}),
   forecasts: r => ({id:r.id,name:r.name,clientId:r.client_id,value:Number(r.value)||0,winner:r.winner,prevDate:r.prev_date||'',repeatDate:r.repeat_date||'',period:r.period,intent:r.intent,assignee:r.assignee,products:r.products||[],notes:r.notes,linkedProposalId:r.linked_proposal_id,convertedToProposalId:r.converted_to_proposal_id}),
   templates: r => ({id:r.id,name:r.name,cat:r.category,desc:r.description,body:r.body}),
   meetings: r => ({id:r.id,title:r.title,type:r.type,startsAt:r.starts_at,endsAt:r.ends_at,location:r.location,meetingUrl:r.meeting_url,clientId:r.client_id,proposalId:r.proposal_id,organizer:r.organizer,attendees:r.attendees||[],agenda:r.agenda,outcome:r.outcome,status:r.status}),
+  alerts: r => ({id:r.id,createdAt:r.created_at,type:r.type,clientId:r.client_id,assetId:r.asset_id,message:r.message,read:!!r.read}),
   assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes,amount:r.amount,currency:r.currency}),
 };
 const toDb = {
-  clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null,status:c.status||'prospect'}),
+  clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null,status:c.status||'prospect',owner:nd(c.owner),next_action:c.nextAction||null,next_action_date:nd(c.nextActionDate)}),
   team:      t => ({id:t.id,first:t.first,last:t.last||null,role:t.role||null,email:t.email||null,color:t.color||null}),
-  proposals: p => ({id:p.id,name:p.name,client_id:nd(p.clientId),value:num(p.value)||0,deadline:nd(p.deadline),status:p.status||'Draft',priority:p.priority||'Medium',assignee:nd(p.assignee),type:p.type||null,partner:p.partner||null,products:p.products||[],notes:p.notes||null,bid_sheet:p.bidSheet||null,created_date:nd(p.createdAt),submitted_at:nd(p.submittedAt)}),
+  proposals: p => ({id:p.id,name:p.name,client_id:nd(p.clientId),value:num(p.value)||0,deadline:nd(p.deadline),status:p.status||'Draft',priority:p.priority||'Medium',assignee:nd(p.assignee),type:p.type||null,partner:p.partner||null,products:p.products||[],notes:p.notes||null,bid_sheet:p.bidSheet||null,created_date:nd(p.createdAt),submitted_at:nd(p.submittedAt),probability:(p.probability!=null&&p.probability!==''?Math.max(0,Math.min(100,Number(p.probability))):null)}),
   tasks:     t => ({id:t.id,title:t.title,proposal_id:nd(t.proposal),assignee:nd(t.assignee),start_date:nd(t.start),due_date:nd(t.due),priority:t.priority||'Medium',status:t.status||'todo',description:t.desc||null,is_next_step:!!t.isNextStep}),
   forecasts: f => ({id:f.id,name:f.name,client_id:nd(f.clientId),value:num(f.value)||0,winner:f.winner||null,prev_date:nd(f.prevDate),repeat_date:nd(f.repeatDate),period:f.period||null,intent:f.intent||null,assignee:nd(f.assignee),products:f.products||[],notes:f.notes||null,linked_proposal_id:nd(f.linkedProposalId),converted_to_proposal_id:nd(f.convertedToProposalId)}),
   templates: t => ({id:t.id,name:t.name,category:t.cat||null,description:t.desc||null,body:t.body||null}),
   meetings: m => ({id:m.id,title:m.title,type:m.type||'virtual',starts_at:nd(m.startsAt),ends_at:nd(m.endsAt),location:m.location||null,meeting_url:m.meetingUrl||null,client_id:nd(m.clientId),proposal_id:nd(m.proposalId),organizer:nd(m.organizer),attendees:m.attendees||[],agenda:m.agenda||null,outcome:m.outcome||null,status:m.status||'scheduled'}),
+  alerts: a => ({id:a.id,type:a.type||'info',client_id:nd(a.clientId),asset_id:nd(a.assetId),message:a.message||'',read:!!a.read}),
   assets: a => ({id:a.id,client_id:nd(a.clientId),category:(Array.isArray(a.category)?(a.category.length?a.category:null):(a.category?[a.category]:null)),vendor:a.vendor||null,product:a.product||null,source:a.source||'incumbent',quantity:(a.quantity!=null&&a.quantity!=='')?Number(a.quantity):null,renewal_date:nd(a.renewalDate),status:a.status||'active',notes:a.notes||null,amount:(a.amount!=null&&a.amount!=='')?Number(a.amount):null,currency:a.currency||'EUR'}),
 };
-const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets'];
+const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets','alerts'];
 
 function denormClientNames(){
   const cmap=Object.fromEntries((D.clients||[]).map(c=>[c.id,c.name]));
@@ -950,6 +963,7 @@ function subscribeRealtime(){
     .on('postgres_changes',{event:'*',schema:'public',table:'forecasts'},()=>reloadEntity('forecasts'))
     .on('postgres_changes',{event:'*',schema:'public',table:'meetings'},()=>reloadEntity('meetings'))
     .on('postgres_changes',{event:'*',schema:'public',table:'assets'},()=>reloadEntity('assets'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'alerts'},()=>reloadEntity('alerts'))
     .subscribe();
 }
 
@@ -1104,8 +1118,46 @@ function renderDashboard(){
 
   // Next Steps panel
   renderDashboardNextSteps();
+  renderAlerts();
+  renderRenewalRadar();
 }
 
+function renderAlerts(){
+  const el=document.getElementById('dash-alerts');if(!el)return;
+  const list=(D.alerts||[]).filter(a=>!a.read).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,6);
+  if(!list.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='flex';
+  el.innerHTML=list.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:.55rem .9rem;border:1.5px solid #f0d9a8;background:#fdf6e3;border-radius:8px">
+    <i class="ti ti-bell-ringing" style="color:#854F0B;flex-shrink:0"></i>
+    <div style="flex:1;min-width:0;font-size:12.5px">${a.message}</div>
+    <span style="font-size:11px;color:var(--text2);flex-shrink:0">${a.createdAt?new Date(a.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):''}</span>
+    <button class="ib" title="Dismiss" onclick="dismissAlert('${a.id}')"><i class="ti ti-x"></i></button>
+  </div>`).join('');
+}
+function dismissAlert(id){const a=(D.alerts||[]).find(x=>x.id===id);if(!a)return;a.read=true;saveData('alerts');renderAlerts();}
+function renderRenewalRadar(){
+  const el=document.getElementById('dash-rr');if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const lim=new Date(today);lim.setDate(lim.getDate()+180);
+  const rows=(D.assets||[]).filter(a=>a.source!=='odyssey'&&a.renewalDate).map(a=>({a,d:new Date(a.renewalDate)}))
+    .filter(x=>x.d>=today&&x.d<=lim).sort((x,y)=>x.d-y.d).slice(0,12);
+  document.getElementById('rr-count').textContent=rows.length?rows.length+' expiring':'';
+  if(!rows.length){el.innerHTML='<div class="empty"><i class="ti ti-radar-off"></i>No competitor renewals in the next 180 days</div>';return;}
+  const cmap=Object.fromEntries((D.clients||[]).map(c=>[c.id,c.name]));
+  el.innerHTML=rows.map(({a,d})=>{
+    const days=Math.round((d-today)/86400000);
+    const col=days<=30?'#A32D2D':days<=90?'#854F0B':'#185FA5';
+    const cats=(Array.isArray(a.category)?a.category:(a.category?[a.category]:[])).slice(0,3).map(c=>`<span class="badge b-draft" style="font-size:10px">${c}</span>`).join(' ');
+    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+      <div style="width:52px;text-align:center;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${col}">${days}d</div><div style="font-size:10px;color:var(--text2)">${d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</div></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cmap[a.clientId]||'—'}</div>
+        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.vendor||'Unnamed incumbent'} ${cats}</div>
+      </div>
+      <div style="flex-shrink:0;font-size:12px;font-weight:600;color:var(--info-text)">${a.amount?'€'+Number(a.amount).toLocaleString('el-GR'):''}</div>
+    </div>`;
+  }).join('');
+}
 function renderDashboardNextSteps(){
   const ns=document.getElementById('dash-ns');
   if(!ns)return;
@@ -1219,6 +1271,7 @@ function openProposalModal(id){
     document.getElementById('pm-type').value=p.type||'Budgetary';updateStatuses();
     document.getElementById('pm-client').value=p.clientId||'';
     document.getElementById('pm-value').value=p.value||'';
+    document.getElementById('pm-prob').value=(p.probability!=null?p.probability:'');
     document.getElementById('pm-deadline').value=p.deadline||'';
     document.getElementById('pm-status').value=p.status||'Draft';
     document.getElementById('pm-priority').value=p.priority||'Medium';
@@ -1241,7 +1294,7 @@ function openProposalModal(id){
     refreshProposalNextStepPanel(p);
   }else{
     document.getElementById('pm-title').textContent='New proposal';
-    ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes'].forEach(f=>document.getElementById(f).value='');
+    ['pm-name','pm-value','pm-deadline','pm-partner','pm-notes','pm-prob'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('pm-type').value='Budgetary';updateStatuses();
     document.getElementById('pm-status').value='Draft';
     document.getElementById('pm-priority').value='Medium';
@@ -1264,7 +1317,7 @@ function saveProposal(){
   // wasNotLost: true if this is a fresh proposal OR was not already Lost
   const wasNotLost=!prevStatus||prevStatus!=='Lost';
   const wasNotSubmitted=prevStatus!=='Submitted';
-  const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:newStatus,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim()};
+  const d={name,type:document.getElementById('pm-type').value,clientId,client:clientObj?clientObj.name:'',value:parseFloat(document.getElementById('pm-value').value)||0,deadline:document.getElementById('pm-deadline').value,status:newStatus,priority:document.getElementById('pm-priority').value,assignee:document.getElementById('pm-assignee').value,partner:document.getElementById('pm-partner').value.trim(),products:getProds(),notes:document.getElementById('pm-notes').value.trim(),probability:(()=>{const v=document.getElementById('pm-prob').value;return v===''?null:Math.max(0,Math.min(100,parseFloat(v)||0));})()};
   // Stamp submission date when first moved to Submitted
   if(newStatus==='Submitted'&&wasNotSubmitted){
     d.submittedAt=new Date().toISOString().slice(0,10);
@@ -1759,23 +1812,30 @@ function copyTpl(id){const t=(D.templates||[]).find(x=>x.id===id);if(!t)return;n
 function delTpl(id){if(!confirm('Delete?'))return;D.templates=(D.templates||[]).filter(t=>t.id!==id);remove('templates',id);renderTemplates();}
 
 // ═══ CLIENTS ═════════════════════════════════════════════════════════════════
+function needsAction(c){if(!c.nextActionDate)return false;const d=new Date(c.nextActionDate),lim=new Date();lim.setDate(lim.getDate()+7);return d<=lim;}
+function naChip(ds){if(!ds)return'';const d=new Date(ds);d.setHours(0,0,0,0);const t=new Date();t.setHours(0,0,0,0);const days=Math.round((d-t)/86400000);let col='#185FA5',txt=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});if(days<0){col='#A32D2D';txt=(-days)+'d overdue';}else if(days===0){col='#A32D2D';txt='Today';}else if(days<=7){col='#854F0B';txt=days+'d';}return`<span style="font-size:10px;font-weight:700;color:${col}">${txt}</span> `;}
+const CLIENT_STB={prospect:['Prospect','#6b7280','#f3f4f6'],contacted:['Contacted','#1d4ed8','#dbeafe'],qualified:['Qualified','#7c3aed','#ede9fe'],proposal_sent:['Proposal sent','#b45309','#fef3c7'],client:['Client','#166534','#dcfce7'],lost:['Lost','#b91c1c','#fee2e2']};
 function renderClients(){
   const q=(document.getElementById('cl-q')||{value:''}).value.toLowerCase();
   const cat=(document.getElementById('cl-cat')||{value:''}).value;
   const st=(document.getElementById('cl-status')||{value:''}).value;
-  const clients=(D.clients||[]).filter(c=>(!q||c.name.toLowerCase().includes(q)||(c.contact||'').toLowerCase().includes(q))&&(!cat||c.category===cat)&&(!st||(c.status||'prospect')===st));
+  const owSel=document.getElementById('cl-owner');
+  if(owSel&&owSel.options.length<=1){const cur=owSel.value;owSel.innerHTML='<option value="">All owners</option>'+(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');owSel.value=cur;}
+  const ow=(owSel||{value:''}).value;
+  const clients=(D.clients||[]).filter(c=>(!q||c.name.toLowerCase().includes(q)||(c.contact||'').toLowerCase().includes(q))&&(!cat||c.category===cat)&&(!st||(st==='__needs'?needsAction(c):(c.status||'prospect')===st))&&(!ow||c.owner===ow));
   const tb=document.getElementById('cl-list');if(!tb)return;
-  if(!clients.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><i class="ti ti-building-off"></i>No clients found</div></td></tr>';return;}
+  if(!clients.length){tb.innerHTML='<tr><td colspan="9"><div class="empty"><i class="ti ti-building-off"></i>No clients found</div></td></tr>';return;}
   const CCS={'Municipality':'b-Municipality','Hospital':'b-Hospital','University':'b-University','Ministry':'b-Ministry','Region':'b-Region','Defence':'b-Defence','Public Body':'b-Public','Other':'b-Other'};
   tb.innerHTML=clients.map(c=>{
     const props=(D.proposals||[]).filter(p=>p.clientId===c.id||p.client===c.name);
     const val=props.reduce((s,p)=>s+(p.value||0),0);
     return`<tr>
-      <td style="font-weight:500">${c.name} ${(c.status==='client')?'<span class="badge b-won">Client</span>':'<span class="badge b-draft">Prospect</span>'}</td>
+      <td style="font-weight:500">${c.name} <span class="badge" style="color:${(CLIENT_STB[c.status||'prospect']||CLIENT_STB.prospect)[1]};background:${(CLIENT_STB[c.status||'prospect']||CLIENT_STB.prospect)[2]}">${(CLIENT_STB[c.status||'prospect']||CLIENT_STB.prospect)[0]}</span></td>
       <td><span class="badge ${CCS[c.category]||'b-Other'}">${c.category}</span></td>
       <td>${c.contact||'—'}<br><span style="font-size:11px;color:var(--text2)">${c.role||''}</span></td>
       <td style="font-size:12px;color:var(--text2)">${c.email||'—'}</td>
       <td style="font-size:12px;color:var(--text2)">${c.phone||'—'}</td>
+      <td style="font-size:12px">${c.nextAction?naChip(c.nextActionDate)+c.nextAction:'—'}${c.owner?' '+av(c.owner,18):''}</td>
       <td style="text-align:center;font-weight:500">${props.length}</td>
       <td style="font-weight:500;color:var(--info-text)">${val?'€'+Number(val).toLocaleString('el-GR'):'—'}</td>
       <td><div class="ra">
@@ -1788,6 +1848,8 @@ function renderClients(){
 
 function openClientModal(id){
   editCid=id||null;
+  const owSel=document.getElementById('cm-owner');
+  owSel.innerHTML='<option value="">— Unassigned —</option>'+(D.team||[]).map(t=>`<option value="${t.id}">${t.first} ${t.last}</option>`).join('');
   if(id){
     const c=(D.clients||[]).find(x=>x.id===id);
     if(!c)return;
@@ -1802,18 +1864,24 @@ function openClientModal(id){
     document.getElementById('cm-address').value=c.address||'';
     document.getElementById('cm-notes').value=c.notes||'';
     document.getElementById('cm-status').value=c.status||'prospect';
+    owSel.value=c.owner||'';
+    document.getElementById('cm-next').value=c.nextAction||'';
+    document.getElementById('cm-next-date').value=c.nextActionDate||'';
   }else{
     document.getElementById('cm-title').textContent='Add client';
     ['cm-name','cm-contact','cm-role','cm-email','cm-phone','cm-afm','cm-address','cm-notes'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('cm-cat').value='Municipality';
     document.getElementById('cm-status').value='prospect';
+    owSel.value='';
+    document.getElementById('cm-next').value='';
+    document.getElementById('cm-next-date').value='';
   }
   openModal('m-client');
 }
 
 function saveClient(){
   const name=document.getElementById('cm-name').value.trim();if(!name){document.getElementById('cm-name').focus();return;}
-  const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim(),status:document.getElementById('cm-status').value};
+  const d={name,category:document.getElementById('cm-cat').value,contact:document.getElementById('cm-contact').value.trim(),role:document.getElementById('cm-role').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),afm:document.getElementById('cm-afm').value.trim(),address:document.getElementById('cm-address').value.trim(),notes:document.getElementById('cm-notes').value.trim(),status:document.getElementById('cm-status').value,owner:document.getElementById('cm-owner').value||null,nextAction:document.getElementById('cm-next').value.trim(),nextActionDate:document.getElementById('cm-next-date').value||null};
   if(!D.clients)D.clients=[];
   if(editCid){const i=D.clients.findIndex(c=>c.id===editCid);if(i>=0)D.clients[i]={...D.clients[i],...d};}
   else{D.clients.push({id:genId('c'),...d});}
@@ -2145,7 +2213,23 @@ function geocodeClients(){ return Promise.resolve(); }
 // ═══ FORECAST ════════════════════════════════════════════════════════════════
 let editFid = null, lostPid = null, chartFC = null;
 
+const PROB_DEFAULTS={'Draft':10,'Active':25,'In review':30,'Submitted':40,'Waiting Result':60,'Approved':90,'Converted to RFP':50,'Won':100,'Lost':0};
+function renderWeightedForecast(){
+  const el=document.getElementById('wf-bars');if(!el)return;
+  const open=(D.proposals||[]).filter(p=>p.status!=='Won'&&p.status!=='Lost');
+  const rows=open.map(p=>{const prob=(p.probability!=null?p.probability:(PROB_DEFAULTS[p.status]!=null?PROB_DEFAULTS[p.status]:20));return{p,prob,exp:(p.value||0)*prob/100};});
+  const raw=rows.reduce((s,r)=>s+(r.p.value||0),0),wtd=rows.reduce((s,r)=>s+r.exp,0);
+  const te=document.getElementById('wf-total');if(te)te.textContent='Expected €'+Math.round(wtd).toLocaleString('el-GR')+' of €'+Math.round(raw).toLocaleString('el-GR')+' open pipeline';
+  const qk=d=>{if(!d)return'No deadline';const dt=new Date(d);return dt.getFullYear()+' Q'+(Math.floor(dt.getMonth()/3)+1);};
+  const byQ={};rows.forEach(r=>{const k=qk(r.p.deadline);(byQ[k]=byQ[k]||{exp:0,raw:0,n:0});byQ[k].exp+=r.exp;byQ[k].raw+=(r.p.value||0);byQ[k].n++;});
+  const keys=Object.keys(byQ).sort((a,b)=>a==='No deadline'?1:b==='No deadline'?-1:a.localeCompare(b));
+  const mx=Math.max(...keys.map(k=>byQ[k].raw),1);
+  el.innerHTML=keys.map(k=>{const g=byQ[k];const pw=Math.round(g.raw/mx*100),pe=Math.round(g.exp/mx*100);
+    return`<div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;font-weight:500">${k} <span style="color:var(--text2);font-weight:400">· ${g.n}</span></span><span style="font-size:12px;color:var(--text2)">expected <b style="color:#185FA5">€${Math.round(g.exp).toLocaleString('el-GR')}</b> / €${Math.round(g.raw).toLocaleString('el-GR')}</span></div>
+    <div style="position:relative;height:10px;border-radius:999px;background:var(--bg3);overflow:hidden"><div style="position:absolute;height:100%;width:${pw}%;background:#c9dcf0;border-radius:999px"></div><div style="position:absolute;height:100%;width:${pe}%;background:#185FA5;border-radius:999px"></div></div></div>`;}).join('');
+}
 function renderForecast(){
+  renderWeightedForecast();
   const q=(document.getElementById('fc-q')||{value:''}).value.toLowerCase();
   const fi=(document.getElementById('fc-intent')||{value:''}).value;
   const fp=(document.getElementById('fc-prod')||{value:''}).value;
