@@ -39,17 +39,33 @@ from diavgeia_harvest import (  # noqa: E402
 KIMDIS_BASE = "https://cerpp.eprocurement.gov.gr/khmdhs-opendata"
 OUT_DIR = os.path.join(REPO, "kimdis")
 
-# Validated against the API's CPV format check (########-#).
-# STRICT = unambiguously security -> no keyword needed.
-CPV_STRICT = ["48730000-4", "72212730-5", "79417000-0"]
-# BROAD = generic IT where cyber work often hides -> keyword gate on title.
-CPV_BROAD = ["72611000-6", "72700000-7", "72222300-0"]
-
-# Distinctive title searches (KIMDIS title filter, max 100 chars, one term).
-TITLE_QUERIES = [
-    "κυβερνοασφάλεια", "κυβερνοασφάλειας", "NIS2",
-    "ασφάλεια πληροφοριών", "ασφάλειας πληροφοριών",
+# All CPV codes below validated live against the API (200 + non-null counts).
+# NOTE: the `title` full-text filter is intentionally NOT used. It returns 404
+# when called from GitHub's runner (Azure IP) while CPV-index queries succeed —
+# the GSIS gateway filters the heavier search path from foreign/datacenter IPs.
+# Run title-search enrichment from a Greek egress if fuller recall is needed.
+#
+# STRICT = unambiguously security -> no keyword gate needed.
+CPV_STRICT = [
+    "48730000-4",  # Security software package
+    "48731000-1",  # Data security software
+    "48732000-8",  # Data protection software
+    "48761000-0",  # Anti-virus software
+    "72212730-5",  # Security software development
+    "72225000-8",  # System security evaluation & analysis
+    "79417000-0",  # Safety/security consultancy
 ]
+# BROAD = generic IT/network where cyber work often hides -> keyword-gated on the
+# returned title (matches_keywords) before a record is kept.
+CPV_BROAD = [
+    "72611000-6",  # Technical computer support
+    "72700000-7",  # Computer network services
+    "72222300-0",  # IT services
+    "32420000-3",  # Network equipment
+]
+# API accepts multiple CPVs per request (OR semantics). Bundling collapses many
+# calls into a few, cutting 429 exposure and intermittent-404 risk.
+CPV_BUNDLE_SIZE = 4
 
 MAX_WINDOW_DAYS = 170          # API hard-clamps date ranges at 180 days
 REQUEST_DELAY = 3.0            # polite pacing; observed rate limit is strict
@@ -247,26 +263,25 @@ def main():
         seen[ada] = provenance
         records.append(rec)
 
+    def _chunks(seq, size):
+        for i in range(0, len(seq), size):
+            yield seq[i:i + size]
+
     for w_from, w_to in date_windows(lookback):
         print(f"[kimdis] window {w_from} -> {w_to}")
 
-        print(f"[kimdis]  strict CPVs {CPV_STRICT}")
-        for n in iter_notices({"cpvItems": CPV_STRICT,
-                               "dateFrom": w_from, "dateTo": w_to}):
-            take(n, "cpv_strict", require_keyword=False)
-        time.sleep(REQUEST_DELAY)
-
-        print(f"[kimdis]  broad CPVs {CPV_BROAD} (keyword-gated)")
-        for n in iter_notices({"cpvItems": CPV_BROAD,
-                               "dateFrom": w_from, "dateTo": w_to}):
-            take(n, "cpv_broad", require_keyword=True)
-        time.sleep(REQUEST_DELAY)
-
-        for kw in TITLE_QUERIES:
-            print(f"[kimdis]  title search: {kw}")
-            for n in iter_notices({"title": kw,
+        for bundle in _chunks(CPV_STRICT, CPV_BUNDLE_SIZE):
+            print(f"[kimdis]  strict CPV bundle {bundle}")
+            for n in iter_notices({"cpvItems": bundle,
                                    "dateFrom": w_from, "dateTo": w_to}):
-                take(n, f"title:{kw}", require_keyword=False)
+                take(n, "cpv_strict", require_keyword=False)
+            time.sleep(REQUEST_DELAY)
+
+        for bundle in _chunks(CPV_BROAD, CPV_BUNDLE_SIZE):
+            print(f"[kimdis]  broad CPV bundle {bundle} (keyword-gated)")
+            for n in iter_notices({"cpvItems": bundle,
+                                   "dateFrom": w_from, "dateTo": w_to}):
+                take(n, "cpv_broad", require_keyword=True)
             time.sleep(REQUEST_DELAY)
 
     records.sort(key=lambda r: (r.get("deadline") or "9999",
