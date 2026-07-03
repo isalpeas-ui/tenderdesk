@@ -1,5 +1,6 @@
 name: KIMDIS cyber tender notices
-KIMDIS notices: twice-weekly harvest workflow# Weekly (and on-demand) sweep of ΚΗΜΔΗΣ tender notices via the official
+
+# Weekly (and on-demand) sweep of ΚΗΜΔΗΣ tender notices via the official
 # Open Data API. Cyber CPVs + Greek keyword title searches -> kimdis/notices.json
 # and (with SUPABASE_URL + SUPABASE_SERVICE_KEY secrets) upserted into the
 # `tenders` table with deadlines. New open tenders raise alerts via DB trigger.
