@@ -1,0 +1,53 @@
+name: KIMDIS cyber tender notices
+KIMDIS notices: twice-weekly harvest workflow# Weekly (and on-demand) sweep of ΚΗΜΔΗΣ tender notices via the official
+# Open Data API. Cyber CPVs + Greek keyword title searches -> kimdis/notices.json
+# and (with SUPABASE_URL + SUPABASE_SERVICE_KEY secrets) upserted into the
+# `tenders` table with deadlines. New open tenders raise alerts via DB trigger.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1,4"   # Mondays & Thursdays 06:00 UTC (deadlines are short)
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: "Notices lookback window in days (max useful ~365)"
+        default: "35"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kimdis-notices
+  cancel-in-progress: false
+
+jobs:
+  notices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: KIMDIS notices sweep
+        env:
+          KIMDIS_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days || '35' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/kimdis_harvest.py
+
+      - name: Commit results
+        run: |
+          git config user.name  "kimdis-bot"
+          git config user.email "actions@github.com"
+          git add kimdis/notices.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No new records to commit."
+          else
+            git commit -m "KIMDIS notices harvest: $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          fi
