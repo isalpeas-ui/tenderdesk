@@ -59,13 +59,48 @@ MAX_PAGES = 40                 # 50/page -> 2000 records per query, plenty
 # --------------------------------------------------------------------------- #
 # API access with 429 backoff
 # --------------------------------------------------------------------------- #
+# The eprocurement platform sits behind an F5 BIG-IP load balancer that routes
+# by the ROUTEID persistence cookie. A cookieless first request (as from a CI
+# runner) can be misrouted to a pool that 404s the API path. We therefore use a
+# persistent Session with a browser-like UA and PRIME it with a GET to the docs
+# so the F5 issues ROUTEID/f5_cspm cookies, which the Session then reuses.
+_SESSION = None
+_BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+               "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+
+
+def _get_session(force_new=False):
+    global _SESSION
+    if _SESSION is not None and not force_new:
+        return _SESSION
+    s = requests.Session()
+    s.headers.update({
+        "User-Agent": _BROWSER_UA,
+        "Accept": "application/json",
+        "Accept-Language": "el-GR,el;q=0.9,en;q=0.8",
+        "Origin": "https://cerpp.eprocurement.gov.gr",
+        "Referer": f"{KIMDIS_BASE}/swagger-ui/index.html",
+    })
+    # Prime the F5 routing cookie with a harmless GET before any POST.
+    try:
+        s.get(f"{KIMDIS_BASE}/swagger-ui/index.html", timeout=60)
+        s.get(f"{KIMDIS_BASE}/v3/api-docs", timeout=60)
+        got = ",".join(sorted(s.cookies.keys())) or "(none)"
+        print(f"[kimdis] session primed; cookies: {got}")
+    except requests.RequestException as e:
+        print(f"[kimdis] session prime failed ({e}); continuing without cookies")
+    _SESSION = s
+    return s
+
+
 def kimdis_post(path, body, page=0, retries=5):
     url = f"{KIMDIS_BASE}{path}"
     backoff = 20
     for attempt in range(retries):
+        s = _get_session()
         try:
-            r = requests.post(url, params={"page": page}, json=body,
-                              headers={"Accept": "application/json"}, timeout=60)
+            r = s.post(url, params={"page": page}, json=body,
+                       headers={"Content-Type": "application/json"}, timeout=60)
         except requests.RequestException as e:
             print(f"[kimdis] network error ({e}); retry in {backoff}s")
             time.sleep(backoff)
@@ -75,6 +110,14 @@ def kimdis_post(path, body, page=0, retries=5):
             print(f"[kimdis] 429 rate-limited; backing off {backoff}s")
             time.sleep(backoff)
             backoff = min(backoff * 2, 120)
+            continue
+        if r.status_code == 404 and attempt < retries - 1:
+            # Likely F5 misroute on a stale/absent ROUTEID: rebuild the session
+            # (fresh cookies) and retry rather than treating as a hard failure.
+            print(f"[kimdis] 404 on {path} (attempt {attempt+1}); "
+                  f"re-priming session and retrying")
+            _get_session(force_new=True)
+            time.sleep(5)
             continue
         r.raise_for_status()
         return r.json()
