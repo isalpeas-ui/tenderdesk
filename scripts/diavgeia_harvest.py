@@ -206,9 +206,9 @@ def search_page(base, org=None, type_uid=None, from_date=None, to_date=None,
     if type_uid:
         params["type"] = type_uid
     if from_date:
-        params["from_date"] = from_date
+        params["from_issue_date"] = from_date  # NB: 'from_date' is silently ignored by the API
     if to_date:
-        params["to_date"] = to_date
+        params["to_issue_date"] = to_date
     return api_get(base, "/search", params)
 
 
@@ -750,6 +750,20 @@ def mode_discover(base, cfg):
     return new
 
 
+def issue_date_windows(start_iso, days=180):
+    """Split [start_iso, today] into <=days-long windows. Querying per window
+    guarantees pagination completes inside each slice, so lookbacks of years
+    are fully reachable instead of being capped by newest-first paging."""
+    ws = date.fromisoformat(start_iso)
+    today = date.today()
+    out = []
+    while ws <= today:
+        we = min(ws + timedelta(days=days), today)
+        out.append((ws.isoformat(), we.isoformat()))
+        ws = we + timedelta(days=1)
+    return out
+
+
 def mode_awards_national(base, cfg):
     """Nationwide sweep: every cyber-security AWARDED tender across Greece, with
     no organization filter. Uses Diavgeia full-text `term` search per keyword,
@@ -770,10 +784,11 @@ def mode_awards_national(base, cfg):
     # Server-side award-type filter: querying per (keyword x award type) means
     # pagination never wastes budget on non-award decisions, so the same
     # max_pages reaches years deeper into history.
+    wins = issue_date_windows(frm)
     for kw in kws:
-        for tuid in (sorted(award_types) or [None]):
+        for tuid, (w_from, w_to) in [(t, w) for t in (sorted(award_types) or [None]) for w in wins]:
             for d in iter_decisions(base, cfg, term=kw, type_uid=tuid,
-                                    from_date=frm, max_pages=max_pages):
+                                    from_date=w_from, to_date=w_to, max_pages=max_pages):
                 ada = ada_of(d)
                 if not ada or ada in by_ada:
                     continue
@@ -816,10 +831,11 @@ def mode_tenders_national(base, cfg):
     delay = cfg.get("request_delay_seconds", 0.3)
     added = 0
 
+    wins = issue_date_windows(frm)
     for kw in kws:
-        for tuid in (sorted(notice_types) or [None]):
+        for tuid, (w_from, w_to) in [(t, w) for t in (sorted(notice_types) or [None]) for w in wins]:
             for d in iter_decisions(base, cfg, term=kw, type_uid=tuid,
-                                    from_date=frm, max_pages=max_pages):
+                                    from_date=w_from, to_date=w_to, max_pages=max_pages):
                 ada = ada_of(d)
                 if not ada or ada in by_ada:
                     continue
