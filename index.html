@@ -289,6 +289,10 @@ code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:monospa
     <div class="card-hdr"><span class="card-title"><i class="ti ti-radar-2" style="font-size:14px;color:#185FA5"></i> Renewal Radar — competitor contracts expiring within 180 days</span><span style="font-size:12px;color:var(--text2)" id="rr-count"></span></div>
     <div id="dash-rr"></div>
   </div>
+  <div class="card" style="margin-top:1rem">
+    <div class="card-hdr"><span class="card-title"><i class="ti ti-gavel" style="font-size:14px;color:#3B6D11"></i> Open Tenders &mdash; ΚΗΜΔΗΣ &amp; Diavgeia</span><span style="font-size:12px;color:var(--text2)" id="ot-count"></span></div>
+    <div id="dash-ot"></div>
+  </div>
   <div class="charts-row" style="margin-top:1rem">
     <div class="chart-card" style="margin-bottom:0;grid-column:1/-1"><div class="chart-title">Value by Stage</div><div id="ch-bars" style="display:flex;flex-direction:column;gap:12px"></div></div>
   </div>
@@ -890,6 +894,7 @@ const fromDb = {
   meetings: r => ({id:r.id,title:r.title,type:r.type,startsAt:r.starts_at,endsAt:r.ends_at,location:r.location,meetingUrl:r.meeting_url,clientId:r.client_id,proposalId:r.proposal_id,organizer:r.organizer,attendees:r.attendees||[],agenda:r.agenda,outcome:r.outcome,status:r.status}),
   alerts: r => ({id:r.id,createdAt:r.created_at,type:r.type,clientId:r.client_id,assetId:r.asset_id,message:r.message,read:!!r.read}),
   assets: r => ({id:r.id,clientId:r.client_id,category:r.category,vendor:r.vendor,product:r.product,source:r.source,quantity:r.quantity,renewalDate:r.renewal_date,status:r.status,notes:r.notes,amount:r.amount,currency:r.currency}),
+  tenders: r => ({id:r.id,ada:r.ada,clientId:r.client_id,org:r.org,subject:r.subject,decisionType:r.decision_type,category:r.category,cpv:r.cpv||[],issueDate:r.issue_date||'',amount:(r.amount!=null?Number(r.amount):null),currency:r.currency,url:r.url,status:r.status||'new',source:r.source||'diavgeia',deadline:r.deadline||'',procedureType:r.procedure_type,orgVat:r.org_vat,nuts:r.nuts}),
 };
 const toDb = {
   clients:   c => ({id:c.id,name:c.name,category:c.category||null,contact:c.contact||null,role:c.role||null,phone:c.phone||null,email:c.email||null,address:c.address||null,afm:c.afm||null,lat:num(c.lat),lng:num(c.lng),notes:c.notes||null,status:c.status||'prospect',owner:nd(c.owner),next_action:c.nextAction||null,next_action_date:nd(c.nextActionDate)}),
@@ -902,7 +907,7 @@ const toDb = {
   alerts: a => ({id:a.id,type:a.type||'info',client_id:nd(a.clientId),asset_id:nd(a.assetId),message:a.message||'',read:!!a.read}),
   assets: a => ({id:a.id,client_id:nd(a.clientId),category:(Array.isArray(a.category)?(a.category.length?a.category:null):(a.category?[a.category]:null)),vendor:a.vendor||null,product:a.product||null,source:a.source||'incumbent',quantity:(a.quantity!=null&&a.quantity!=='')?Number(a.quantity):null,renewal_date:nd(a.renewalDate),status:a.status||'active',notes:a.notes||null,amount:(a.amount!=null&&a.amount!=='')?Number(a.amount):null,currency:a.currency||'EUR'}),
 };
-const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets','alerts'];
+const ENTITIES = ['clients','team','proposals','tasks','forecasts','templates','meetings','assets','alerts','tenders'];
 
 function denormClientNames(){
   const cmap=Object.fromEntries((D.clients||[]).map(c=>[c.id,c.name]));
@@ -964,6 +969,7 @@ function subscribeRealtime(){
     .on('postgres_changes',{event:'*',schema:'public',table:'meetings'},()=>reloadEntity('meetings'))
     .on('postgres_changes',{event:'*',schema:'public',table:'assets'},()=>reloadEntity('assets'))
     .on('postgres_changes',{event:'*',schema:'public',table:'alerts'},()=>reloadEntity('alerts'))
+    .on('postgres_changes',{event:'*',schema:'public',table:'tenders'},()=>reloadEntity('tenders'))
     .subscribe();
 }
 
@@ -1120,6 +1126,7 @@ function renderDashboard(){
   renderDashboardNextSteps();
   renderAlerts();
   renderRenewalRadar();
+  renderOpenTenders();
 }
 
 function renderAlerts(){
@@ -1155,6 +1162,29 @@ function renderRenewalRadar(){
         <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.vendor||'Unnamed incumbent'} ${cats}</div>
       </div>
       <div style="flex-shrink:0;font-size:12px;font-weight:600;color:var(--info-text)">${a.amount?'€'+Number(a.amount).toLocaleString('el-GR'):''}</div>
+    </div>`;
+  }).join('');
+}
+function renderOpenTenders(){
+  const el=document.getElementById('dash-ot');if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const rows=(D.tenders||[]).filter(t=>t.status!=='dismissed'&&(t.deadline?new Date(t.deadline)>=today:(t.issueDate&&(today-new Date(t.issueDate))/86400000<=60)))
+    .sort((a,b)=>((a.deadline||'9999')+(a.issueDate||'')).localeCompare((b.deadline||'9999')+(b.issueDate||''))).slice(0,12);
+  const cnt=document.getElementById('ot-count');if(cnt)cnt.textContent=rows.length?rows.length+' open':'';
+  if(!rows.length){el.innerHTML='<div class="empty"><i class="ti ti-gavel"></i>No open tender notices — harvesters run twice a week</div>';return;}
+  el.innerHTML=rows.map(t=>{
+    const d=t.deadline?new Date(t.deadline):null;
+    const days=d?Math.round((d-today)/86400000):null;
+    const col=days==null?'var(--text2)':days<=7?'#A32D2D':days<=21?'#854F0B':'#3B6D11';
+    const src=(t.source==='kimdis')?'ΚΗΜΔΗΣ':'Diavgeia';
+    return`<div style="display:flex;align-items:center;gap:10px;padding:.5rem 1.25rem;border-bottom:.5px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+      <div style="width:52px;text-align:center;flex-shrink:0">${d?`<div style="font-size:13px;font-weight:700;color:${col}">${days}d</div><div style="font-size:10px;color:var(--text2)">${d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</div>`:`<div style="font-size:11px;color:var(--text2)">new</div>`}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.subject||'—'}</div>
+        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.org||'—'}${t.procedureType?' · '+t.procedureType:''} <span class="badge b-draft" style="font-size:10px">${src}</span></div>
+      </div>
+      <div style="flex-shrink:0;font-size:12px;font-weight:600;color:var(--info-text)">${t.amount?'€'+Number(t.amount).toLocaleString('el-GR'):''}</div>
+      ${t.url?`<a class="ib" href="${t.url}" target="_blank" title="Open notice document"><i class="ti ti-external-link"></i></a>`:''}
     </div>`;
   }).join('');
 }
