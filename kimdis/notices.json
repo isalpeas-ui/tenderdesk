@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-13T08:57:21.168531+00:00",
+  "generated_at": "2026-07-16T08:02:34.179323+00:00",
   "lookback_days": 35,
-  "count": 117,
+  "count": 111,
   "records": [
     {
       "ada": "26PROC019207554",
@@ -19,12 +19,12 @@
         "79417000-0"
       ],
       "req_adams": [
-        "26REQ019172868",
-        "26REQ019172485"
+        "26REQ019172485",
+        "26REQ019172868"
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019207554",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.738724+00:00",
+      "harvested_at": "2026-07-16T08:02:24.050601+00:00",
       "matched": []
     },
     {
@@ -47,7 +47,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019209337",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.738412+00:00",
+      "harvested_at": "2026-07-16T08:02:24.050296+00:00",
       "matched": []
     },
     {
@@ -70,56 +70,8 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019212483",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.737166+00:00",
+      "harvested_at": "2026-07-16T08:02:24.049067+00:00",
       "matched": []
-    },
-    {
-      "ada": "26PROC019183136",
-      "subject": "Πρόσκληση για την παροχή υπηρεσιών τεχνικού ασφαλείας για τις ανάγκες του «Εθνικού Αθλητικού Προπονη",
-      "org": "ΕΘΝΙΚΟ ΑΘΛΗΤΙΚΟ ΠΡΟΠΟΝΗΤΙΚΟ ΚΕΝΤΡΟ ΟΛΥΜΠΙΑΚΟΥ ΧΩΡΙΟΥ",
-      "org_vat": "996830395",
-      "nuts": "Ανατολική Αττική",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-08",
-      "deadline": "2026-06-12",
-      "amount": 1200.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019183125"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019183136",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.741376+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019176508",
-      "subject": "ΠΡΟΣΚΛΗΣΗ ΕΚΔΗΛΩΣΗΣ ΕΝΔΙΑΦΕΡΟΝΤΟΣ_ΠΡΟΜΗΘΕΙΑ ΑΔΕΙΩΝ  WATCHGUARD VPN",
-      "org": "ΕΘΝΙΚΟΣ ΟΡΓΑΝΙΣΜΟΣ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΥΓΕΙΑΣ",
-      "org_vat": "997478553",
-      "nuts": "Βόρειος Τομέας Αθηνών",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-08",
-      "deadline": "2026-06-15",
-      "amount": 15000.0,
-      "cancelled": false,
-      "cpv": [
-        "48730000-4"
-      ],
-      "req_adams": [
-        "26REQ019160992"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019176508",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.930095+00:00",
-      "matched": [
-        "vpn"
-      ]
     },
     {
       "ada": "26PROC019209397",
@@ -141,30 +93,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019209397",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.738097+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019197999",
-      "subject": "ΠΑΡΟΧΗ ΥΠΗΡΕΣΙΩΝ \"ΤΕΧΝΙΚΟΣ ΑΣΦΑΛΕΙΑΣ ΓΙΑ ΤΟ ΚΥΑΔΑ ΚΑΙ ΤΙΣ ΔΟΜΕΣ ΤΟΥ, ΔΙΑΡΚΕΙΑΣ 12 ΜΗΝΩΝ\"",
-      "org": "ΚΥΑΔΑ (ΙΔΡΥΜΑ ΑΣΤΕΓΩΝ) Ν.Π.Δ.Δ",
-      "org_vat": "999066241",
-      "nuts": "Κεντρικός Τομέας Αθηνών",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-10",
-      "deadline": "2026-06-15",
-      "amount": 2263.2,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019191384"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019197999",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.740401+00:00",
+      "harvested_at": "2026-07-16T08:02:24.050004+00:00",
       "matched": []
     },
     {
@@ -187,54 +116,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019230353",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.732684+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019198736",
-      "subject": "ΠΡΟΣΚΛΗΣΗ ΠΡΟΜΗΘΕΙΑΣ ΕΙΔΩΝ",
-      "org": "ΕΘΝΙΚΟ ΑΣΤΕΡΟΣΚΟΠΕΙΟ ΑΘΗΝΩΝ",
-      "org_vat": "997028265",
-      "nuts": "ATTIKΗ",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-09",
-      "deadline": "2026-06-16",
-      "amount": 135.0,
-      "cancelled": false,
-      "cpv": [
-        "48000000-8",
-        "48761000-0"
-      ],
-      "req_adams": [
-        "26REQ019198658"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019198736",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.928000+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019191498",
-      "subject": "Παροχή συμβουλευτικών υπηρεσιών συμμόρφωσης με τις απαιτήσεις του Γενικού Κανονισμού για την Προστασ",
-      "org": "ΔΗΜΟΣ ΕΠΙΔΑΥΡΟΥ",
-      "org_vat": "998142373",
-      "nuts": "Αργολίδα, Αρκαδία",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-09",
-      "deadline": "2026-06-16",
-      "amount": 6600.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019175214"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019191498",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.740897+00:00",
+      "harvested_at": "2026-07-16T08:02:24.044521+00:00",
       "matched": []
     },
     {
@@ -258,81 +140,12 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019218271",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.927105+00:00",
+      "harvested_at": "2026-07-16T08:02:16.648080+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας",
         "nis2"
       ]
-    },
-    {
-      "ada": "26PROC019179752",
-      "subject": "ΠΡΟΣΚΛΗΣΗ ΣΥΜΒΟΥΛΕΥΤΙΚΩΝ ΥΠΗΡ. ΑΝΑΠΤΥΞΗΣ ΕΦΑΡΜΟΓΗΣ ΕΠΙΚΑΙΡΟΠΟΙΗΣΗΣ ΣΥΣΤΗΜΑΤΟΣ ΔΙΑΧΕΙΡΙΣΗΣ ΚΙΝΔΥΝΩΝ",
-      "org": "ΥΠΟΥΡΓΕΙΟ ΨΗΦΙΑΚΗΣ ΔΙΑΚΥΒΕΡΝΗΣΗΣ",
-      "org_vat": "997001671",
-      "nuts": "Νότιος Τομέας Αθηνών",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-08",
-      "deadline": "2026-06-18",
-      "amount": 30000.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019132922"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019179752",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.741886+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019172645",
-      "subject": "Παροχή υπηρεσιών Υπευθύνου Προστασίας Προσωπικών Δεδομένων (DPO) 2026",
-      "org": "ΔΗΜΟΤΙΚΗ ΕΠΙΧΕΙΡΗΣΗ ΥΔΡΕΥΣΗΣ ΑΠΟΧΕΤΕΥΣΗΣ ΒΕΡΟΙΑΣ (Δ.Ε.Υ.Α.Β.)",
-      "org_vat": "090096769",
-      "nuts": "Ημαθία",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-08",
-      "deadline": "2026-06-18",
-      "amount": 6000.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019142680"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019172645",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.742285+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019199647",
-      "subject": "ΠΡΟΣΚΛΗΣΗ ΥΠΟΒΟΛΗΣ ΠΡΟΣΦΟΡΑΣ Παροχή υπηρεσιών Υπευθύνου Προστασίας Προσωπικών Δεδομένων (DPO)",
-      "org": "ΔΗΜΟΣ ΚΑΒΑΛΑΣ",
-      "org_vat": "997582067",
-      "nuts": "Θάσος, Καβάλα",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-10",
-      "deadline": "2026-06-18",
-      "amount": 6358.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019197177"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019199647",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.739977+00:00",
-      "matched": []
     },
     {
       "ada": "26PROC019209407",
@@ -352,35 +165,8 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019209407",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.737658+00:00",
+      "harvested_at": "2026-07-16T08:02:24.049545+00:00",
       "matched": []
-    },
-    {
-      "ada": "26PROC019189914",
-      "subject": "ΠΡΟΣΚΛΗ: 'Προμήθεια λογισμικού & υπηρ. για νομική–τεχνική εναρμόνιση με απαιτήσεις Κυβερνοασφάλειας'",
-      "org": "ΔΗΜΟΤΙΚΗ ΕΠΙΧΕΙΡΗΣΗ ΥΔΡΕΥΣΗΣ ΑΠΟΧΕΤΕΥΣΗΣ ΑΓΡΙΝΙΟΥ (Δ.Ε.Υ.Α.Α.)",
-      "org_vat": "090013919",
-      "nuts": "Αιτωλοακαρνανία",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Απευθείας ανάθεση",
-      "issue_date": "2026-06-09",
-      "deadline": "2026-06-19",
-      "amount": 15300.0,
-      "cancelled": false,
-      "cpv": [
-        "48730000-4",
-        "72260000-5"
-      ],
-      "req_adams": [
-        "26REQ019186514"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019189914",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.928978+00:00",
-      "matched": [
-        "κυβερνοασφάλεια",
-        "κυβερνοασφάλειας"
-      ]
     },
     {
       "ada": "26PROC019223305",
@@ -402,7 +188,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019223305",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.735060+00:00",
+      "harvested_at": "2026-07-16T08:02:24.046938+00:00",
       "matched": []
     },
     {
@@ -425,7 +211,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019218859",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.736414+00:00",
+      "harvested_at": "2026-07-16T08:02:24.048294+00:00",
       "matched": []
     },
     {
@@ -448,7 +234,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019217342",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.736840+00:00",
+      "harvested_at": "2026-07-16T08:02:24.048739+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας"
@@ -474,7 +260,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019221684",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.735966+00:00",
+      "harvested_at": "2026-07-16T08:02:24.047857+00:00",
       "matched": []
     },
     {
@@ -497,7 +283,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019233544",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.926577+00:00",
+      "harvested_at": "2026-07-16T08:02:16.647531+00:00",
       "matched": [
         "firewall"
       ]
@@ -522,7 +308,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019231093",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.926842+00:00",
+      "harvested_at": "2026-07-16T08:02:16.647815+00:00",
       "matched": [
         "firewall"
       ]
@@ -547,7 +333,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019226957",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.734121+00:00",
+      "harvested_at": "2026-07-16T08:02:24.045989+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας"
@@ -573,7 +359,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019226397",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.734627+00:00",
+      "harvested_at": "2026-07-16T08:02:24.046480+00:00",
       "matched": []
     },
     {
@@ -596,7 +382,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019265117",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.730633+00:00",
+      "harvested_at": "2026-07-16T08:02:24.042428+00:00",
       "matched": []
     },
     {
@@ -619,7 +405,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019243561",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.731490+00:00",
+      "harvested_at": "2026-07-16T08:02:24.043303+00:00",
       "matched": []
     },
     {
@@ -642,7 +428,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019242416",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.731894+00:00",
+      "harvested_at": "2026-07-16T08:02:24.043740+00:00",
       "matched": []
     },
     {
@@ -665,7 +451,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019258735",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.731025+00:00",
+      "harvested_at": "2026-07-16T08:02:24.042844+00:00",
       "matched": []
     },
     {
@@ -688,7 +474,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019238890",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.732301+00:00",
+      "harvested_at": "2026-07-16T08:02:24.044155+00:00",
       "matched": []
     },
     {
@@ -712,7 +498,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019258665",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.925658+00:00",
+      "harvested_at": "2026-07-16T08:02:16.646566+00:00",
       "matched": []
     },
     {
@@ -735,7 +521,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019273659",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.728525+00:00",
+      "harvested_at": "2026-07-16T08:02:24.040315+00:00",
       "matched": []
     },
     {
@@ -758,30 +544,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019271932",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.728830+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019201344",
-      "subject": "Παροχή υπηρεσιών Υπευθύνου Προστασίας Δεδομένων (DPO), στο Δ.Β.Α. προϋπ. οικ. έτων 2026-2027",
-      "org": "ΔΗΜΟΤΙΚΟ ΒΡΕΦΟΚΟΜΕΙΟ ΑΘΗΝΩΝ",
-      "org_vat": "090000788",
-      "nuts": "Κεντρικός Τομέας Αθηνών",
-      "notice_type": "Πρόσκληση",
-      "procedure_type": "Ανοιχτή διαδικασία",
-      "issue_date": "2026-06-10",
-      "deadline": "2026-06-25",
-      "amount": 10000.0,
-      "cancelled": false,
-      "cpv": [
-        "79417000-0"
-      ],
-      "req_adams": [
-        "26REQ019178639"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019201344",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.739486+00:00",
+      "harvested_at": "2026-07-16T08:02:24.040608+00:00",
       "matched": []
     },
     {
@@ -804,7 +567,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019207380",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.739041+00:00",
+      "harvested_at": "2026-07-16T08:02:24.050933+00:00",
       "matched": []
     },
     {
@@ -825,7 +588,7 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019266118",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.730145+00:00",
+      "harvested_at": "2026-07-16T08:02:24.041960+00:00",
       "matched": []
     },
     {
@@ -848,7 +611,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019270643",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.729278+00:00",
+      "harvested_at": "2026-07-16T08:02:24.041082+00:00",
       "matched": []
     },
     {
@@ -871,7 +634,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019270025",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.729749+00:00",
+      "harvested_at": "2026-07-16T08:02:24.041537+00:00",
       "matched": []
     },
     {
@@ -895,7 +658,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019278022",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.727758+00:00",
+      "harvested_at": "2026-07-16T08:02:24.039644+00:00",
       "matched": [
         "ασφάλεια δικτύων",
         "ασφάλειας δικτύων"
@@ -921,7 +684,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019277696",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.728154+00:00",
+      "harvested_at": "2026-07-16T08:02:24.039993+00:00",
       "matched": []
     },
     {
@@ -944,7 +707,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019283068",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.014594+00:00",
+      "harvested_at": "2026-07-16T08:02:24.039138+00:00",
       "matched": []
     },
     {
@@ -968,7 +731,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019211265",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.927505+00:00",
+      "harvested_at": "2026-07-16T08:02:16.648451+00:00",
       "matched": [
         "backup"
       ]
@@ -993,7 +756,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019292424",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.924193+00:00",
+      "harvested_at": "2026-07-16T08:02:16.645122+00:00",
       "matched": []
     },
     {
@@ -1016,7 +779,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019312612",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.011932+00:00",
+      "harvested_at": "2026-07-16T08:02:20.413144+00:00",
       "matched": [
         "ασφάλεια συστημάτων",
         "ασφάλειας συστημάτων"
@@ -1043,7 +806,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019341479",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.919633+00:00",
+      "harvested_at": "2026-07-16T08:02:16.640521+00:00",
       "matched": []
     },
     {
@@ -1066,7 +829,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019269477",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.924659+00:00",
+      "harvested_at": "2026-07-16T08:02:16.645564+00:00",
       "matched": []
     },
     {
@@ -1087,7 +850,7 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019300469",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.012773+00:00",
+      "harvested_at": "2026-07-16T08:02:20.413990+00:00",
       "matched": []
     },
     {
@@ -1110,7 +873,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019309268",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.012485+00:00",
+      "harvested_at": "2026-07-16T08:02:20.413700+00:00",
       "matched": []
     },
     {
@@ -1133,7 +896,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019321788",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.922069+00:00",
+      "harvested_at": "2026-07-16T08:02:16.642988+00:00",
       "matched": [
         "antivirus"
       ]
@@ -1159,7 +922,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019323829",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.921165+00:00",
+      "harvested_at": "2026-07-16T08:02:16.642054+00:00",
       "matched": []
     },
     {
@@ -1182,7 +945,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019323053",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.009352+00:00",
+      "harvested_at": "2026-07-16T08:02:20.410527+00:00",
       "matched": []
     },
     {
@@ -1205,7 +968,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019321632",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.010543+00:00",
+      "harvested_at": "2026-07-16T08:02:20.411793+00:00",
       "matched": []
     },
     {
@@ -1228,7 +991,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019318678",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.010960+00:00",
+      "harvested_at": "2026-07-16T08:02:20.412217+00:00",
       "matched": []
     },
     {
@@ -1251,7 +1014,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019285764",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.014058+00:00",
+      "harvested_at": "2026-07-16T08:02:24.038546+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας",
@@ -1278,7 +1041,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019307580",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.922609+00:00",
+      "harvested_at": "2026-07-16T08:02:16.643519+00:00",
       "matched": [
         "ψηφιακό πιστοποιητικό",
         "ssl"
@@ -1304,7 +1067,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019307351",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.923066+00:00",
+      "harvested_at": "2026-07-16T08:02:16.644004+00:00",
       "matched": []
     },
     {
@@ -1325,7 +1088,7 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019331701",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.920541+00:00",
+      "harvested_at": "2026-07-16T08:02:16.641420+00:00",
       "matched": [
         "τείχος προστασίας"
       ]
@@ -1350,7 +1113,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019331594",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.008928+00:00",
+      "harvested_at": "2026-07-16T08:02:20.410098+00:00",
       "matched": []
     },
     {
@@ -1375,62 +1138,10 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019338813",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.920129+00:00",
+      "harvested_at": "2026-07-16T08:02:16.641041+00:00",
       "matched": [
         "firewall"
       ]
-    },
-    {
-      "ada": "26PROC019178182",
-      "subject": "Παράταση_Διακήρυξη_Παροχή Υπηρεσιών Ασφαλείας (Cybersecurity)",
-      "org": "ΕΛΛΗΝΙΚΟ ΚΤΗΜΑΤΟΛΟΓΙΟ",
-      "org_vat": "997003848",
-      "nuts": "Βόρειος Τομέας Αθηνών",
-      "notice_type": "Διακήρυξη",
-      "procedure_type": "Ανοιχτή διαδικασία",
-      "issue_date": "2026-06-05",
-      "deadline": "2026-07-06",
-      "amount": 10023700.0,
-      "cancelled": false,
-      "cpv": [
-        "48730000-4",
-        "72222300-0",
-        "72230000-6",
-        "72253200-5"
-      ],
-      "req_adams": [
-        "26REQ018639577"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019178182",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.929452+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019177373",
-      "subject": "Παράταση_Προκήρυξη_Παροχή Υπηρεσιών Ασφαλείας (Cybersecurity)",
-      "org": "ΕΛΛΗΝΙΚΟ ΚΤΗΜΑΤΟΛΟΓΙΟ",
-      "org_vat": "997003848",
-      "nuts": "Βόρειος Τομέας Αθηνών",
-      "notice_type": "Προκήρυξη",
-      "procedure_type": "Ανοιχτή διαδικασία",
-      "issue_date": "2026-06-08",
-      "deadline": "2026-07-06",
-      "amount": 10023700.0,
-      "cancelled": false,
-      "cpv": [
-        "48730000-4",
-        "72222300-0",
-        "72230000-6",
-        "72253200-5"
-      ],
-      "req_adams": [
-        "26REQ018639577"
-      ],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019177373",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.929776+00:00",
-      "matched": []
     },
     {
       "ada": "26PROC019293822",
@@ -1452,7 +1163,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019293822",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.013221+00:00",
+      "harvested_at": "2026-07-16T08:02:20.414447+00:00",
       "matched": [
         "ασφάλεια πληροφοριών",
         "ασφάλειας πληροφοριών",
@@ -1482,7 +1193,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019323302",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.921563+00:00",
+      "harvested_at": "2026-07-16T08:02:16.642425+00:00",
       "matched": [
         "firewall"
       ]
@@ -1507,7 +1218,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019321894",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.009666+00:00",
+      "harvested_at": "2026-07-16T08:02:20.410895+00:00",
       "matched": []
     },
     {
@@ -1530,7 +1241,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019327946",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.920873+00:00",
+      "harvested_at": "2026-07-16T08:02:16.641767+00:00",
       "matched": []
     },
     {
@@ -1553,7 +1264,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019343666",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.008149+00:00",
+      "harvested_at": "2026-07-16T08:02:20.409302+00:00",
       "matched": []
     },
     {
@@ -1576,7 +1287,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019343835",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.007759+00:00",
+      "harvested_at": "2026-07-16T08:02:20.408908+00:00",
       "matched": []
     },
     {
@@ -1599,7 +1310,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019367540",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.916922+00:00",
+      "harvested_at": "2026-07-16T08:02:16.637806+00:00",
       "matched": []
     },
     {
@@ -1622,7 +1333,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019368815",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.007028+00:00",
+      "harvested_at": "2026-07-16T08:02:20.408193+00:00",
       "matched": []
     },
     {
@@ -1645,7 +1356,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019290712",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.013614+00:00",
+      "harvested_at": "2026-07-16T08:02:20.414882+00:00",
       "matched": []
     },
     {
@@ -1668,7 +1379,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019321766",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.010163+00:00",
+      "harvested_at": "2026-07-16T08:02:20.411402+00:00",
       "matched": []
     },
     {
@@ -1691,7 +1402,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019356202",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.918535+00:00",
+      "harvested_at": "2026-07-16T08:02:16.639434+00:00",
       "matched": []
     },
     {
@@ -1715,7 +1426,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019363829",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.918144+00:00",
+      "harvested_at": "2026-07-16T08:02:16.639066+00:00",
       "matched": []
     },
     {
@@ -1738,7 +1449,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019375479",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.006036+00:00",
+      "harvested_at": "2026-07-16T08:02:20.407146+00:00",
       "matched": []
     },
     {
@@ -1761,7 +1472,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019222502",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.735454+00:00",
+      "harvested_at": "2026-07-16T08:02:24.047319+00:00",
       "matched": []
     },
     {
@@ -1788,67 +1499,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019365645",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.917399+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019192381",
-      "subject": "Ψηφιακός Μετασχηματισμός Δήμου Πύδνας - Κολινδρού",
-      "org": "ΔΗΜΟΣ ΠΥΔΝΑΣ - ΚΟΛΙΝΔΡΟΥ",
-      "org_vat": "099607100",
-      "nuts": "Πιερία",
-      "notice_type": "Διακήρυξη",
-      "procedure_type": "Ανοιχτή διαδικασία",
-      "issue_date": "2026-06-09",
-      "deadline": "2026-07-10",
-      "amount": 306129.03,
-      "cancelled": false,
-      "cpv": [
-        "32420000-3",
-        "34998000-9",
-        "35125100-7",
-        "38551000-2",
-        "38554000-3",
-        "48445000-9",
-        "48613000-8",
-        "48730000-4",
-        "48732000-8",
-        "79999100-4"
-      ],
-      "req_adams": [],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019192381",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.928298+00:00",
-      "matched": []
-    },
-    {
-      "ada": "26PROC019192168",
-      "subject": "Ψηφιακός Μετασχηματισμός Δήμου Πύδνας - Κολινδρού",
-      "org": "ΔΗΜΟΣ ΠΥΔΝΑΣ - ΚΟΛΙΝΔΡΟΥ",
-      "org_vat": "099607100",
-      "nuts": "Πιερία",
-      "notice_type": "Προκήρυξη",
-      "procedure_type": "Ανοιχτή διαδικασία",
-      "issue_date": "2026-06-09",
-      "deadline": "2026-07-10",
-      "amount": 306129.03,
-      "cancelled": false,
-      "cpv": [
-        "32420000-3",
-        "34998000-9",
-        "35125100-7",
-        "38551000-2",
-        "38554000-3",
-        "48445000-9",
-        "48613000-8",
-        "48730000-4",
-        "48732000-8",
-        "79999100-4"
-      ],
-      "req_adams": [],
-      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019192168",
-      "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.928658+00:00",
+      "harvested_at": "2026-07-16T08:02:16.638266+00:00",
       "matched": []
     },
     {
@@ -1871,7 +1522,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019313203",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.011433+00:00",
+      "harvested_at": "2026-07-16T08:02:20.412659+00:00",
       "matched": []
     },
     {
@@ -1894,7 +1545,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019361756",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.007313+00:00",
+      "harvested_at": "2026-07-16T08:02:20.408482+00:00",
       "matched": []
     },
     {
@@ -1921,7 +1572,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019369437",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.916471+00:00",
+      "harvested_at": "2026-07-16T08:02:16.637340+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας"
@@ -1947,7 +1598,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019388730",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.005547+00:00",
+      "harvested_at": "2026-07-16T08:02:20.406615+00:00",
       "matched": []
     },
     {
@@ -1970,7 +1621,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019393918",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.004642+00:00",
+      "harvested_at": "2026-07-16T08:02:20.405720+00:00",
       "matched": [
         "ασφάλεια συστημάτων",
         "ασφάλειας συστημάτων"
@@ -1996,7 +1647,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019298634",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.923436+00:00",
+      "harvested_at": "2026-07-16T08:02:16.644347+00:00",
       "matched": []
     },
     {
@@ -2019,7 +1670,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019297235",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.923820+00:00",
+      "harvested_at": "2026-07-16T08:02:16.644747+00:00",
       "matched": []
     },
     {
@@ -2042,7 +1693,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019388810",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.915569+00:00",
+      "harvested_at": "2026-07-16T08:02:16.636424+00:00",
       "matched": []
     },
     {
@@ -2065,7 +1716,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019397971",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.914712+00:00",
+      "harvested_at": "2026-07-16T08:02:16.635587+00:00",
       "matched": []
     },
     {
@@ -2088,7 +1739,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019398604",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.002467+00:00",
+      "harvested_at": "2026-07-16T08:02:20.403489+00:00",
       "matched": []
     },
     {
@@ -2111,7 +1762,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019396831",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.002877+00:00",
+      "harvested_at": "2026-07-16T08:02:20.403960+00:00",
       "matched": []
     },
     {
@@ -2134,7 +1785,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019396122",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.003804+00:00",
+      "harvested_at": "2026-07-16T08:02:20.404891+00:00",
       "matched": []
     },
     {
@@ -2157,7 +1808,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019395807",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.004184+00:00",
+      "harvested_at": "2026-07-16T08:02:20.405259+00:00",
       "matched": []
     },
     {
@@ -2180,7 +1831,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019390416",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.005121+00:00",
+      "harvested_at": "2026-07-16T08:02:20.406217+00:00",
       "matched": []
     },
     {
@@ -2203,7 +1854,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019408036",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.000722+00:00",
+      "harvested_at": "2026-07-16T08:02:20.401639+00:00",
       "matched": []
     },
     {
@@ -2226,7 +1877,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019402050",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.001698+00:00",
+      "harvested_at": "2026-07-16T08:02:20.402611+00:00",
       "matched": []
     },
     {
@@ -2251,7 +1902,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019396578",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.003196+00:00",
+      "harvested_at": "2026-07-16T08:02:20.404301+00:00",
       "matched": []
     },
     {
@@ -2274,7 +1925,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019412774",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.913245+00:00",
+      "harvested_at": "2026-07-16T08:02:16.634696+00:00",
       "matched": [
         "antivirus"
       ]
@@ -2299,7 +1950,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019337425",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.008544+00:00",
+      "harvested_at": "2026-07-16T08:02:20.409697+00:00",
       "matched": []
     },
     {
@@ -2322,7 +1973,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019372328",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.006571+00:00",
+      "harvested_at": "2026-07-16T08:02:20.407684+00:00",
       "matched": []
     },
     {
@@ -2345,7 +1996,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019409880",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.999743+00:00",
+      "harvested_at": "2026-07-16T08:02:20.400549+00:00",
       "matched": []
     },
     {
@@ -2368,7 +2019,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019424697",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.997804+00:00",
+      "harvested_at": "2026-07-16T08:02:20.398599+00:00",
       "matched": [
         "ασφάλεια συστημάτων",
         "ασφάλειας συστημάτων"
@@ -2394,7 +2045,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019415040",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.999312+00:00",
+      "harvested_at": "2026-07-16T08:02:20.400173+00:00",
       "matched": []
     },
     {
@@ -2417,7 +2068,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019409245",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.000287+00:00",
+      "harvested_at": "2026-07-16T08:02:20.401176+00:00",
       "matched": []
     },
     {
@@ -2440,7 +2091,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019401718",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.002036+00:00",
+      "harvested_at": "2026-07-16T08:02:20.403024+00:00",
       "matched": []
     },
     {
@@ -2465,7 +2116,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019228215",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.733250+00:00",
+      "harvested_at": "2026-07-16T08:02:24.045109+00:00",
       "matched": []
     },
     {
@@ -2485,12 +2136,12 @@
         "79417000-0"
       ],
       "req_adams": [
-        "26REQ018912497",
-        "26REQ018493820"
+        "26REQ018493820",
+        "26REQ018912497"
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019227229",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:10.733747+00:00",
+      "harvested_at": "2026-07-16T08:02:24.045592+00:00",
       "matched": []
     },
     {
@@ -2517,12 +2168,12 @@
         "80533100-0"
       ],
       "req_adams": [
-        "26REQ019242570",
-        "26REQ019008735"
+        "26REQ019008735",
+        "26REQ019242570"
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019258666",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.925131+00:00",
+      "harvested_at": "2026-07-16T08:02:16.646059+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας"
@@ -2557,7 +2208,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019258455",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.926105+00:00",
+      "harvested_at": "2026-07-16T08:02:16.647065+00:00",
       "matched": [
         "κυβερνοασφάλεια",
         "κυβερνοασφάλειας"
@@ -2584,7 +2235,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019407252",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:07.001200+00:00",
+      "harvested_at": "2026-07-16T08:02:20.402122+00:00",
       "matched": []
     },
     {
@@ -2607,7 +2258,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019425691",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.997049+00:00",
+      "harvested_at": "2026-07-16T08:02:20.397932+00:00",
       "matched": []
     },
     {
@@ -2630,7 +2281,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019425672",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.997468+00:00",
+      "harvested_at": "2026-07-16T08:02:20.398281+00:00",
       "matched": []
     },
     {
@@ -2651,7 +2302,7 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019417003",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.998273+00:00",
+      "harvested_at": "2026-07-16T08:02:20.399122+00:00",
       "matched": []
     },
     {
@@ -2672,7 +2323,99 @@
       "req_adams": [],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019416998",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:06.998797+00:00",
+      "harvested_at": "2026-07-16T08:02:20.399649+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019442934",
+      "subject": "ΥΠΗΡΕΣΙΕΣ ΥΠΕΥΘΥΝΟΥ ΠΡΟΣΤΑΣΙΑΣ ΔΕΔΟΜΕΝΩΝ (DPO) ΚΑΤΑ ΤΙΣ ΔΙΑΤΑΞΕΙΣ ΤΟΥ ΓΕΝΙΚΟΥ ΚΑΝ. ΠΡΟΣΤ....2026-207",
+      "org": "ΔΕΤΕΠΑ",
+      "org_vat": "090052773",
+      "nuts": "Φλώρινα",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-14",
+      "deadline": "2026-07-20",
+      "amount": 4200.0,
+      "cancelled": false,
+      "cpv": [
+        "79417000-0"
+      ],
+      "req_adams": [
+        "26REQ019441819"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019442934",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:20.396466+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019438655",
+      "subject": "ΠΡΟΣΚΛΗΣΗ υπηρεσίας: ''Υπεύθυνου Τεχνικού Ασφαλείας και Συντονιστή Ασφάλειας και Υγείας στην ΔΕΥΑΑ''",
+      "org": "ΔΗΜΟΤΙΚΗ ΕΠΙΧΕΙΡΗΣΗ ΥΔΡΕΥΣΗΣ ΑΠΟΧΕΤΕΥΣΗΣ ΑΓΡΙΝΙΟΥ (Δ.Ε.Υ.Α.Α.)",
+      "org_vat": "090013919",
+      "nuts": "Αιτωλοακαρνανία",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-14",
+      "deadline": "2026-07-20",
+      "amount": 4125.0,
+      "cancelled": false,
+      "cpv": [
+        "79417000-0"
+      ],
+      "req_adams": [
+        "26REQ019432955"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019438655",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:20.396983+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019450421",
+      "subject": "ΑΝΑΝΕΩΣΗ ΑΔΕΙΩΝ ΧΡΗΣΗΣ ΛΟΓΙΣΜΙΚΟΥ ΕΠ ΩΦΕΛΕΙΑ ΚΕΠΥΕΣ",
+      "org": "ΥΠΟΥΡΓΕΙΟ ΕΘΝΙΚΗΣ ΑΜΥΝΑΣ",
+      "org_vat": "090153025",
+      "nuts": "Κεντρικός Τομέας Αθηνών",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-15",
+      "deadline": "2026-07-20",
+      "amount": 4115.0,
+      "cancelled": false,
+      "cpv": [
+        "48731000-1"
+      ],
+      "req_adams": [
+        "26REQ019440911"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019450421",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:16.632139+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019452461",
+      "subject": "ΠΡΟΣΚΛΗΣΗ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΥΠΕΥΘΥΝΟΥ ΠΡΟΣΤΑΣΙΑΣ ΠΡΟΣΩΠΙΚΩΝ ΔΕΔΟΜΕΝΩΝ",
+      "org": "ΔΗΜΟΣ ΒΙΣΑΛΤΙΑΣ",
+      "org_vat": "998020646",
+      "nuts": "Σέρρες",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-15",
+      "deadline": "2026-07-20",
+      "amount": 6200.0,
+      "cancelled": false,
+      "cpv": [
+        "79417000-0"
+      ],
+      "req_adams": [
+        "26REQ019379084"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019452461",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:20.396047+00:00",
       "matched": []
     },
     {
@@ -2698,7 +2441,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019356130",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.918902+00:00",
+      "harvested_at": "2026-07-16T08:02:16.639824+00:00",
       "matched": []
     },
     {
@@ -2724,7 +2467,139 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019356055",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.919257+00:00",
+      "harvested_at": "2026-07-16T08:02:16.640174+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019447918",
+      "subject": "Πρόσκληση υποβολής προσφοράς για την «Αναβάθμιση και Συντήρηση της ΤΠΕ Υποδομής και Ασφάλειας του Επ",
+      "org": "ΕΠΙΜΕΛΗΤΗΡΙΟ ΑΧΑΙΑΣ",
+      "org_vat": "090031022",
+      "nuts": "Αχαΐα",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-15",
+      "deadline": "2026-07-21",
+      "amount": 11632.8,
+      "cancelled": false,
+      "cpv": [
+        "32420000-3",
+        "48730000-4",
+        "72265000-0"
+      ],
+      "req_adams": [
+        "26REQ019447156"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019447918",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:16.633533+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019429083",
+      "subject": "ΠΡΟΣΚΛΗΣΗ ΑΝΑΘΕΣΗΣ ΕΡΓΟΥ \"ΕΞΕΙΔΙΚΕΥΜΕΝΗ ΛΟΓΙΣΤΙΚΗ ΥΠΟΣΤΗΡΙΞΗ ΤΗΣ ΔΙΕΥΘ/ΝΣΗΣ ΣΤΡΑΤ/ΚΟΥ ΤΗΣ ΕΥΔΑΜ\"",
+      "org": "ΥΠΟΥΡΓΕΙΟ ΟΙΚΟΝΟΜΙΚΩΝ",
+      "org_vat": "090165560",
+      "nuts": "Κεντρικός Τομέας Αθηνών",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-10",
+      "deadline": "2026-07-22",
+      "amount": 12000.0,
+      "cancelled": false,
+      "cpv": [
+        "22120000-7",
+        "22900000-9",
+        "30000000-9",
+        "30190000-7",
+        "30192700-8",
+        "30237300-2",
+        "39110000-6",
+        "39150000-8",
+        "48600000-4",
+        "48730000-4",
+        "48900000-7",
+        "50310000-1",
+        "63000000-9",
+        "63510000-7",
+        "64110000-0",
+        "64200000-8",
+        "71320000-7",
+        "71356300-1",
+        "72000000-5",
+        "72212224-5",
+        "72224000-1",
+        "72260000-5",
+        "72500000-0",
+        "79111000-5",
+        "79211000-6",
+        "79311000-7",
+        "79340000-9",
+        "79341000-6",
+        "79416200-5",
+        "79930000-2",
+        "79950000-8",
+        "79952000-2",
+        "79980000-7",
+        "79997000-9",
+        "80000000-4",
+        "85312320-8",
+        "90919200-4",
+        "98300000-6"
+      ],
+      "req_adams": [
+        "26REQ018539803"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019429083",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:16.634184+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019448113",
+      "subject": "Προμήθεια αδειών λογισμικού για την εύρυθμη και ασφαλή λειτουργία των πληροφοριακών συστημάτων (ΕΑΔ)",
+      "org": "ΕΘΝΙΚΗ ΑΡΧΗ  ΔΙΑΦΑΝΕΙΑΣ",
+      "org_vat": "996858503",
+      "nuts": "Κεντρικός Τομέας Αθηνών",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-15",
+      "deadline": "2026-07-22",
+      "amount": 22543.92,
+      "cancelled": false,
+      "cpv": [
+        "48218000-9",
+        "48730000-4"
+      ],
+      "req_adams": [
+        "26REQ019425317"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019448113",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:16.633009+00:00",
+      "matched": []
+    },
+    {
+      "ada": "26PROC019430758",
+      "subject": "Πρόσκληση υποβοληής προσφορών για παροχή υπηρεσιών Υπεύθ. Προστασίας Δεδομένων ΑΔΑιγαίου",
+      "org": "ΑΠΟΚΕΝΤΡΩΜΕΝΗ ΔΙΟΙΚΗΣΗ ΑΙΓΑΙΟΥ",
+      "org_vat": "997633594",
+      "nuts": "Πειραιάς, Νήσοι",
+      "notice_type": "Πρόσκληση",
+      "procedure_type": "Απευθείας ανάθεση",
+      "issue_date": "2026-07-13",
+      "deadline": "2026-07-23",
+      "amount": 21600.0,
+      "cancelled": false,
+      "cpv": [
+        "79417000-0"
+      ],
+      "req_adams": [
+        "26REQ019406592"
+      ],
+      "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019430758",
+      "provenance": "cpv_strict",
+      "harvested_at": "2026-07-16T08:02:20.397469+00:00",
       "matched": []
     },
     {
@@ -2765,7 +2640,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019398527",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.914294+00:00",
+      "harvested_at": "2026-07-16T08:02:16.635214+00:00",
       "matched": []
     },
     {
@@ -2791,7 +2666,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019391536",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.915102+00:00",
+      "harvested_at": "2026-07-16T08:02:16.635988+00:00",
       "matched": []
     },
     {
@@ -2819,7 +2694,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019364822",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.917745+00:00",
+      "harvested_at": "2026-07-16T08:02:16.638611+00:00",
       "matched": []
     },
     {
@@ -2847,7 +2722,7 @@
       ],
       "url": "https://cerpp.eprocurement.gov.gr/khmdhs-opendata/notice/attachment/26PROC019383619",
       "provenance": "cpv_strict",
-      "harvested_at": "2026-07-13T08:57:02.916007+00:00",
+      "harvested_at": "2026-07-16T08:02:16.636887+00:00",
       "matched": []
     }
   ]
