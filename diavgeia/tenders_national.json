@@ -1765,5 +1765,152 @@
     ],
     "org_label": "ΕΙΔΙΚΟ ΝΟΣΟΚΟΜΕΙΟ ΟΦΘΑΛΜΙΑΤΡΕΙΟ ΑΘΗΝΩΝ",
     "kind": "tender_notice"
+  },
+  {
+    "ada": "ΨΙΒ846ΝΛΔΓ-1Μ3",
+    "subject": "ΔΙΑΚΗΡΥΞΗ ΠΡΟΜΗΘΕΙΑΣ ΣΥΣΤΗΜΑΤΩΝ ΑΣΦΑΛΕΙΑΣ (FIREWALL)",
+    "org": "100081533",
+    "type": "Δ.2.1",
+    "issue_date": "2026-07-21",
+    "url": "https://diavgeia.gov.gr/doc/ΨΙΒ846ΝΛΔΓ-1Μ3",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-07-27T08:39:13.556157+00:00",
+    "cpv": [
+      "32420000",
+      "48730000",
+      "72253200"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": null,
+    "duration_source": "",
+    "matched": [
+      "ασφάλεια συστημάτων",
+      "ασφάλειας συστημάτων",
+      "firewall"
+    ],
+    "org_label": "ΥΠΟΥΡΓΕΙΟ ΕΡΓΑΣΙΑΣ ΚΑΙ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "ΡΨ0Ν46906Ι-32Κ",
+    "subject": "Πρόσκληση εκδήλωσης ενδιαφέροντος, αναφορικά με την προμήθεια 70 αδειών του «ΣΥΣΤΗΜΑΤΟΣ ΠΡΟΣΤΑΣΙΑΣ ΙΩΝ ΚΑΙ ΑΠΕΙΛΩΝ - ANTIVIRUS» CPV:48761000-0, συνολικής προϋπολογισθείσας δαπάνης 6.451,61€ άνευ ΦΠΑ και 8.000,00€ συμπεριλαμβανομένου ΦΠΑ 24%, χρονικής διάρκειας 3 ετών, με κριτήριο κατακύρωσης την πλέον συμφέρουσα από οικονομική άποψη προσφορά βάσει τιμής, σε  εφαρμογή  του Προγραμματισμού Συμβάσεων διαχειριστικού έτους 2026, σύμφωνα με τα οριζόμενα στο άρθρο 118 του ν. 4412/2016.",
+    "org": "99222015",
+    "type": "Δ.2.1",
+    "issue_date": "2026-07-20",
+    "url": "https://diavgeia.gov.gr/doc/ΡΨ0Ν46906Ι-32Κ",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-07-27T08:39:34.757197+00:00",
+    "cpv": [
+      "48761000"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": 36,
+    "duration_source": "parsed",
+    "matched": [
+      "antivirus"
+    ],
+    "org_label": "ΠΡΩΤΟ ΓΕΝ. ΝΟΣ. ΘΕΣ/ΝΙΚΗΣ «ΑΓΙΟΣ ΠΑΥΛΟΣ»",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "Ρ9ΝΟ46ΜΑΠΣ-9Γ1",
+    "subject": "Διακήρυξη  ανοικτού ηλεκτρονικού διαγωνισμού, κάτω των ορίων, για την προμήθεια αδειών χρήσης διετούς (2 έτη) ισχύος λογισμικού προστασίας από κακόβουλο κώδικα (antimalware) σε Η/Υ και κεντρικούς εξυπηρετητές του e-ΕΦΚΑ. (ΦΓ 31/26)",
+    "org": "100059918",
+    "type": "Δ.2.1",
+    "issue_date": "2026-07-23",
+    "url": "https://diavgeia.gov.gr/doc/Ρ9ΝΟ46ΜΑΠΣ-9Γ1",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-07-27T08:40:25.528628+00:00",
+    "cpv": [
+      "48760000"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": 24,
+    "duration_source": "parsed",
+    "matched": [
+      "κακόβουλο λογισμικό"
+    ],
+    "org_label": "ΗΛΕΚΤΡΟΝΙΚΟΣ ΕΘΝΙΚΟΣ ΦΟΡΕΑΣ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "9ΧΦΛ46ΝΛΔΓ-15Η",
+    "subject": "ΑΠΟΦΑΣΗ ΣΚΟΠΙΜΟΤΗΤΑΣ ΓΙΑ ΤΗΝ ΔΙΑΚΗΡΥΞΗ ΠΡΟΜΗΘΕΙΑΣ  ΣΥΣΤΗΜΑΤΩΝ ΑΣΦΑΛΕΙΑΣ (FIREWALL) ΤΟΥ ΥΠΟΥΡΓΕΙΟΥ ΕΡΓΑΣΙΑΣ ΚΑΙ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ",
+    "org": "100081533",
+    "type": "Δ.2.1",
+    "issue_date": "2026-07-20",
+    "url": "https://diavgeia.gov.gr/doc/9ΧΦΛ46ΝΛΔΓ-15Η",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-07-27T08:40:26.396958+00:00",
+    "cpv": [
+      "48730000",
+      "32420000",
+      "72253200"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": null,
+    "duration_source": "",
+    "matched": [
+      "ασφάλεια συστημάτων",
+      "ασφάλειας συστημάτων",
+      "firewall"
+    ],
+    "org_label": "ΥΠΟΥΡΓΕΙΟ ΕΡΓΑΣΙΑΣ ΚΑΙ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "91ΥΝ469ΗΞΩ-1ΥΤ",
+    "subject": "13301 Πρόσκληση Εκδήλωσης Ενδιαφέροντος NIS2GRAPH 001.2026 ds471",
+    "org": "99221083",
+    "type": "Γ.3.1",
+    "issue_date": "2026-07-23",
+    "url": "https://diavgeia.gov.gr/doc/91ΥΝ469ΗΞΩ-1ΥΤ",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-07-27T08:41:21.163333+00:00",
+    "cpv": [],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": null,
+    "duration_source": "",
+    "matched": [
+      "nis2",
+      "nis 2"
+    ],
+    "org_label": "ΕΡΕΥΝΗΤΙΚΟ ΚΕΝΤΡΟ ΚΑΙΝΟΤΟΜΙΑΣ ΣΤΙΣ ΤΕΧΝΟΛΟΓΙΕΣ ΤΗΣ ΠΛΗΡΟΦΟΡΙΑΣ, ΤΩΝ ΕΠΙΚΟΙΝΩΝΙΩΝ ΚΑΙ ΤΗΣ ΓΝΩΣΗΣ - «ΑΘΗΝΑ»",
+    "kind": "tender_notice"
   }
 ]
