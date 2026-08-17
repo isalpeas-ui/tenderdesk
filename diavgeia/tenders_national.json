@@ -2058,5 +2058,91 @@
     ],
     "org_label": "ΓΕΝΙΚΟ ΝΟΣΟΚΟΜΕΙΟ ΝΑΟΥΣΑΣ",
     "kind": "tender_notice"
+  },
+  {
+    "ada": "9ΠΧΓ46Ψ84Ψ-7ΞΧ",
+    "subject": "ΠΡΟΜΗΘΕΙΑ ΣΥΝΔΡΟΜΗΤΙΚΩΝ ΑΔΕΙΩΝ ΚΑΙ ΕΞΟΠΛΙΣΜΟΥ BACKUP, ΚΑΘΩΣ ΚΑΙ ΠΑΡΟΧΗ ΥΠΗΡΕΣΙΩΝ ΛΕΙΤΟΥΡΓΙΚΗΣ ΥΠΟΣΤΗΡΙΞΗΣ ΤΗΣ ΣΧΕΤΙΚΗΣ ΥΠΟΔΟΜΗΣ-Δ8464",
+    "org": "99201059",
+    "type": "Δ.2.1",
+    "issue_date": "2026-08-11",
+    "url": "https://diavgeia.gov.gr/doc/9ΠΧΓ46Ψ84Ψ-7ΞΧ",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-08-17T05:42:35.451603+00:00",
+    "cpv": [
+      "48710000",
+      "48820000",
+      "72267000"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": null,
+    "duration_source": "",
+    "matched": [
+      "backup"
+    ],
+    "org_label": "ΕΥΔΑΠ ΑΕ",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "ΨΗΟΘ4690ΒΩ-ΩΣΧ",
+    "subject": "ΕΡΕΥΝΑ ΑΓΟΡΑΣ 17194/12-08-2026 ΓΙΑ ΕΠΕΚΤΑΣΗ ΥΠΗΡΕΣΙΩΝ ΑΣΦΑΛΕΙΑΣ ΤΟΥ FORTIGATE 200E FIREWALL",
+    "org": "99221899",
+    "type": "Δ.2.1",
+    "issue_date": "2026-08-12",
+    "url": "https://diavgeia.gov.gr/doc/ΨΗΟΘ4690ΒΩ-ΩΣΧ",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-08-17T05:43:38.181400+00:00",
+    "cpv": [
+      "30200000"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": null,
+    "duration_source": "",
+    "matched": [
+      "firewall"
+    ],
+    "org_label": "ΝΟΜ.ΓΕΝ. ΝΟΣΟΚΟΜΕΙΟ ΒΟΛΟΥ 'ΑΧΙΛΛΟΠΟΥΛΕIO'",
+    "kind": "tender_notice"
+  },
+  {
+    "ada": "ΨΘΒ846907Λ-ΚΣ7",
+    "subject": "Πρόσκληση υποβολής προσφοράς για τη συντήρηση και επισκευή του συγκροτήματος μαγνητικής τομογραφίας SIEMENS MAGNETOM SEMPRA, για χρονικό διάστημα τριών (3) μηνών, συνολικού κόστους 13.500€ + ΦΠΑ 24%, εις βάρος του ΑΛΕ 2420304 (ΚΑΕ 0887) του προϋπολογισμού του Νοσοκομείου.",
+    "org": "99221939",
+    "type": "Δ.2.1",
+    "issue_date": "2026-08-12",
+    "url": "https://diavgeia.gov.gr/doc/ΨΘΒ846907Λ-ΚΣ7",
+    "tier": "national",
+    "legacy_id": "",
+    "harvested_at": "2026-08-17T05:45:04.876522+00:00",
+    "cpv": [
+      "50400000"
+    ],
+    "amount": "",
+    "currency": "EUR",
+    "vendor": "",
+    "vendor_afm": "",
+    "assignment_type": "",
+    "buyer": "",
+    "buyer_afm": "",
+    "duration_months": 3,
+    "duration_source": "parsed",
+    "matched": [
+      "siem"
+    ],
+    "org_label": "ΝΟΜ.ΓΕΝ. ΝΟΣΟΚΟΜΕΙΟ ΡΕΘΥΜΝΗΣ",
+    "kind": "tender_notice"
   }
 ]
