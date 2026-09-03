@@ -1,5 +1,33 @@
 [
   {
+    "ada": "90Μ446ΝΚΠΔ-Α4Κ",
+    "subject": "ΔΙΑΚΗΡΥΞΗ ΑΝΟΙΧΤΟΥ ΗΛΕΚΤΡΟΝΙΚΟΥ ΔΙΑΓΩΝΙΣΜΟΥ ΑΝΩ ΤΩΝ ΟΡΙΩΝ ΣΕ ΕΥΡΩ (€)\n«Για την επιλογή Αναδόχου/-ων, για τη σύναψη συμβάσεων με αντικείμενα:\n1. Άδεια λογισμικού συστήματος SIEM/SOAR (Security Information and Event Management – SIEM, Security Orchestration, Automation, and Response -SOAR),\n2. Ανανέωση του Προγράμματος Συντήρησης και Υποστήριξης (Software Assurance - SA) των Αδειών Λογισμικού Microsoft του Υπουργείου\n3. Ανανέωση και Επέκταση των Αδειών Υποστήριξης (Firmware Updates, Enhanced Support και Phone Support) του Συστήματος FortiAuthenticator της Υποδομής του Συστήματος Ασφαλούς Μετάδοσης (ΣΑΜ)»",
+    "org": "100081880",
+    "type": "Δ.2.1",
+    "issue_date": "2026-09-02",
+    "url": "https://diavgeia.gov.gr/doc/90Μ446ΝΚΠΔ-Α4Κ",
+    "tier": "client",
+    "legacy_id": null,
+    "harvested_at": "2026-09-03T08:30:21.549974+00:00",
+    "matched": [
+      "siem"
+    ]
+  },
+  {
+    "ada": "9ΟΥ846ΝΚΠΔ-Π0Ω",
+    "subject": "ΠΡΟΚΗΡΥΞΗ (ΠΕΡΙΛΗΨΗ ΔΙΑΚΗΡΥΞΗΣ) ΑΝΟΙΚΤΟΥ ΗΛΕΚΤΡΟΝΙΚΟΥ ΔΙΑΓΩΝΙΣΜΟΥ ΑΝΩ ΤΩΝ ΟΡΙΩΝ ΣΕ ΕΥΡΩ (€) «Για την επιλογή Αναδόχου/-ων, για τη σύναψη συμβάσεων  με αντικείμενα:1. Άδεια λογισμικού συστήματος SIEM/SOAR (Security Information and Event Management – SIEM, Security Orchestration, Automation, and Response -SOAR),2. Ανανέωση του Προγράμματος Συντήρησης και Υποστήριξης (Software Assurance - SA) των Αδειών Λογισμικού Microsoft του Υπουργείου,3. Ανανέωση και Επέκταση των Αδειών Υποστήριξης (Firmware Updates, Enhanced Support και Phone Support) του Συστήματος FortiAuthenticator της Υποδομής του Συστήματος Ασφαλούς Μετάδοσης (ΣΑΜ)»",
+    "org": "100081880",
+    "type": "Δ.2.1",
+    "issue_date": "2026-09-03",
+    "url": "https://diavgeia.gov.gr/doc/9ΟΥ846ΝΚΠΔ-Π0Ω",
+    "tier": "client",
+    "legacy_id": null,
+    "harvested_at": "2026-09-03T08:30:21.551270+00:00",
+    "matched": [
+      "siem"
+    ]
+  },
+  {
     "ada": "9Ρ5Ρ7ΛΡ-ΗΕΦ",
     "subject": "ΑΝΑΛΥΤΙΚΗ ΔΙΑΚΗΡΥΞΗ ΤΟΥ ΕΡΓΟΥ «ΑΣΦΑΛΕΙΑ ΟΔΙΚΟΥ ΔΙΚΤΥΟΥ ΠΕΡΙΦΕΡΕΙΑΣ ΘΕΣΣΑΛΙΑΣ -Π.Ε. ΤΡΙΚΑΛΩΝ 2027-2028» ΥΠΟΕΡΓΟ 3: «ΚΑΘΕΤΗ ΣΗΜΑΝΣΗ - ΣΤΗΘΑΙΑ ΟΔΙΚΟΥ ΔΙΚΤΥΟΥ Π.Ε. ΤΡΙΚΑΛΩΝ 2027-2028 », προϋπολογισμού 645.161,29€ ΕΥΡΩ (Χωρίς Φ.Π.Α 24%).",
     "org": "5007",
